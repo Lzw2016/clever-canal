@@ -148,6 +148,12 @@
                 <artifactId>swagger-models</artifactId>
                 <version>1.5.21</version>
             </dependency>
+            <!--mysql-binlog-connector-->
+            <dependency>
+                <groupId>com.github.shyiko</groupId>
+                <artifactId>mysql-binlog-connector-java</artifactId>
+                <version>0.20.1</version>
+            </dependency>
             <!--jdbc-client-->
             <dependency>
                 <groupId>mysql</groupId>
