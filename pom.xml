@@ -53,9 +53,9 @@
     </distributionManagement>
 
     <modules>
+        <module>clever-canal-core</module>
         <module>clever-canal-node</module>
         <module>clever-canal-server</module>
-        <module>clever-canal-core</module>
     </modules>
 
     <properties>
@@ -77,6 +77,11 @@
     <dependencyManagement>
         <dependencies>
             <!--当前项目模块-->
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-node</artifactId>
