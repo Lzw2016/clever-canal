@@ -55,6 +55,7 @@
     <modules>
         <module>clever-canal-node</module>
         <module>clever-canal-server</module>
+        <module>clever-canal-core</module>
     </modules>
 
     <properties>
@@ -232,6 +233,21 @@
                 <version>${otter.version}</version>
             </dependency>
             <!--依赖包-->
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>2.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>28.1-jre</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.netty</groupId>
+                <artifactId>netty</artifactId>
+                <version>3.2.10.Final</version>
+            </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-api</artifactId>
