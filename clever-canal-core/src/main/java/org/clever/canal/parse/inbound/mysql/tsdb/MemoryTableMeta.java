@@ -4,6 +4,8 @@ import com.alibaba.fastsql.sql.ast.SQLDataType;
 import com.alibaba.fastsql.sql.ast.SQLDataTypeImpl;
 import com.alibaba.fastsql.sql.ast.SQLExpr;
 import com.alibaba.fastsql.sql.ast.SQLStatement;
+import com.alibaba.fastsql.sql.ast.expr.*;
+import com.alibaba.fastsql.sql.ast.statement.*;
 import com.alibaba.fastsql.sql.dialect.mysql.ast.MySqlPrimaryKey;
 import com.alibaba.fastsql.sql.dialect.mysql.ast.MySqlUnique;
 import com.alibaba.fastsql.sql.dialect.mysql.ast.expr.MySqlOrderingExpr;
@@ -11,11 +13,11 @@ import com.alibaba.fastsql.sql.repository.Schema;
 import com.alibaba.fastsql.sql.repository.SchemaObject;
 import com.alibaba.fastsql.sql.repository.SchemaRepository;
 import com.alibaba.fastsql.util.JdbcConstants;
-import com.alibaba.otter.canal.parse.inbound.TableMeta;
-import com.alibaba.otter.canal.parse.inbound.TableMeta.FieldMeta;
-import com.alibaba.otter.canal.parse.inbound.mysql.ddl.DruidDdlParser;
-import com.alibaba.otter.canal.protocol.position.EntryPosition;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.inbound.TableMeta;
+import org.clever.canal.parse.inbound.TableMeta.FieldMeta;
+import org.clever.canal.parse.inbound.mysql.ddl.DruidDdlParser;
+import org.clever.canal.protocol.position.EntryPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,17 +29,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 基于DDL维护的内存表结构
- *
- * @author agapple 2017年7月27日 下午4:19:40
- * @since 3.2.5
  */
+@SuppressWarnings("WeakerAccess")
 public class MemoryTableMeta implements TableMetaTSDB {
 
-    private Logger logger     = LoggerFactory.getLogger(MemoryTableMeta.class);
-    private Map<List<String>, TableMeta> tableMetas = new ConcurrentHashMap<List<String>, TableMeta>();
-    private SchemaRepository             repository = new SchemaRepository(JdbcConstants.MYSQL);
+    private Logger logger = LoggerFactory.getLogger(MemoryTableMeta.class);
+    private Map<List<String>, TableMeta> tableMetas = new ConcurrentHashMap<>();
+    private SchemaRepository repository = new SchemaRepository(JdbcConstants.MYSQL);
 
-    public MemoryTableMeta(){
+    public MemoryTableMeta() {
     }
 
     @Override
@@ -56,15 +56,14 @@ public class MemoryTableMeta implements TableMetaTSDB {
             if (StringUtils.isNotEmpty(schema)) {
                 repository.setDefaultSchema(schema);
             }
-
             try {
                 // druid暂时flush privileges语法解析有问题
                 if (!StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "flush")
-                    && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "grant")
-                    && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "revoke")
-                    && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "create user")
-                    && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "alter user")
-                    && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "drop user")) {
+                        && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "grant")
+                        && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "revoke")
+                        && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "create user")
+                        && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "alter user")
+                        && !StringUtils.startsWithIgnoreCase(StringUtils.trim(ddl), "drop user")) {
                     repository.console(ddl);
                 }
             } catch (Throwable e) {
@@ -111,13 +110,11 @@ public class MemoryTableMeta implements TableMetaTSDB {
                         if (schema != null) {
                             tableMeta.setSchema(schema);
                         }
-
                         tableMetas.put(keys, tableMeta);
                     }
                 }
             }
         }
-
         return tableMeta;
     }
 
@@ -127,7 +124,7 @@ public class MemoryTableMeta implements TableMetaTSDB {
     }
 
     public Map<String, String> snapshot() {
-        Map<String, String> schemaDdls = new HashMap<String, String>();
+        Map<String, String> schemaDdls = new HashMap<>();
         for (Schema schema : repository.getSchemas()) {
             StringBuffer data = new StringBuffer(4 * 1024);
             for (String table : schema.showTables()) {
@@ -137,7 +134,6 @@ public class MemoryTableMeta implements TableMetaTSDB {
             }
             schemaDdls.put(schema.getName(), data.toString());
         }
-
         return schemaDdls;
     }
 
@@ -151,7 +147,6 @@ public class MemoryTableMeta implements TableMetaTSDB {
             }
             return tableMeta;
         }
-
         return null;
     }
 
@@ -162,53 +157,47 @@ public class MemoryTableMeta implements TableMetaTSDB {
             String name = getSqlName(column.getName());
             // String charset = getSqlName(column.getCharsetExpr());
             SQLDataType dataType = column.getDataType();
-            String dataTypStr = dataType.getName();
-            if (StringUtils.equalsIgnoreCase(dataTypStr, "float")) {
+            StringBuilder dataTypStr = new StringBuilder(dataType.getName());
+            if (StringUtils.equalsIgnoreCase(dataTypStr.toString(), "float")) {
                 if (dataType.getArguments().size() == 1) {
-                    int num = Integer.valueOf(dataType.getArguments().get(0).toString());
+                    int num = Integer.parseInt(dataType.getArguments().get(0).toString());
                     if (num > 24) {
-                        dataTypStr = "double";
+                        dataTypStr = new StringBuilder("double");
                     }
                 }
             }
-
             if (dataType.getArguments().size() > 0) {
-                dataTypStr += "(";
+                dataTypStr.append("(");
                 for (int i = 0; i < column.getDataType().getArguments().size(); i++) {
                     if (i != 0) {
-                        dataTypStr += ",";
+                        dataTypStr.append(",");
                     }
                     SQLExpr arg = column.getDataType().getArguments().get(i);
-                    dataTypStr += arg.toString();
+                    dataTypStr.append(arg.toString());
                 }
-                dataTypStr += ")";
+                dataTypStr.append(")");
             }
-
             if (dataType instanceof SQLDataTypeImpl) {
                 SQLDataTypeImpl dataTypeImpl = (SQLDataTypeImpl) dataType;
                 if (dataTypeImpl.isUnsigned()) {
-                    dataTypStr += " unsigned";
+                    dataTypStr.append(" unsigned");
                 }
-
                 if (dataTypeImpl.isZerofill()) {
                     // mysql default behaiver
                     // 如果设置了zerofill，自动给列添加unsigned属性
                     if (!dataTypeImpl.isUnsigned()) {
-                        dataTypStr += " unsigned";
+                        dataTypStr.append(" unsigned");
                     }
-
-                    dataTypStr += " zerofill";
+                    dataTypStr.append(" zerofill");
                 }
             }
-
             if (column.getDefaultExpr() == null || column.getDefaultExpr() instanceof SQLNullExpr) {
                 fieldMeta.setDefaultValue(null);
             } else {
                 fieldMeta.setDefaultValue(DruidDdlParser.unescapeQuotaName(getSqlName(column.getDefaultExpr())));
             }
-
             fieldMeta.setColumnName(name);
-            fieldMeta.setColumnType(dataTypStr);
+            fieldMeta.setColumnType(dataTypStr.toString());
             fieldMeta.setNullable(true);
             List<SQLColumnConstraint> constraints = column.getConstraints();
             for (SQLColumnConstraint constraint : constraints) {
@@ -248,11 +237,9 @@ public class MemoryTableMeta implements TableMetaTSDB {
         if (sqlName == null) {
             return null;
         }
-
         if (sqlName instanceof SQLPropertyExpr) {
             SQLIdentifierExpr owner = (SQLIdentifierExpr) ((SQLPropertyExpr) sqlName).getOwner();
-            return DruidDdlParser.unescapeName(owner.getName()) + "."
-                   + DruidDdlParser.unescapeName(((SQLPropertyExpr) sqlName).getName());
+            return DruidDdlParser.unescapeName(owner.getName()) + "." + DruidDdlParser.unescapeName(((SQLPropertyExpr) sqlName).getName());
         } else if (sqlName instanceof SQLIdentifierExpr) {
             return DruidDdlParser.unescapeName(((SQLIdentifierExpr) sqlName).getName());
         } else if (sqlName instanceof SQLCharExpr) {
@@ -269,5 +256,4 @@ public class MemoryTableMeta implements TableMetaTSDB {
     public SchemaRepository getRepository() {
         return repository;
     }
-
 }

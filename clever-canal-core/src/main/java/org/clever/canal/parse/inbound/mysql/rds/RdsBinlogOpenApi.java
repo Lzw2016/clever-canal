@@ -1,12 +1,12 @@
 package org.clever.canal.parse.inbound.mysql.rds;
 
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.BinlogFile;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.DescribeBinlogFileResult;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.RdsBackupPolicy;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.RdsItem;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.request.DescribeBackupPolicyRequest;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.request.DescribeBinlogFilesRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.inbound.mysql.rds.data.BinlogFile;
+import org.clever.canal.parse.inbound.mysql.rds.data.DescribeBinlogFileResult;
+import org.clever.canal.parse.inbound.mysql.rds.data.RdsBackupPolicy;
+import org.clever.canal.parse.inbound.mysql.rds.data.RdsItem;
+import org.clever.canal.parse.inbound.mysql.rds.request.DescribeBackupPolicyRequest;
+import org.clever.canal.parse.inbound.mysql.rds.request.DescribeBinlogFilesRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,16 +16,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author agapple 2017年10月14日 下午1:53:52
- * @since 1.0.25
- */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class RdsBinlogOpenApi {
 
     protected static final Logger logger = LoggerFactory.getLogger(RdsBinlogOpenApi.class);
 
-    public static List<BinlogFile> listBinlogFiles(String url, String ak, String sk, String dbInstanceId,
-                                                   Date startTime, Date endTime) {
+    public static List<BinlogFile> listBinlogFiles(String url, String ak, String sk, String dbInstanceId, Date startTime, Date endTime) {
         DescribeBinlogFilesRequest request = new DescribeBinlogFilesRequest();
         if (StringUtils.isNotEmpty(url)) {
             try {
@@ -42,7 +38,7 @@ public class RdsBinlogOpenApi {
         request.setRdsInstanceId(dbInstanceId);
         request.setAccessKeyId(ak);
         request.setAccessKeySecret(sk);
-        DescribeBinlogFileResult result = null;
+        DescribeBinlogFileResult result;
         int retryTime = 3;
         while (true) {
             try {
@@ -54,18 +50,18 @@ public class RdsBinlogOpenApi {
                 }
                 try {
                     Thread.sleep(100L);
-                } catch (InterruptedException e1) {
+                } catch (InterruptedException ignored) {
                 }
             }
         }
         if (result == null) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         RdsItem rdsItem = result.getItems();
         if (rdsItem != null) {
             return rdsItem.getBinLogFile();
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     public static RdsBackupPolicy queryBinlogBackupPolicy(String url, String ak, String sk, String dbInstanceId) {
@@ -91,7 +87,7 @@ public class RdsBinlogOpenApi {
                 }
                 try {
                     Thread.sleep(100L);
-                } catch (InterruptedException e1) {
+                } catch (InterruptedException ignored) {
                 }
             }
         }

@@ -1,6 +1,7 @@
 package org.clever.canal.parse.inbound.mysql.rds.request;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -22,19 +23,13 @@ import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午2:26
- * @since 1.0.25
- */
+@SuppressWarnings({"WeakerAccess", "FinalPrivateMethod", "unchecked", "unused", "CStyleArrayDeclaration"})
 public abstract class AbstractRequest<T> {
 
     /**
@@ -46,26 +41,26 @@ public abstract class AbstractRequest<T> {
      */
     private static final String MAC_NAME = "HmacSHA1";
 
-    private String              accessKeyId;
+    private String accessKeyId;
 
-    private String              accessKeySecret;
+    private String accessKeySecret;
 
     /**
      * api 版本
      */
-    private String              version;
+    private String version;
 
-    private String              endPoint = "rds.aliyuncs.com";
+    private String endPoint = "rds.aliyuncs.com";
 
-    private String              protocol = "http";
+    private String protocol = "http";
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
     }
 
-    private int                 timeout = (int) TimeUnit.MINUTES.toMillis(1);
+    private int timeout = (int) TimeUnit.MINUTES.toMillis(1);
 
-    private Map<String, String> treeMap = new TreeMap();
+    private Map<String, String> treeMap = new TreeMap<>();
 
     public void putQueryString(String name, String value) {
         if (StringUtils.isBlank(name) || StringUtils.isBlank(value)) {
@@ -94,9 +89,7 @@ public abstract class AbstractRequest<T> {
      * 使用 HMAC-SHA1 签名方法对对encryptText进行签名
      *
      * @param encryptText 被签名的字符串
-     * @param encryptKey 密钥
-     * @return
-     * @throws Exception
+     * @param encryptKey  密钥
      */
     private byte[] HmacSHA1Encrypt(String encryptText, String encryptKey) throws Exception {
         byte[] data = encryptKey.getBytes(ENCODING);
@@ -106,7 +99,6 @@ public abstract class AbstractRequest<T> {
         Mac mac = Mac.getInstance(MAC_NAME);
         // 用给定密钥初始化 Mac 对象
         mac.init(secretKey);
-
         byte[] text = encryptText.getBytes(ENCODING);
         // 完成 Mac 操作
         return mac.doFinal(text);
@@ -120,7 +112,7 @@ public abstract class AbstractRequest<T> {
         if (null == parameters) {
             return null;
         }
-        StringBuilder urlBuilder = new StringBuilder("");
+        StringBuilder urlBuilder = new StringBuilder();
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             String key = entry.getKey();
             String val = entry.getValue();
@@ -147,9 +139,7 @@ public abstract class AbstractRequest<T> {
         cqs = cqs.replaceAll("\\+", "%20");
         cqs = cqs.replaceAll("\\*", "%2A");
         cqs = cqs.replaceAll("%7E", "~");
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("GET").append("&").append(encode("/")).append("&").append(cqs);
-        return base64(HmacSHA1Encrypt(stringBuilder.toString(), accessKeySecret + "&"));
+        return base64(HmacSHA1Encrypt("GET" + "&" + encode("/") + "&" + cqs, accessKeySecret + "&"));
     }
 
     public final String formatUTCTZ(Date date) {
@@ -170,7 +160,7 @@ public abstract class AbstractRequest<T> {
 
     private String makeRequestString(Map<String, String> param) throws Exception {
         fillCommonParam(param);
-        String sign = makeSignature(new TreeMap<String, String>(param));
+        String sign = makeSignature(new TreeMap<>(param));
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, String> entry : param.entrySet()) {
             builder.append(encode(entry.getKey())).append("=").append(encode(entry.getValue())).append("&");
@@ -181,39 +171,29 @@ public abstract class AbstractRequest<T> {
 
     /**
      * 执行http请求
-     *
-     * @param getMethod
-     * @return
-     * @throws IOException
      */
     @SuppressWarnings("deprecation")
     private final HttpResponse executeHttpRequest(HttpGet getMethod, String host) throws Exception {
-        SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, new TrustStrategy() {
-
-            @Override
-            public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-                return true;
-            }
-        }).build();
+        SSLContext sslContext = SSLContexts.custom().loadTrustMaterial(null, (TrustStrategy) (arg0, arg1) -> true).build();
         SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext,
-            new String[] { "TLSv1" },
-            null,
-            SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                new String[]{"TLSv1"},
+                null,
+                SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         Registry registry = RegistryBuilder.create()
-            .register("http", PlainConnectionSocketFactory.INSTANCE)
-            .register("https", sslsf)
-            .build();
+                .register("http", PlainConnectionSocketFactory.INSTANCE)
+                .register("https", sslsf)
+                .build();
         HttpClientConnectionManager httpClientConnectionManager = new PoolingHttpClientConnectionManager(registry);
         CloseableHttpClient httpClient = HttpClientBuilder.create()
-            .setMaxConnPerRoute(50)
-            .setMaxConnTotal(100)
-            .setConnectionManager(httpClientConnectionManager)
-            .build();
+                .setMaxConnPerRoute(50)
+                .setMaxConnTotal(100)
+                .setConnectionManager(httpClientConnectionManager)
+                .build();
         RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectTimeout(timeout)
-            .setConnectionRequestTimeout(timeout)
-            .setSocketTimeout(timeout)
-            .build();
+                .setConnectTimeout(timeout)
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
         getMethod.setConfig(requestConfig);
         HttpResponse response = httpClient.execute(getMethod);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -227,7 +207,6 @@ public abstract class AbstractRequest<T> {
     protected abstract T processResult(HttpResponse response) throws Exception;
 
     protected void processBefore() {
-
     }
 
     public final T doAction() throws Exception {

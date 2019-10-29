@@ -2,19 +2,16 @@ package org.clever.canal.parse.inbound.mysql.rds.request;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.DescribeBinlogFileResult;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.clever.canal.parse.inbound.mysql.rds.data.DescribeBinlogFileResult;
 
 import java.util.Date;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午3:41
- * @since 1.0.25
- */
+@SuppressWarnings("unused")
 public class DescribeBinlogFilesRequest extends AbstractRequest<DescribeBinlogFileResult> {
 
-    public DescribeBinlogFilesRequest(){
+    public DescribeBinlogFilesRequest() {
         setVersion("2014-08-15");
         putQueryString("Action", "DescribeBinlogFiles");
     }
@@ -46,9 +43,10 @@ public class DescribeBinlogFilesRequest extends AbstractRequest<DescribeBinlogFi
     @Override
     protected DescribeBinlogFileResult processResult(HttpResponse response) throws Exception {
         String result = EntityUtils.toString(response.getEntity());
-        DescribeBinlogFileResult describeBinlogFileResult = JSONObject.parseObject(result,
-            new TypeReference<DescribeBinlogFileResult>() {
-            });
-        return describeBinlogFileResult;
+        return JSONObject.parseObject(
+                result,
+                new TypeReference<DescribeBinlogFileResult>() {
+                }
+        );
     }
 }

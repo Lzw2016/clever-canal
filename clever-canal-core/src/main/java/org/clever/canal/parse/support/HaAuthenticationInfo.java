@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * @author zebin.xuzb 2012-9-26 下午3:08:11
- * @version 1.0.0
- */
+@SuppressWarnings("unused")
 public class HaAuthenticationInfo {
 
-    private AuthenticationInfo       master;
-    private List<AuthenticationInfo> slavers = new ArrayList<AuthenticationInfo>();
+    private AuthenticationInfo master;
+    private List<AuthenticationInfo> slavers = new ArrayList<>();
 
     public AuthenticationInfo getMaster() {
         return master;
@@ -32,5 +29,4 @@ public class HaAuthenticationInfo {
     public void addSlavers(Collection<AuthenticationInfo> slavers) {
         this.slavers.addAll(slavers);
     }
-
 }

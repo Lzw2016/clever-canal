@@ -1,17 +1,14 @@
 package org.clever.canal.parse.inbound.mysql.rds.data;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午2:26
- * @since 1.0.25
- */
+@SuppressWarnings("unused")
 public class DescribeBinlogFileResult {
 
     private RdsItem Items;
-    private long    PageNumber;
-    private long    TotalRecordCount;
-    private long    TotalFileSize;
-    private String  RequestId;
-    private long    PageRecordCount;
+    private long PageNumber;
+    private long TotalRecordCount;
+    private long TotalFileSize;
+    private String RequestId;
+    private long PageRecordCount;
 
     public RdsItem getItems() {
         return Items;

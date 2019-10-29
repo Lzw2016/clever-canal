@@ -2,20 +2,17 @@ package org.clever.canal.parse.inbound.mysql.tsdb.dao;
 
 import java.util.Date;
 
-/**
- * @author agapple 2017年7月27日 下午11:09:41
- * @since 1.0.25
- */
+@SuppressWarnings("unused")
 public class MetaHistoryDO {
 
-    private Long   id;
-    private Date   gmtCreate;
-    private Date   gmtModified;
+    private Long id;
+    private Date gmtCreate;
+    private Date gmtModified;
     private String destination;
     private String binlogFile;
-    private Long   binlogOffest;
+    private Long binlogOffest;
     private String binlogMasterId;
-    private Long   binlogTimestamp;
+    private Long binlogTimestamp;
     private String useSchema;
     private String sqlSchema;
     private String sqlTable;
@@ -138,10 +135,9 @@ public class MetaHistoryDO {
     @Override
     public String toString() {
         return "MetaHistoryDO [id=" + id + ", gmtCreate=" + gmtCreate + ", gmtModified=" + gmtModified
-               + ", destination=" + destination + ", binlogFile=" + binlogFile + ", binlogOffest=" + binlogOffest
-               + ", binlogMasterId=" + binlogMasterId + ", binlogTimestamp=" + binlogTimestamp + ", useSchema="
-               + useSchema + ", sqlSchema=" + sqlSchema + ", sqlTable=" + sqlTable + ", sqlText=" + sqlText
-               + ", sqlType=" + sqlType + ", extra=" + extra + "]";
+                + ", destination=" + destination + ", binlogFile=" + binlogFile + ", binlogOffest=" + binlogOffest
+                + ", binlogMasterId=" + binlogMasterId + ", binlogTimestamp=" + binlogTimestamp + ", useSchema="
+                + useSchema + ", sqlSchema=" + sqlSchema + ", sqlTable=" + sqlTable + ", sqlText=" + sqlText
+                + ", sqlType=" + sqlType + ", extra=" + extra + "]";
     }
-
 }

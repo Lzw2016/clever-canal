@@ -1,19 +1,18 @@
 package org.clever.canal.parse.inbound.mysql.rds;
 
-import com.alibaba.otter.canal.parse.CanalEventParser;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.parse.exception.PositionNotFoundException;
-import com.alibaba.otter.canal.parse.exception.ServerIdNotMatchException;
-import com.alibaba.otter.canal.parse.inbound.ErosaConnection;
-import com.alibaba.otter.canal.parse.inbound.ParserExceptionHandler;
-import com.alibaba.otter.canal.parse.inbound.mysql.LocalBinLogConnection;
-import com.alibaba.otter.canal.parse.inbound.mysql.LocalBinlogEventParser;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.BinlogFile;
-import com.alibaba.otter.canal.protocol.position.EntryPosition;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.util.Assert;
+import org.clever.canal.common.utils.Assert;
+import org.clever.canal.parse.CanalEventParser;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.parse.exception.PositionNotFoundException;
+import org.clever.canal.parse.exception.ServerIdNotMatchException;
+import org.clever.canal.parse.inbound.ErosaConnection;
+import org.clever.canal.parse.inbound.mysql.LocalBinLogConnection;
+import org.clever.canal.parse.inbound.mysql.LocalBinlogEventParser;
+import org.clever.canal.parse.inbound.mysql.rds.data.BinlogFile;
+import org.clever.canal.protocol.position.EntryPosition;
+import org.clever.canal.protocol.position.LogPosition;
 
 import java.io.File;
 import java.util.Date;
@@ -21,23 +20,21 @@ import java.util.List;
 
 /**
  * 基于rds binlog备份文件的复制
- * 
- * @author agapple 2017年10月15日 下午1:27:36
- * @since 1.0.25
  */
+@SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
 public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements CanalEventParser, LocalBinLogConnection.FileParserListener {
 
-    private String              url;                // openapi地址
-    private String              accesskey;          // 云账号的ak
-    private String              secretkey;          // 云账号sk
-    private String              instanceId;         // rds实例id
-    private Long                startTime;
-    private Long                endTime;
+    private String url;                // openapi地址
+    private String accesskey;          // 云账号的ak
+    private String secretkey;          // 云账号sk
+    private String instanceId;         // rds实例id
+    private Long startTime;
+    private Long endTime;
     private BinlogDownloadQueue binlogDownloadQueue;
     private ParseFinishListener finishListener;
-    private int                 batchFileSize;
+    private int batchFileSize;
 
-    public RdsLocalBinlogEventParser(){
+    public RdsLocalBinlogEventParser() {
     }
 
     public void start() throws CanalParseException {
@@ -47,11 +44,9 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
             Assert.notNull(instanceId);
             Assert.notNull(url);
             Assert.notNull(directory);
-
             if (endTime == null) {
                 endTime = System.currentTimeMillis();
             }
-
             EntryPosition entryPosition = findStartPosition(null);
             if (entryPosition == null) {
                 throw new PositionNotFoundException("position not found!");
@@ -60,18 +55,11 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
             if (startTimeInMill == null || startTimeInMill <= 0) {
                 throw new PositionNotFoundException("position timestamp is empty!");
             }
-
             startTime = startTimeInMill;
-            List<BinlogFile> binlogFiles = RdsBinlogOpenApi.listBinlogFiles(url,
-                accesskey,
-                secretkey,
-                instanceId,
-                new Date(startTime),
-                new Date(endTime));
+            List<BinlogFile> binlogFiles = RdsBinlogOpenApi.listBinlogFiles(url, accesskey, secretkey, instanceId, new Date(startTime), new Date(endTime));
             if (binlogFiles.isEmpty()) {
                 throw new CanalParseException("start timestamp : " + startTimeInMill + " binlog files is empty");
             }
-
             binlogDownloadQueue = new BinlogDownloadQueue(binlogFiles, batchFileSize, directory);
             binlogDownloadQueue.silenceDownload();
             needWait = true;
@@ -81,13 +69,7 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
             logger.error("download binlog failed", e);
             throw new CanalParseException(e);
         }
-        setParserExceptionHandler(new ParserExceptionHandler() {
-
-            @Override
-            public void handle(Throwable e) {
-                handleMysqlParserException(e);
-            }
-        });
+        setParserExceptionHandler(this::handleMysqlParserException);
         super.start();
     }
 
@@ -102,15 +84,10 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
-
             try {
-                binlogDownloadQueue.execute(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        RdsLocalBinlogEventParser.super.stop();
-                        RdsLocalBinlogEventParser.super.start();
-                    }
+                binlogDownloadQueue.execute(() -> {
+                    RdsLocalBinlogEventParser.super.stop();
+                    RdsLocalBinlogEventParser.super.start();
                 });
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -180,24 +157,17 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
                 int sepIdx = journalName.indexOf(".");
                 String fileIndex = journalName.substring(sepIdx + 1);
                 int index = NumberUtils.toInt(fileIndex) + 1;
-                String newJournalName = journalName.substring(0, sepIdx) + "."
-                                        + StringUtils.leftPad(String.valueOf(index), fileIndex.length(), "0");
-                newLogPosition.setPostion(new EntryPosition(newJournalName,
-                    4L,
-                    position.getTimestamp(),
-                    position.getServerId()));
+                String newJournalName = journalName.substring(0, sepIdx) + "." + StringUtils.leftPad(String.valueOf(index), fileIndex.length(), "0");
+                newLogPosition.setPostion(new EntryPosition(newJournalName, 4L, position.getTimestamp(), position.getServerId()));
                 newLogPosition.setIdentity(logPosition.getIdentity());
                 logPositionManager.persistLogPosition(destination, newLogPosition);
             }
-
             if (binlogDownloadQueue.isLastFile(fileName)) {
-                logger.warn("last file : " + fileName + " , timestamp : " + timestamp
-                            + " , all file parse complete, switch to mysql parser!");
+                logger.warn("last file : " + fileName + " , timestamp : " + timestamp + " , all file parse complete, switch to mysql parser!");
                 finishListener.onFinish();
                 return;
             } else {
-                logger.warn("parse local binlog file : " + fileName + " , timestamp : " + timestamp
-                            + " , try the next binlog !");
+                logger.warn("parse local binlog file : " + fileName + " , timestamp : " + timestamp + " , try the next binlog !");
             }
             binlogDownloadQueue.prepare();
         } catch (Exception e) {
@@ -217,7 +187,6 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
     }
 
     public interface ParseFinishListener {
-
         void onFinish();
     }
 

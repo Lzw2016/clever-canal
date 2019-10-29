@@ -9,8 +9,8 @@ import java.net.InetSocketAddress;
 /**
  * 数据库认证信息
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class AuthenticationInfo {
-
     private InetSocketAddress address;  // 主库信息
     private String username;            // 帐号
     private String password;            // 密码
@@ -137,13 +137,7 @@ public class AuthenticationInfo {
             return false;
         }
         if (username == null) {
-            if (other.username != null) {
-                return false;
-            }
-        } else if (!username.equals(other.username)) {
-            return false;
-        }
-        return true;
+            return other.username == null;
+        } else return username.equals(other.username);
     }
-
 }

@@ -1,8 +1,8 @@
 package org.clever.canal.parse.inbound.mysql.local;
 
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
+import org.clever.canal.parse.exception.CanalParseException;
 
 import java.io.File;
 import java.util.*;
@@ -13,68 +13,62 @@ import java.util.regex.Pattern;
 
 /**
  * 维护binlog文件列表
- * 
- * @author jianghang 2012-7-7 下午03:48:05
- * @version 1.0.0
  */
+@SuppressWarnings({"unused", "FieldCanBeLocal", "UnusedReturnValue", "WeakerAccess"})
 public class BinLogFileQueue {
 
-    private String              baseName       = "mysql-bin.";
-    private List<File>          binlogs        = new ArrayList<File>();
-    private File                directory;
-    private ReentrantLock       lock           = new ReentrantLock();
-    private Condition           nextCondition  = lock.newCondition();
-    private Timer               timer          = new Timer(true);
-    private long                reloadInterval = 10 * 1000L;           // 10秒
-    private CanalParseException exception      = null;
+    private String baseName = "mysql-bin.";
+    private List<File> binlogs = new ArrayList<>();
+    private File directory;
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition nextCondition = lock.newCondition();
+    private Timer timer = new Timer(true);
+    private long reloadInterval = 10 * 1000L;   // 10秒
+    private CanalParseException exception = null;
 
-    public BinLogFileQueue(String directory){
+    public BinLogFileQueue(String directory) {
         this(new File(directory));
     }
 
-    public BinLogFileQueue(File directory){
+    public BinLogFileQueue(File directory) {
         this.directory = directory;
-
         if (!directory.canRead()) {
             throw new CanalParseException("Binlog index missing or unreadable;  " + directory.getAbsolutePath());
         }
-
         List<File> files = listBinlogFiles();
         for (File file : files) {
             offer(file);
         }
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-
-            public void run() {
-                try {
-                    // File errorFile = new File(BinLogFileQueue.this.directory,
-                    // errorFileName);
-                    // if (errorFile.isFile() && errorFile.exists()) {
-                    // String text = StringUtils.join(IOUtils.readLines(new
-                    // FileInputStream(errorFile)), "\n");
-                    // exception = new CanalParseException(text);
-                    // }
-                    List<File> files = listBinlogFiles();
-                    for (File file : files) {
-                        offer(file);
+        timer.scheduleAtFixedRate(
+                new TimerTask() {
+                    public void run() {
+                        try {
+                            // File errorFile = new File(BinLogFileQueue.this.directory,
+                            // errorFileName);
+                            // if (errorFile.isFile() && errorFile.exists()) {
+                            // String text = StringUtils.join(IOUtils.readLines(new
+                            // FileInputStream(errorFile)), "\n");
+                            // exception = new CanalParseException(text);
+                            // }
+                            List<File> files = listBinlogFiles();
+                            for (File file : files) {
+                                offer(file);
+                            }
+                        } catch (Throwable e) {
+                            exception = new CanalParseException(e);
+                        }
+                        if (exception != null) {
+                            offer(null);
+                        }
                     }
-                } catch (Throwable e) {
-                    exception = new CanalParseException(e);
-                }
-
-                if (exception != null) {
-                    offer(null);
-                }
-            }
-        }, reloadInterval, reloadInterval);
+                },
+                reloadInterval,
+                reloadInterval
+        );
     }
 
     /**
      * 根据前一个文件，获取符合条件的下一个binlog文件
-     * 
-     * @param pre
-     * @return
      */
     public File getNextFile(File pre) {
         try {
@@ -82,11 +76,11 @@ public class BinLogFileQueue {
             if (exception != null) {
                 throw exception;
             }
-
             if (binlogs.size() == 0) {
                 return null;
             } else {
-                if (pre == null) {// 第一次
+                if (pre == null) {
+                    // 第一次
                     return binlogs.get(0);
                 } else {
                     int index = seek(pre);
@@ -111,11 +105,11 @@ public class BinLogFileQueue {
             if (exception != null) {
                 throw exception;
             }
-
             if (binlogs.size() == 0) {
                 return null;
             } else {
-                if (file == null) {// 第一次
+                if (file == null) {
+                    // 第一次
                     return binlogs.get(binlogs.size() - 1);
                 } else {
                     int index = seek(file);
@@ -136,30 +130,29 @@ public class BinLogFileQueue {
 
     /**
      * 根据前一个文件，获取符合条件的下一个binlog文件
-     * 
-     * @param pre
-     * @return
-     * @throws InterruptedException
      */
     public File waitForNextFile(File pre) throws InterruptedException {
         try {
             lock.lockInterruptibly();
             if (binlogs.size() == 0) {
-                nextCondition.await();// 等待新文件
+                // 等待新文件
+                nextCondition.await();
             }
-
             if (exception != null) {
                 throw exception;
             }
-            if (pre == null) {// 第一次
+            if (pre == null) {
+                // 第一次
                 return binlogs.get(0);
             } else {
                 int index = seek(pre);
                 if (index < binlogs.size() - 1) {
                     return binlogs.get(index + 1);
                 } else {
-                    nextCondition.await();// 等待新文件
-                    return waitForNextFile(pre);// 唤醒之后递归调用一下
+                    // 等待新文件
+                    nextCondition.await();
+                    // 唤醒之后递归调用一下
+                    return waitForNextFile(pre);
                 }
             }
         } finally {
@@ -171,7 +164,7 @@ public class BinLogFileQueue {
      * 获取当前所有binlog文件
      */
     public List<File> currentBinlogs() {
-        return new ArrayList<File>(binlogs);
+        return new ArrayList<>(binlogs);
     }
 
     public void destory() {
@@ -179,8 +172,8 @@ public class BinLogFileQueue {
             lock.lockInterruptibly();
             timer.cancel();
             binlogs.clear();
-
-            nextCondition.signalAll();// 唤醒线程，通知退出
+            // 唤醒线程，通知退出
+            nextCondition.signalAll();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {
@@ -194,12 +187,13 @@ public class BinLogFileQueue {
             if (file != null) {
                 if (!binlogs.contains(file)) {
                     binlogs.add(file);
-                    nextCondition.signalAll();// 唤醒
+                    // 唤醒
+                    nextCondition.signalAll();
                     return true;
                 }
             }
-
-            nextCondition.signalAll();// 唤醒
+            // 唤醒
+            nextCondition.signalAll();
             return false;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -210,27 +204,25 @@ public class BinLogFileQueue {
     }
 
     private List<File> listBinlogFiles() {
-        List<File> files = new ArrayList<File>();
-        files.addAll(FileUtils.listFiles(directory, new IOFileFilter() {
+        List<File> files = new ArrayList<>(
+                FileUtils.listFiles(
+                        directory,
+                        new IOFileFilter() {
+                            public boolean accept(File file) {
+                                Pattern pattern = Pattern.compile("\\d+$");
+                                Matcher matcher = pattern.matcher(file.getName());
+                                return file.getName().startsWith(baseName) && matcher.find();
+                            }
 
-            public boolean accept(File file) {
-                Pattern pattern = Pattern.compile("\\d+$");
-                Matcher matcher = pattern.matcher(file.getName());
-                return file.getName().startsWith(baseName) && matcher.find();
-            }
-
-            public boolean accept(File dir, String name) {
-                return true;
-            }
-        }, null));
+                            public boolean accept(File dir, String name) {
+                                return true;
+                            }
+                        },
+                        null
+                )
+        );
         // 排一下序列
-        Collections.sort(files, new Comparator<File>() {
-
-            public int compare(File o1, File o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-
-        });
+        files.sort(Comparator.comparing(File::getName));
         return files;
     }
 
@@ -241,7 +233,6 @@ public class BinLogFileQueue {
                 return i;
             }
         }
-
         return -1;
     }
 

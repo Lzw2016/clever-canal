@@ -1,28 +1,26 @@
 package org.clever.canal.store;
 
-import com.alibaba.otter.canal.common.AbstractCanalLifeCycle;
-import com.alibaba.otter.canal.meta.CanalMetaManager;
-import com.alibaba.otter.canal.protocol.ClientIdentity;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
-import com.alibaba.otter.canal.protocol.position.Position;
-import org.springframework.util.CollectionUtils;
+import org.clever.canal.common.AbstractCanalLifeCycle;
+import org.clever.canal.common.utils.CollectionUtils;
+import org.clever.canal.meta.CanalMetaManager;
+import org.clever.canal.protocol.ClientIdentity;
+import org.clever.canal.protocol.position.LogPosition;
+import org.clever.canal.protocol.position.Position;
 
 import java.util.List;
 
 /**
  * store回收机制
- * 
- * @author jianghang 2012-8-8 下午12:57:36
- * @version 1.0.0
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle implements CanalStoreScavenge {
 
-    protected String           destination;
+    protected String destination;
     protected CanalMetaManager canalMetaManager;
-    protected boolean          onAck            = true;
-    protected boolean          onFull           = false;
-    protected boolean          onSchedule       = false;
-    protected String           scavengeSchedule = null;
+    protected boolean onAck = true;
+    protected boolean onFull = false;
+    protected boolean onSchedule = false;
+    protected String scavengeSchedule = null;
 
     public void scavenge() {
         Position position = getLatestAckPosition(destination);
@@ -31,8 +29,6 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
 
     /**
      * 找出该destination中可被清理掉的position位置
-     * 
-     * @param destination
      */
     private Position getLatestAckPosition(String destination) {
         List<ClientIdentity> clientIdentitys = canalMetaManager.listAllSubscribeInfo(destination);
@@ -44,7 +40,6 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
                 if (position == null) {
                     continue;
                 }
-
                 if (result == null) {
                     result = position;
                 } else {
@@ -52,13 +47,13 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
                 }
             }
         }
-
         return result;
     }
 
     /**
      * 找出一个最小的position位置
      */
+    @SuppressWarnings("DuplicatedCode")
     private LogPosition min(LogPosition position1, LogPosition position2) {
         if (position1.getIdentity().equals(position2.getIdentity())) {
             // 首先根据文件进行比较
@@ -111,5 +106,4 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
     public void setCanalMetaManager(CanalMetaManager canalMetaManager) {
         this.canalMetaManager = canalMetaManager;
     }
-
 }

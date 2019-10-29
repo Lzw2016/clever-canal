@@ -1,18 +1,16 @@
 package org.clever.canal.store;
 
-import com.alibaba.otter.canal.common.CanalLifeCycle;
-import com.alibaba.otter.canal.protocol.position.Position;
-import com.alibaba.otter.canal.store.model.Events;
+import org.clever.canal.common.CanalLifeCycle;
+import org.clever.canal.protocol.position.Position;
+import org.clever.canal.store.model.Events;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * canel数据存储接口
- * 
- * @author jianghang 2012-6-14 下午08:44:52
- * @version 1.0.0
  */
+@SuppressWarnings("unused")
 public interface CanalEventStore<T> extends CanalLifeCycle, CanalStoreScavenge {
 
     /**
@@ -53,8 +51,7 @@ public interface CanalEventStore<T> extends CanalLifeCycle, CanalStoreScavenge {
     /**
      * 获取指定大小的数据，阻塞等待其操作完成或者时间超时
      */
-    Events<T> get(Position start, int batchSize, long timeout, TimeUnit unit) throws InterruptedException,
-                                                                             CanalStoreException;
+    Events<T> get(Position start, int batchSize, long timeout, TimeUnit unit) throws InterruptedException, CanalStoreException;
 
     /**
      * 根据指定位置，获取一个指定大小的数据
@@ -78,8 +75,6 @@ public interface CanalEventStore<T> extends CanalLifeCycle, CanalStoreScavenge {
 
     /**
      * 删除指定seqId之前的数据
-     * 
-     * @Since 1.1.4
      */
     void ack(Position position, Long seqId) throws CanalStoreException;
 
@@ -87,5 +82,4 @@ public interface CanalEventStore<T> extends CanalLifeCycle, CanalStoreScavenge {
      * 出错时执行回滚操作(未提交ack的所有状态信息重新归位，减少出错时数据全部重来的成本)
      */
     void rollback() throws CanalStoreException;
-
 }

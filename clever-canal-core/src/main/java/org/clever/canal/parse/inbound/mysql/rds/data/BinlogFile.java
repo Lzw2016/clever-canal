@@ -1,12 +1,9 @@
 package org.clever.canal.parse.inbound.mysql.rds.data;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午2:26
- * @since 1.0.25
- */
+@SuppressWarnings("unused")
 public class BinlogFile {
 
-    private Long   FileSize;
+    private Long FileSize;
     private String LogBeginTime;
     private String LogEndTime;
     private String DownloadLink;
@@ -73,8 +70,7 @@ public class BinlogFile {
     @Override
     public String toString() {
         return "BinlogFile [FileSize=" + FileSize + ", LogBeginTime=" + LogBeginTime + ", LogEndTime=" + LogEndTime
-               + ", DownloadLink=" + DownloadLink + ", HostInstanceID=" + HostInstanceID + ", LinkExpiredTime="
-               + LinkExpiredTime + ", fileName=" + fileName + "]";
+                + ", DownloadLink=" + DownloadLink + ", HostInstanceID=" + HostInstanceID + ", LinkExpiredTime="
+                + LinkExpiredTime + ", fileName=" + fileName + "]";
     }
-
 }

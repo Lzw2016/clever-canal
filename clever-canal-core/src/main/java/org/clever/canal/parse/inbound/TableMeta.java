@@ -1,7 +1,7 @@
 package org.clever.canal.parse.inbound;
 
-import com.taobao.tddl.dbsync.binlog.event.TableMapLogEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.dbsync.binlog.event.TableMapLogEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,22 +14,19 @@ import java.util.List;
  * 2. column name
  * 3. unsigned字段
  * </pre>
- *
- * @author jianghang 2013-1-18 下午12:24:59
- * @version 1.0.0
  */
+@SuppressWarnings("unused")
 public class TableMeta {
 
-    private String          schema;
-    private String          table;
-    private List<FieldMeta> fields = new ArrayList<FieldMeta>();
-    private String          ddl;                                          // 表结构的DDL语句
+    private String schema;
+    private String table;
+    private List<FieldMeta> fields = new ArrayList<>();
+    private String ddl; // 表结构的DDL语句
 
-    public TableMeta(){
-
+    public TableMeta() {
     }
 
-    public TableMeta(String schema, String table, List<FieldMeta> fields){
+    public TableMeta(String schema, String table, List<FieldMeta> fields) {
         this.schema = schema;
         this.table = table;
         this.fields = fields;
@@ -69,18 +66,16 @@ public class TableMeta {
                 return meta;
             }
         }
-
         throw new RuntimeException("unknow column : " + name);
     }
 
     public List<FieldMeta> getPrimaryFields() {
-        List<FieldMeta> primarys = new ArrayList<FieldMeta>();
+        List<FieldMeta> primarys = new ArrayList<>();
         for (FieldMeta meta : fields) {
             if (meta.isKey()) {
                 primarys.add(meta);
             }
         }
-
         return primarys;
     }
 
@@ -99,7 +94,7 @@ public class TableMeta {
     @Override
     public String toString() {
         StringBuilder data = new StringBuilder();
-        data.append("TableMeta [schema=" + schema + ", table=" + table + ", fileds=");
+        data.append("TableMeta [schema=").append(schema).append(", table=").append(table).append(", fileds=");
         for (FieldMeta field : fields) {
             data.append("\n\t").append(field.toString());
         }
@@ -107,13 +102,13 @@ public class TableMeta {
         return data.toString();
     }
 
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public static class FieldMeta {
 
-        public FieldMeta(){
-
+        public FieldMeta() {
         }
 
-        public FieldMeta(String columnName, String columnType, boolean nullable, boolean key, String defaultValue){
+        public FieldMeta(String columnName, String columnType, boolean nullable, boolean key, String defaultValue) {
             this.columnName = columnName;
             this.columnType = columnType;
             this.nullable = nullable;
@@ -121,12 +116,12 @@ public class TableMeta {
             this.defaultValue = defaultValue;
         }
 
-        private String  columnName;
-        private String  columnType;
+        private String columnName;
+        private String columnType;
         private boolean nullable;
         private boolean key;
-        private String  defaultValue;
-        private String  extra;
+        private String defaultValue;
+        private String extra;
         private boolean unique;
 
         public String getColumnName() {
@@ -192,10 +187,8 @@ public class TableMeta {
         @Override
         public String toString() {
             return "FieldMeta [columnName=" + columnName + ", columnType=" + columnType + ", nullable=" + nullable
-                   + ", key=" + key + ", defaultValue=" + defaultValue + ", extra=" + extra + ", unique=" + unique
-                   + "]";
+                    + ", key=" + key + ", defaultValue=" + defaultValue + ", extra=" + extra + ", unique=" + unique
+                    + "]";
         }
-
     }
-
 }

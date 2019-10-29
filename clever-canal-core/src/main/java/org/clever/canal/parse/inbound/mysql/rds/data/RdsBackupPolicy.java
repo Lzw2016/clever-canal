@@ -1,24 +1,20 @@
 package org.clever.canal.parse.inbound.mysql.rds.data;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午2:26
- * @since 1.0.25
- */
+@SuppressWarnings("unused")
 public class RdsBackupPolicy {
-
     /**
      * 数据备份保留天数（7到730天）。
      */
-    private String  BackupRetentionPeriod;
+    private String BackupRetentionPeriod;
     /**
      * 数据备份时间，格式：HH:mmZ- HH:mm Z。
      */
-    private String  PreferredBackupTime;
+    private String PreferredBackupTime;
     /**
      * 数据备份周期。Monday：周一；Tuesday：周二；Wednesday：周三；Thursday：周四；Friday：周五；Saturday：
      * 周六；Sunday：周日。
      */
-    private String  PreferredBackupPeriod;
+    private String PreferredBackupPeriod;
     /**
      * 日志备份状态。Enable：开启；Disabled：关闭。
      */
@@ -26,7 +22,7 @@ public class RdsBackupPolicy {
     /**
      * 日志备份保留天数（7到730天）。
      */
-    private int     LogBackupRetentionPeriod;
+    private int LogBackupRetentionPeriod;
 
     public String getBackupRetentionPeriod() {
         return BackupRetentionPeriod;
@@ -71,8 +67,7 @@ public class RdsBackupPolicy {
     @Override
     public String toString() {
         return "RdsBackupPolicy [BackupRetentionPeriod=" + BackupRetentionPeriod + ", PreferredBackupTime="
-               + PreferredBackupTime + ", PreferredBackupPeriod=" + PreferredBackupPeriod + ", BackupLog=" + BackupLog
-               + ", LogBackupRetentionPeriod=" + LogBackupRetentionPeriod + "]";
+                + PreferredBackupTime + ", PreferredBackupPeriod=" + PreferredBackupPeriod + ", BackupLog=" + BackupLog
+                + ", LogBackupRetentionPeriod=" + LogBackupRetentionPeriod + "]";
     }
-
 }

@@ -1,49 +1,48 @@
 package org.clever.canal.store.model;
 
-import com.alibaba.otter.canal.common.utils.CanalToStringStyle;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
-import com.alibaba.otter.canal.protocol.position.LogIdentity;
 import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.clever.canal.common.utils.CanalToStringStyle;
+import org.clever.canal.protocol.CanalEntry;
+import org.clever.canal.protocol.CanalEntry.EntryType;
+import org.clever.canal.protocol.CanalEntry.EventType;
+import org.clever.canal.protocol.position.LogIdentity;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
  * store存储数据对象
- * 
- * @author jianghang 2012-7-13 下午03:03:03
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Event implements Serializable {
 
     private static final long serialVersionUID = 1333330351758762739L;
 
-    private LogIdentity       logIdentity;                            // 记录数据产生的来源
-    private ByteString        rawEntry;
+    private LogIdentity logIdentity; // 记录数据产生的来源
+    private ByteString rawEntry;
 
-    private long              executeTime;
-    private EntryType         entryType;
-    private String            journalName;
-    private long              position;
-    private long              serverId;
-    private EventType         eventType;
-    private String            gtid;
-    private long              rawLength;
-    private int               rowsCount;
+    private long executeTime;
+    private EntryType entryType;
+    private String journalName;
+    private long position;
+    private long serverId;
+    private EventType eventType;
+    private String gtid;
+    private long rawLength;
+    private int rowsCount;
 
     // ==== https://github.com/alibaba/canal/issues/1019
-    private CanalEntry.Entry  entry;
+    private CanalEntry.Entry entry;
 
-    public Event(){
+    public Event() {
     }
 
-    public Event(LogIdentity logIdentity, CanalEntry.Entry entry){
+    public Event(LogIdentity logIdentity, CanalEntry.Entry entry) {
         this(logIdentity, entry, true);
     }
 
-    public Event(LogIdentity logIdentity, CanalEntry.Entry entry, boolean raw){
+    public Event(LogIdentity logIdentity, CanalEntry.Entry entry, boolean raw) {
         this.logIdentity = logIdentity;
         this.entryType = entry.getEntryType();
         this.executeTime = entry.getHeader().getExecuteTime();
@@ -63,7 +62,6 @@ public class Event implements Serializable {
                 }
             }
         }
-
         if (raw) {
             // build raw
             this.rawEntry = entry.toByteString();
@@ -174,5 +172,4 @@ public class Event implements Serializable {
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);
     }
-
 }

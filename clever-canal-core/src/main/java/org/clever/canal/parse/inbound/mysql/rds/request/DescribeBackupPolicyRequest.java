@@ -2,19 +2,17 @@ package org.clever.canal.parse.inbound.mysql.rds.request;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.RdsBackupPolicy;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.clever.canal.parse.inbound.mysql.rds.data.RdsBackupPolicy;
 
 /**
  * rds 备份策略查询
- * 
- * @author chengjin.lyf on 2018/8/7 下午3:41
- * @since 1.0.25
  */
+@SuppressWarnings("unused")
 public class DescribeBackupPolicyRequest extends AbstractRequest<RdsBackupPolicy> {
 
-    public DescribeBackupPolicyRequest(){
+    public DescribeBackupPolicyRequest() {
         setVersion("2014-08-15");
         putQueryString("Action", "DescribeBackupPolicy");
 

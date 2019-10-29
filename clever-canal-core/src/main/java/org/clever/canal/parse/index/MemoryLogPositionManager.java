@@ -1,15 +1,13 @@
 package org.clever.canal.parse.index;
 
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
 import com.google.common.collect.MapMaker;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.protocol.position.LogPosition;
 
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by yinxiu on 17/3/17. Email: marklin.hz@gmail.com
- */
+@SuppressWarnings("WeakerAccess")
 public class MemoryLogPositionManager extends AbstractLogPositionManager {
 
     private Map<String, LogPosition> positions;
@@ -39,5 +37,4 @@ public class MemoryLogPositionManager extends AbstractLogPositionManager {
     public Set<String> destinations() {
         return positions.keySet();
     }
-
 }

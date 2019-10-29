@@ -1,25 +1,24 @@
 package org.clever.canal.parse.index;
 
-import com.alibaba.otter.canal.common.utils.JsonUtils;
-import com.alibaba.otter.canal.meta.exception.CanalMetaManagerException;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
-import com.google.common.base.Function;
 import com.google.common.collect.MigrateMap;
 import org.apache.commons.io.FileUtils;
+import org.clever.canal.common.utils.JsonUtils;
+import org.clever.canal.meta.exception.CanalMetaManagerException;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.protocol.position.LogPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by yinxiu on 17/3/18. Email: marklin.hz@gmail.com 基于文件刷新的log
  * position实现
  *
  * <pre>
@@ -28,27 +27,22 @@ import java.util.concurrent.TimeUnit;
  * 2. 数据采取overwrite模式(只保留最后一次)
  * </pre>
  */
+@SuppressWarnings({"DuplicatedCode", "unused"})
 public class FileMixedLogPositionManager extends AbstractLogPositionManager {
 
-    private final static Logger logger       = LoggerFactory.getLogger(FileMixedLogPositionManager.class);
-    private final static Charset     charset      = Charset.forName("UTF-8");
-
-    private File                     dataDir;
-
-    private Map<String, File>        dataFileCaches;
-
+    private final static Logger logger = LoggerFactory.getLogger(FileMixedLogPositionManager.class);
+    private final static Charset charset = StandardCharsets.UTF_8;
+    private File dataDir;
+    private Map<String, File> dataFileCaches;
     private ScheduledExecutorService executorService;
-
-    @SuppressWarnings("serial")
-    private final LogPosition        nullPosition = new LogPosition() {
-                                                  };
-
+    private final LogPosition nullPosition = new LogPosition() {
+    };
     private MemoryLogPositionManager memoryLogPositionManager;
 
-    private long                     period;
-    private Set<String>              persistTasks;
+    private long period;
+    private Set<String> persistTasks;
 
-    public FileMixedLogPositionManager(File dataDir, long period, MemoryLogPositionManager memoryLogPositionManager){
+    public FileMixedLogPositionManager(File dataDir, long period, MemoryLogPositionManager memoryLogPositionManager) {
         if (dataDir == null) {
             throw new NullPointerException("null dataDir");
         }
@@ -61,22 +55,14 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
         this.dataDir = dataDir;
         this.period = period;
         this.memoryLogPositionManager = memoryLogPositionManager;
-
-        this.dataFileCaches = MigrateMap.makeComputingMap(new Function<String, File>() {
-
-            public File apply(String destination) {
-                return getDataFile(destination);
-            }
-        });
-
+        this.dataFileCaches = MigrateMap.makeComputingMap(this::getDataFile);
         this.executorService = Executors.newScheduledThreadPool(1);
-        this.persistTasks = Collections.synchronizedSet(new HashSet<String>());
+        this.persistTasks = Collections.synchronizedSet(new HashSet<>());
     }
 
     @Override
     public void start() {
         super.start();
-
         if (!dataDir.exists()) {
             try {
                 FileUtils.forceMkdir(dataDir);
@@ -84,39 +70,35 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
                 throw new CanalMetaManagerException(e);
             }
         }
-
         if (!dataDir.canRead() || !dataDir.canWrite()) {
             throw new CanalMetaManagerException("dir[" + dataDir.getPath() + "] can not read/write");
         }
-
         if (!memoryLogPositionManager.isStart()) {
             memoryLogPositionManager.start();
         }
-
         // 启动定时工作任务
-        executorService.scheduleAtFixedRate(new Runnable() {
-
-            public void run() {
-                List<String> tasks = new ArrayList<String>(persistTasks);
-                for (String destination : tasks) {
-                    try {
-                        // 定时将内存中的最新值刷到file中，多次变更只刷一次
-                        flushDataToFile(destination);
-                        persistTasks.remove(destination);
-                    } catch (Throwable e) {
-                        // ignore
-                        logger.error("period update" + destination + " curosr failed!", e);
+        executorService.scheduleAtFixedRate(() -> {
+                    List<String> tasks = new ArrayList<>(persistTasks);
+                    for (String destination : tasks) {
+                        try {
+                            // 定时将内存中的最新值刷到file中，多次变更只刷一次
+                            flushDataToFile(destination);
+                            persistTasks.remove(destination);
+                        } catch (Throwable e) {
+                            // ignore
+                            logger.error("period update" + destination + " curosr failed!", e);
+                        }
                     }
-                }
-            }
-        }, period, period, TimeUnit.MILLISECONDS);
-
+                },
+                period,
+                period,
+                TimeUnit.MILLISECONDS
+        );
     }
 
     @Override
     public void stop() {
         super.stop();
-
         flushDataToFile();
         executorService.shutdown();
         memoryLogPositionManager.stop();
@@ -152,7 +134,6 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
                 throw new CanalMetaManagerException(e);
             }
         }
-
         String dataFileName = "parse.dat";
         return new File(destinationMetaDir, dataFileName);
     }
@@ -172,7 +153,7 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
         if (position != null && position != nullPosition) {
             String json = JsonUtils.marshalToString(position);
             try {
-                FileUtils.writeStringToFile(dataFile, json);
+                FileUtils.writeStringToFile(dataFile, json, charset);
             } catch (IOException e) {
                 throw new CanalMetaManagerException(e);
             }
@@ -184,7 +165,6 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
             if (!dataFile.exists()) {
                 return null;
             }
-
             String json = FileUtils.readFileToString(dataFile, charset.name());
             return JsonUtils.unmarshalFromString(json, LogPosition.class);
         } catch (IOException e) {

@@ -7,30 +7,27 @@ import java.io.*;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.FileChannel;
 
-/**
- * @author jianghang 2012-7-7 下午03:10:47
- * @version 1.0.0
- */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class BufferedFileDataInput {
 
     private static final Logger logger = LoggerFactory.getLogger(BufferedFileDataInput.class);
     // Read parameters.
-    private File                file;
-    private int                 size;
+    private File file;
+    private int size;
 
     // Variables to control reading.
-    private FileInputStream     fileInput;
+    private FileInputStream fileInput;
     private BufferedInputStream bufferedInput;
-    private DataInputStream     dataInput;
-    private long                offset;
-    private FileChannel         fileChannel;
+    private DataInputStream dataInput;
+    private long offset;
+    private FileChannel fileChannel;
 
-    public BufferedFileDataInput(File file, int size) throws FileNotFoundException, IOException, InterruptedException{
+    public BufferedFileDataInput(File file, int size) {
         this.file = file;
         this.size = size;
     }
 
-    public BufferedFileDataInput(File file) throws FileNotFoundException, IOException, InterruptedException{
+    public BufferedFileDataInput(File file) {
         this(file, 1024);
     }
 
@@ -44,7 +41,7 @@ public class BufferedFileDataInput {
         return bytesSkipped;
     }
 
-    public void seek(long seekBytes) throws FileNotFoundException, IOException, InterruptedException {
+    public void seek(long seekBytes) throws IOException, InterruptedException {
         fileInput = new FileInputStream(file);
         fileChannel = fileInput.getChannel();
 
@@ -76,12 +73,10 @@ public class BufferedFileDataInput {
         } catch (IOException e) {
             logger.warn("Unable to close buffered file reader: file=" + file.getName() + " exception=" + e.getMessage());
         }
-
         fileChannel = null;
         fileInput = null;
         bufferedInput = null;
         dataInput = null;
         offset = -1;
     }
-
 }

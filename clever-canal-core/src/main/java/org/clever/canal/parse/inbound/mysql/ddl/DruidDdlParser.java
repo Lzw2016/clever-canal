@@ -5,35 +5,31 @@ import com.alibaba.fastsql.sql.ast.SQLExpr;
 import com.alibaba.fastsql.sql.ast.SQLStatement;
 import com.alibaba.fastsql.sql.ast.expr.SQLIdentifierExpr;
 import com.alibaba.fastsql.sql.ast.expr.SQLPropertyExpr;
+import com.alibaba.fastsql.sql.ast.statement.*;
 import com.alibaba.fastsql.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement;
 import com.alibaba.fastsql.sql.dialect.mysql.ast.statement.MySqlRenameTableStatement.Item;
 import com.alibaba.fastsql.sql.parser.ParserException;
 import com.alibaba.fastsql.util.JdbcConstants;
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.protocol.CanalEntry.EventType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-/**
- * @author agapple 2017年7月27日 下午4:05:34
- * @since 1.0.25
- */
 public class DruidDdlParser {
 
     public static List<DdlResult> parse(String queryString, String schmeaName) {
-        List<SQLStatement> stmtList = null;
+        List<SQLStatement> stmtList;
         try {
             stmtList = SQLUtils.parseStatements(queryString, JdbcConstants.MYSQL, false);
         } catch (ParserException e) {
             // 可能存在一些SQL是不支持的，比如存储过程
             DdlResult ddlResult = new DdlResult();
             ddlResult.setType(EventType.QUERY);
-            return Arrays.asList(ddlResult);
+            return Collections.singletonList(ddlResult);
         }
-
-        List<DdlResult> ddlResults = new ArrayList<DdlResult>();
+        List<DdlResult> ddlResults = new ArrayList<>();
         for (SQLStatement statement : stmtList) {
             if (statement instanceof SQLCreateTableStatement) {
                 DdlResult ddlResult = new DdlResult();
@@ -153,7 +149,6 @@ public class DruidDdlParser {
                 ddlResults.add(ddlResult);
             }
         }
-
         return ddlResults;
     }
 
@@ -164,7 +159,6 @@ public class DruidDdlParser {
             }
             return;
         }
-
         String table = null;
         if (sqlName instanceof SQLPropertyExpr) {
             SQLIdentifierExpr owner = (SQLIdentifierExpr) ((SQLPropertyExpr) sqlName).getOwner();
@@ -173,7 +167,6 @@ public class DruidDdlParser {
         } else if (sqlName instanceof SQLIdentifierExpr) {
             table = unescapeName(((SQLIdentifierExpr) sqlName).getName());
         }
-
         if (isOri) {
             ddlResult.setOriSchemaName(schema);
             ddlResult.setOriTableName(table);
@@ -191,7 +184,6 @@ public class DruidDdlParser {
                 return name.substring(1, name.length() - 1);
             }
         }
-
         return name;
     }
 
@@ -203,8 +195,6 @@ public class DruidDdlParser {
                 return name.substring(1, name.length() - 1);
             }
         }
-
         return name;
     }
-
 }

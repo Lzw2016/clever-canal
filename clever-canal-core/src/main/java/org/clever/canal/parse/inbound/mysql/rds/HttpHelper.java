@@ -22,7 +22,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +29,14 @@ import org.slf4j.LoggerFactory;
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import static org.apache.http.client.config.RequestConfig.custom;
 
+@SuppressWarnings({"DuplicatedCode", "WeakerAccess", "SameParameterValue", "unused"})
 public class HttpHelper {
 
     protected static final Logger logger = LoggerFactory.getLogger(HttpHelper.class);
@@ -51,14 +49,13 @@ public class HttpHelper {
         CloseableHttpClient httpclient = builder.build();
         URI uri = new URIBuilder(url).build();
         RequestConfig config = custom().setConnectTimeout(timeout)
-            .setConnectionRequestTimeout(timeout)
-            .setSocketTimeout(timeout)
-            .build();
+                .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
+                .build();
         HttpGet httpGet = new HttpGet(uri);
         HttpClientContext context = HttpClientContext.create();
         context.setRequestConfig(config);
-        CloseableHttpResponse response = httpclient.execute(httpGet, context);
-        try {
+        try (CloseableHttpResponse response = httpclient.execute(httpGet, context)) {
             int statusCode = response.getStatusLine().getStatusCode();
             long end = System.currentTimeMillis();
             long cost = end - start;
@@ -70,10 +67,9 @@ public class HttpHelper {
             } else {
                 String errorMsg = EntityUtils.toString(response.getEntity());
                 throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode
-                                           + ", error msg=" + errorMsg);
+                        + ", error msg=" + errorMsg);
             }
         } finally {
-            response.close();
             httpGet.releaseConnection();
         }
     }
@@ -95,9 +91,9 @@ public class HttpHelper {
         try {
             URI uri = new URIBuilder(url).build();
             RequestConfig config = custom().setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
+                    .setConnectionRequestTimeout(timeout)
+                    .setSocketTimeout(timeout)
+                    .build();
             httpGet = new HttpGet(uri);
             HttpClientContext context = HttpClientContext.create();
             context.setRequestConfig(config);
@@ -107,8 +103,7 @@ public class HttpHelper {
                 return EntityUtils.toString(response.getEntity());
             } else {
                 String errorMsg = EntityUtils.toString(response.getEntity());
-                throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode
-                                           + ", error msg=" + errorMsg);
+                throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode + ", error msg=" + errorMsg);
             }
         } catch (Throwable t) {
             long end = System.currentTimeMillis();
@@ -122,10 +117,12 @@ public class HttpHelper {
             if (response != null) {
                 try {
                     response.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
-            httpGet.releaseConnection();
+            if (httpGet != null) {
+                httpGet.releaseConnection();
+            }
         }
     }
 
@@ -138,29 +135,20 @@ public class HttpHelper {
         CloseableHttpResponse response = null;
         try {
             // 创建支持忽略证书的https
-            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            }).build();
-
+            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (x509Certificates, s) -> true).build();
             CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setSSLContext(sslContext)
-                .setConnectionManager(new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory> create()
-                    .register("http", PlainConnectionSocketFactory.INSTANCE)
-                    .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
-                    .build()))
-                .build();
-
+                    .setSSLContext(sslContext)
+                    .setConnectionManager(new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory>create()
+                            .register("http", PlainConnectionSocketFactory.INSTANCE)
+                            .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
+                            .build()))
+                    .build();
             // ---------------- 创建支持https 的client成功---------
-
             URI uri = new URIBuilder(url).build();
             RequestConfig config = custom().setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
+                    .setConnectionRequestTimeout(timeout)
+                    .setSocketTimeout(timeout)
+                    .build();
             httpGet = new HttpGet(uri);
             HttpClientContext context = HttpClientContext.create();
             context.setRequestConfig(config);
@@ -171,7 +159,7 @@ public class HttpHelper {
             } else {
                 String errorMsg = EntityUtils.toString(response.getEntity());
                 throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode
-                                           + ", error msg=" + errorMsg);
+                        + ", error msg=" + errorMsg);
             }
         } catch (Throwable t) {
             long end = System.currentTimeMillis();
@@ -185,7 +173,7 @@ public class HttpHelper {
             if (response != null) {
                 try {
                     response.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
             if (httpGet != null) {
@@ -203,35 +191,27 @@ public class HttpHelper {
         CloseableHttpResponse response = null;
         try {
             // 创建支持忽略证书的https
-            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            }).build();
-
+            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (x509Certificates, s) -> true).build();
             CloseableHttpClient httpClient = HttpClientBuilder.create()
-                .setSSLContext(sslContext)
-                .setConnectionManager(new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory> create()
-                    .register("http", PlainConnectionSocketFactory.INSTANCE)
-                    .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
-                    .build()))
-                .build();
+                    .setSSLContext(sslContext)
+                    .setConnectionManager(new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory>create()
+                            .register("http", PlainConnectionSocketFactory.INSTANCE)
+                            .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
+                            .build()))
+                    .build();
             // ---------------- 创建支持https 的client成功---------
-
             URI uri = new URIBuilder(url).build();
             RequestConfig config = custom().setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
+                    .setConnectionRequestTimeout(timeout)
+                    .setSocketTimeout(timeout)
+                    .build();
             httpPost = new HttpPost(uri);
             List<NameValuePair> parameters = Lists.newArrayList();
             for (String key : params.keySet()) {
                 NameValuePair nameValuePair = new BasicNameValuePair(key, params.get(key));
                 parameters.add(nameValuePair);
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(parameters, Charset.forName("UTF-8")));
+            httpPost.setEntity(new UrlEncodedFormEntity(parameters, StandardCharsets.UTF_8));
             HttpClientContext context = HttpClientContext.create();
             context.setRequestConfig(config);
             context.setCookieStore(cookieStore);
@@ -247,8 +227,7 @@ public class HttpHelper {
                 long end = System.currentTimeMillis();
                 long cost = end - start;
                 String curlRequest = getCurlRequest(url, cookieStore, params, cost);
-                throw new RuntimeException("requestPost(Https) remote error, request : " + curlRequest
-                                           + ", statusCode=" + statusCode + "");
+                throw new RuntimeException("requestPost(Https) remote error, request : " + curlRequest + ", statusCode=" + statusCode + "");
             }
         } catch (Throwable t) {
             long end = System.currentTimeMillis();
@@ -259,7 +238,7 @@ public class HttpHelper {
             if (response != null) {
                 try {
                     response.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
             if (httpPost != null) {
@@ -284,16 +263,16 @@ public class HttpHelper {
             CloseableHttpClient httpclient = builder.build();
             URI uri = new URIBuilder(url).build();
             RequestConfig config = custom().setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
+                    .setConnectionRequestTimeout(timeout)
+                    .setSocketTimeout(timeout)
+                    .build();
             httpPost = new HttpPost(uri);
             List<NameValuePair> parameters = Lists.newArrayList();
             for (String key : params.keySet()) {
                 NameValuePair nameValuePair = new BasicNameValuePair(key, params.get(key));
                 parameters.add(nameValuePair);
             }
-            httpPost.setEntity(new UrlEncodedFormEntity(parameters, Charset.forName("UTF-8")));
+            httpPost.setEntity(new UrlEncodedFormEntity(parameters, StandardCharsets.UTF_8));
             HttpClientContext context = HttpClientContext.create();
             context.setRequestConfig(config);
             context.setCookieStore(cookieStore);
@@ -309,8 +288,7 @@ public class HttpHelper {
                 long end = System.currentTimeMillis();
                 long cost = end - start;
                 String curlRequest = getCurlRequest(url, cookieStore, params, cost);
-                throw new RuntimeException("requestPost remote error, request : " + curlRequest + ", statusCode="
-                                           + statusCode + ";" + EntityUtils.toString(response.getEntity()));
+                throw new RuntimeException("requestPost remote error, request : " + curlRequest + ", statusCode=" + statusCode + ";" + EntityUtils.toString(response.getEntity()));
             }
         } catch (Throwable t) {
             long end = System.currentTimeMillis();
@@ -321,7 +299,7 @@ public class HttpHelper {
             if (response != null) {
                 try {
                     response.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                 }
             }
             if (httpPost != null) {
@@ -342,7 +320,7 @@ public class HttpHelper {
             Iterator<Map.Entry<String, String>> iterator = params.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> entry = iterator.next();
-                paramsStr.append(entry.getKey() + "=" + entry.getValue());
+                paramsStr.append(entry.getKey()).append("=").append(entry.getValue());
                 if (iterator.hasNext()) {
                     paramsStr.append("&");
                 }
@@ -355,7 +333,7 @@ public class HttpHelper {
                 Iterator<Cookie> iteratorCookie = cookies.iterator();
                 while (iteratorCookie.hasNext()) {
                     Cookie cookie = iteratorCookie.next();
-                    cookieStr.append(cookie.getName() + "=" + cookie.getValue());
+                    cookieStr.append(cookie.getName()).append("=").append(cookie.getValue());
                     if (iteratorCookie.hasNext()) {
                         cookieStr.append(";");
                     }

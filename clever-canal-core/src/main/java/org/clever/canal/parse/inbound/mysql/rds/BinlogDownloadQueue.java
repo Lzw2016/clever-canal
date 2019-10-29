@@ -1,7 +1,5 @@
 package org.clever.canal.parse.inbound.mysql.rds;
 
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.parse.inbound.mysql.rds.data.BinlogFile;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -20,41 +18,40 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.apache.http.ssl.TrustStrategy;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.parse.inbound.mysql.rds.data.BinlogFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.*;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-/**
- * @author chengjin.lyf on 2018/8/7 下午3:10
- * @since 1.0.25
- */
+@SuppressWarnings({"WeakerAccess", "ConstantConditions", "ResultOfMethodCallIgnored"})
 public class BinlogDownloadQueue {
 
-    private static final Logger logger        = LoggerFactory.getLogger(BinlogDownloadQueue.class);
-    private static final int                TIMEOUT       = 10000;
+    private static final Logger logger = LoggerFactory.getLogger(BinlogDownloadQueue.class);
+    private static final int TIMEOUT = 10000;
 
-    private LinkedBlockingQueue<BinlogFile> downloadQueue = new LinkedBlockingQueue<BinlogFile>();
-    private LinkedBlockingQueue<Runnable>   taskQueue     = new LinkedBlockingQueue<Runnable>();
-    private LinkedList<BinlogFile>          binlogList;
-    private final int                       batchFileSize;
-    private Thread                          downloadThread;
-    public boolean                          running       = true;
-    private final String                    destDir;
-    private String                          hostId;
-    private int                             currentSize;
-    private String                          lastDownload;
+    private LinkedBlockingQueue<BinlogFile> downloadQueue = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<Runnable> taskQueue = new LinkedBlockingQueue<>();
+    private LinkedList<BinlogFile> binlogList;
+    private final int batchFileSize;
+    private Thread downloadThread;
+    public boolean running = true;
+    private final String destDir;
+    private String hostId;
+    private int currentSize;
+    private String lastDownload;
 
-    public BinlogDownloadQueue(List<BinlogFile> downloadQueue, int batchFileSize, String destDir) throws IOException{
-        this.binlogList = new LinkedList(downloadQueue);
+    public BinlogDownloadQueue(List<BinlogFile> downloadQueue, int batchFileSize, String destDir) throws IOException {
+        this.binlogList = new LinkedList<>(downloadQueue);
         this.batchFileSize = batchFileSize;
         this.destDir = destDir;
         this.currentSize = 0;
@@ -67,13 +64,7 @@ public class BinlogDownloadQueue {
             String fileName = StringUtils.substringBetween(binlog.getDownloadLink(), "mysql-bin.", "?");
             binlog.setFileName(fileName);
         }
-        Collections.sort(this.binlogList, new Comparator<BinlogFile>() {
-
-            @Override
-            public int compare(BinlogFile o1, BinlogFile o2) {
-                return o1.getFileName().compareTo(o2.getFileName());
-            }
-        });
+        this.binlogList.sort(Comparator.comparing(BinlogFile::getFileName));
     }
 
     public void cleanDir() throws IOException {
@@ -176,31 +167,25 @@ public class BinlogDownloadQueue {
             builder.setMaxConnPerRoute(50);
             builder.setMaxConnTotal(100);
             // 创建支持忽略证书的https
-            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-
-                @Override
-                public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-                    return true;
-                }
-            }).build();
-
+            final SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, (x509Certificates, s) -> true).build();
             httpClient = HttpClientBuilder.create()
-                .setSSLContext(sslContext)
-                .setConnectionManager(new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory> create()
-                    .register("http", PlainConnectionSocketFactory.INSTANCE)
-                    .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
-                    .build()))
-                .build();
+                    .setSSLContext(sslContext)
+                    .setConnectionManager(
+                            new PoolingHttpClientConnectionManager(RegistryBuilder.<ConnectionSocketFactory>create()
+                                    .register("http", PlainConnectionSocketFactory.INSTANCE)
+                                    .register("https", new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE))
+                                    .build())
+                    )
+                    .build();
         } else {
             httpClient = HttpClientBuilder.create().setMaxConnPerRoute(50).setMaxConnTotal(100).build();
         }
-
         HttpGet httpGet = new HttpGet(downloadLink);
         RequestConfig requestConfig = RequestConfig.custom()
-            .setConnectTimeout(TIMEOUT)
-            .setConnectionRequestTimeout(TIMEOUT)
-            .setSocketTimeout(TIMEOUT)
-            .build();
+                .setConnectTimeout(TIMEOUT)
+                .setConnectionRequestTimeout(TIMEOUT)
+                .setSocketTimeout(TIMEOUT)
+                .build();
         httpGet.setConfig(requestConfig);
         HttpResponse response = httpClient.execute(httpGet);
         int statusCode = response.getStatusLine().getStatusCode();
@@ -210,6 +195,7 @@ public class BinlogDownloadQueue {
         saveFile(new File(destDir), "mysql-bin." + fileName, response);
     }
 
+    @SuppressWarnings("deprecation")
     private static void saveFile(File parentFile, String fileName, HttpResponse response) throws IOException {
         InputStream is = response.getEntity().getContent();
         long totalSize = Long.parseLong(response.getFirstHeader("Content-Length").getValue());
@@ -251,7 +237,6 @@ public class BinlogDownloadQueue {
                 if (file.exists()) {
                     file.delete();
                 }
-
                 if (!file.isFile()) {
                     file.createNewFile();
                 }
@@ -268,7 +253,7 @@ public class BinlogDownloadQueue {
                         long progress = copySize * 100 / totalSize;
                         if (progress >= nextPrintProgress) {
                             logger.info("download " + file.getName() + " progress : " + progress
-                                        + "% , download size : " + copySize + ", total size : " + totalSize);
+                                    + "% , download size : " + copySize + ", total size : " + totalSize);
                             nextPrintProgress += 10;
                         }
                     }
@@ -289,7 +274,6 @@ public class BinlogDownloadQueue {
     }
 
     private class DownloadThread implements Runnable {
-
         @Override
         public void run() {
             while (running) {
@@ -306,8 +290,7 @@ public class BinlogDownloadQueue {
                                 if (retry % 10 == 0) {
                                     retry = retry + 1;
                                     try {
-                                        logger.warn("download failed + " + binlogFile.toString() + "], retry : "
-                                                    + retry, e);
+                                        logger.warn("download failed + " + binlogFile.toString() + "], retry : " + retry, e);
                                         // File errorFile = new File(destDir,
                                         // "error.txt");
                                         // FileWriter writer = new
@@ -325,7 +308,6 @@ public class BinlogDownloadQueue {
                             }
                         }
                     }
-
                     Runnable runnable = taskQueue.poll(5000, TimeUnit.MILLISECONDS);
                     if (runnable != null) {
                         runnable.run();
@@ -334,7 +316,6 @@ public class BinlogDownloadQueue {
                     logger.error("task process failed", e);
                 }
             }
-
         }
     }
 }

@@ -1,26 +1,24 @@
 package org.clever.canal.parse.index;
 
-import com.alibaba.otter.canal.meta.CanalMetaManager;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.protocol.ClientIdentity;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
-import com.alibaba.otter.canal.store.helper.CanalEventUtils;
+import org.clever.canal.common.utils.CollectionUtils;
+import org.clever.canal.meta.CanalMetaManager;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.protocol.ClientIdentity;
+import org.clever.canal.protocol.position.LogPosition;
+import org.clever.canal.store.helper.CanalEventUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
-/**
- * Created by yinxiu on 17/3/18. Email: marklin.hz@gmail.com
- */
+@SuppressWarnings("unused")
 public class MetaLogPositionManager extends AbstractLogPositionManager {
 
     private final static Logger logger = LoggerFactory.getLogger(MetaLogPositionManager.class);
 
     private final CanalMetaManager metaManager;
 
-    public MetaLogPositionManager(CanalMetaManager metaManager){
+    public MetaLogPositionManager(CanalMetaManager metaManager) {
         if (metaManager == null) {
             throw new NullPointerException("null metaManager");
         }
@@ -31,7 +29,6 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
     @Override
     public void stop() {
         super.stop();
-
         if (metaManager.isStart()) {
             metaManager.stop();
         }
@@ -40,7 +37,6 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
     @Override
     public void start() {
         super.start();
-
         if (!metaManager.isStart()) {
             metaManager.start();
         }
@@ -57,7 +53,6 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
                 if (position == null) {
                     continue;
                 }
-
                 if (result == null) {
                     result = position;
                 } else {
@@ -65,13 +60,12 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
                 }
             }
         }
-
         return result;
     }
 
     @Override
     public void persistLogPosition(String destination, LogPosition logPosition) throws CanalParseException {
         // do nothing
-        logger.info("persist LogPosition:{}", destination, logPosition);
+        logger.info("persist LogPosition:{} - {}", destination, logPosition);
     }
 }

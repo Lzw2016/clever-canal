@@ -3,6 +3,7 @@ package org.clever.canal.meta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MigrateMap;
 import org.apache.commons.io.FileUtils;
+import org.clever.canal.common.utils.Assert;
 import org.clever.canal.common.utils.JsonUtils;
 import org.clever.canal.meta.exception.CanalMetaManagerException;
 import org.clever.canal.protocol.ClientIdentity;
@@ -46,7 +47,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
 
     public void start() {
         super.start();
-        assert dataDir != null;
+        Assert.notNull(dataDir);
         if (!dataDir.exists()) {
             try {
                 FileUtils.forceMkdir(dataDir);
@@ -61,7 +62,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
         executor = Executors.newScheduledThreadPool(1);
         destinations = MigrateMap.makeComputingMap(this::loadClientIdentity);
         cursors = MigrateMap.makeComputingMap(clientIdentity -> {
-            assert clientIdentity != null;
+            Assert.notNull(clientIdentity);
             Position position = loadCursor(clientIdentity.getDestination(), clientIdentity);
             if (position == null) {
                 return nullCursor; // 返回一个空对象标识，避免出现异常

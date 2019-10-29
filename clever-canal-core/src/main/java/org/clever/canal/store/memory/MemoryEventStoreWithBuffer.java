@@ -1,21 +1,21 @@
 package org.clever.canal.store.memory;
 
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
-import com.alibaba.otter.canal.protocol.position.Position;
-import com.alibaba.otter.canal.protocol.position.PositionRange;
-import com.alibaba.otter.canal.store.AbstractCanalStoreScavenge;
-import com.alibaba.otter.canal.store.CanalEventStore;
-import com.alibaba.otter.canal.store.CanalStoreException;
-import com.alibaba.otter.canal.store.CanalStoreScavenge;
-import com.alibaba.otter.canal.store.helper.CanalEventUtils;
-import com.alibaba.otter.canal.store.model.BatchMode;
-import com.alibaba.otter.canal.store.model.Event;
-import com.alibaba.otter.canal.store.model.Events;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.protocol.CanalEntry;
+import org.clever.canal.protocol.CanalEntry.EventType;
+import org.clever.canal.protocol.position.LogPosition;
+import org.clever.canal.protocol.position.Position;
+import org.clever.canal.protocol.position.PositionRange;
+import org.clever.canal.store.AbstractCanalStoreScavenge;
+import org.clever.canal.store.CanalEventStore;
+import org.clever.canal.store.CanalStoreException;
+import org.clever.canal.store.CanalStoreScavenge;
+import org.clever.canal.store.helper.CanalEventUtils;
+import org.clever.canal.store.model.BatchMode;
+import org.clever.canal.store.model.Event;
+import org.clever.canal.store.model.Events;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -24,58 +24,56 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 基于内存buffer构建内存memory store
- * 
+ *
  * <pre>
  * 变更记录：
  * 1. 新增BatchMode类型，支持按内存大小获取批次数据，内存大小更加可控.
  *   a. put操作，会首先根据bufferSize进行控制，然后再进行bufferSize * bufferMemUnit进行控制. 因存储的内容是以Event，如果纯依赖于memsize进行控制，会导致RingBuffer出现动态伸缩
  * </pre>
- * 
- * @author jianghang 2012-6-20 上午09:46:31
- * @version 1.0.0
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge implements CanalEventStore<Event>, CanalStoreScavenge {
 
     private static final long INIT_SEQUENCE = -1;
-    private int               bufferSize    = 16 * 1024;
-    private int               bufferMemUnit = 1024;                                      // memsize的单位，默认为1kb大小
-    private int               indexMask;
-    private Event[]           entries;
+    private int bufferSize = 16 * 1024;
+    private int bufferMemUnit = 1024; // memsize的单位，默认为1kb大小
+    private int indexMask;
+    private Event[] entries;
 
     // 记录下put/get/ack操作的三个下标
-    private AtomicLong        putSequence   = new AtomicLong(INIT_SEQUENCE);             // 代表当前put操作最后一次写操作发生的位置
-    private AtomicLong        getSequence   = new AtomicLong(INIT_SEQUENCE);             // 代表当前get操作读取的最后一条的位置
-    private AtomicLong        ackSequence   = new AtomicLong(INIT_SEQUENCE);             // 代表当前ack操作的最后一条的位置
+    private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前put操作最后一次写操作发生的位置
+    private AtomicLong getSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前get操作读取的最后一条的位置
+    private AtomicLong ackSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前ack操作的最后一条的位置
 
     // 记录下put/get/ack操作的三个memsize大小
-    private AtomicLong        putMemSize    = new AtomicLong(0);
-    private AtomicLong        getMemSize    = new AtomicLong(0);
-    private AtomicLong        ackMemSize    = new AtomicLong(0);
+    private AtomicLong putMemSize = new AtomicLong(0);
+    private AtomicLong getMemSize = new AtomicLong(0);
+    private AtomicLong ackMemSize = new AtomicLong(0);
 
     // 记录下put/get/ack操作的三个execTime
-    private AtomicLong        putExecTime   = new AtomicLong(System.currentTimeMillis());
-    private AtomicLong        getExecTime   = new AtomicLong(System.currentTimeMillis());
-    private AtomicLong        ackExecTime   = new AtomicLong(System.currentTimeMillis());
+    private AtomicLong putExecTime = new AtomicLong(System.currentTimeMillis());
+    private AtomicLong getExecTime = new AtomicLong(System.currentTimeMillis());
+    private AtomicLong ackExecTime = new AtomicLong(System.currentTimeMillis());
 
     // 记录下put/get/ack操作的三个table rows
-    private AtomicLong        putTableRows  = new AtomicLong(0);
-    private AtomicLong        getTableRows  = new AtomicLong(0);
-    private AtomicLong        ackTableRows  = new AtomicLong(0);
+    private AtomicLong putTableRows = new AtomicLong(0);
+    private AtomicLong getTableRows = new AtomicLong(0);
+    private AtomicLong ackTableRows = new AtomicLong(0);
 
     // 阻塞put/get操作控制信号
-    private ReentrantLock     lock          = new ReentrantLock();
-    private Condition         notFull       = lock.newCondition();
-    private Condition         notEmpty      = lock.newCondition();
+    private ReentrantLock lock = new ReentrantLock();
+    private Condition notFull = lock.newCondition();
+    private Condition notEmpty = lock.newCondition();
 
-    private BatchMode         batchMode     = BatchMode.ITEMSIZE;                        // 默认为内存大小模式
-    private boolean           ddlIsolation  = false;
-    private boolean           raw           = true;                                      // 针对entry是否开启raw模式
+    private BatchMode batchMode = BatchMode.ITEMSIZE; // 默认为内存大小模式
+    private boolean ddlIsolation = false;
+    private boolean raw = true; // 针对entry是否开启raw模式
 
-    public MemoryEventStoreWithBuffer(){
+    public MemoryEventStoreWithBuffer() {
 
     }
 
-    public MemoryEventStoreWithBuffer(BatchMode batchMode){
+    public MemoryEventStoreWithBuffer(BatchMode batchMode) {
         this.batchMode = batchMode;
     }
 
@@ -129,7 +127,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            for (;;) {
+            for (; ; ) {
                 if (checkFreeSlotAt(putSequence.get() + data.size())) {
                     doPut(data);
                     return true;
@@ -170,15 +168,15 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     }
 
     public void put(Event data) throws InterruptedException, CanalStoreException {
-        put(Arrays.asList(data));
+        put(Collections.singletonList(data));
     }
 
     public boolean put(Event data, long timeout, TimeUnit unit) throws InterruptedException, CanalStoreException {
-        return put(Arrays.asList(data), timeout, unit);
+        return put(Collections.singletonList(data), timeout, unit);
     }
 
     public boolean tryPut(Event data) throws CanalStoreException {
-        return tryPut(Arrays.asList(data));
+        return tryPut(Collections.singletonList(data));
     }
 
     /**
@@ -228,12 +226,12 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     }
 
     public Events<Event> get(Position start, int batchSize, long timeout, TimeUnit unit) throws InterruptedException,
-                                                                                        CanalStoreException {
+            CanalStoreException {
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
-            for (;;) {
+            for (; ; ) {
                 if (checkUnGetSlotAt((LogPosition) start, batchSize)) {
                     return doGet(start, batchSize);
                 }
@@ -279,14 +277,14 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
 
         if (current >= maxAbleSequence) {
-            return new Events<Event>();
+            return new Events<>();
         }
 
-        Events<Event> result = new Events<Event>();
+        Events<Event> result = new Events<>();
         List<Event> entrys = result.getEvents();
         long memsize = 0;
         if (batchMode.isItemSize()) {
-            end = (next + batchSize - 1) < maxAbleSequence ? (next + batchSize - 1) : maxAbleSequence;
+            end = Math.min((next + batchSize - 1), maxAbleSequence);
             // 提取数据并返回
             for (; next <= end; next++) {
                 Event event = entries[getIndex(next)];
@@ -328,7 +326,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
 
         }
 
-        PositionRange<LogPosition> range = new PositionRange<LogPosition>();
+        PositionRange<LogPosition> range = new PositionRange<>();
         result.setPositionRange(range);
 
         range.setStart(CanalEventUtils.createPosition(entrys.get(0)));
@@ -340,7 +338,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             Event event = entrys.get(i);
             // GTID模式,ack的位点必须是事务结尾,因为下一次订阅的时候mysql会发送这个gtid之后的next,如果在事务头就记录了会丢这最后一个事务
             if ((CanalEntry.EntryType.TRANSACTIONBEGIN == event.getEntryType() && StringUtils.isEmpty(event.getGtid()))
-                || CanalEntry.EntryType.TRANSACTIONEND == event.getEntryType() || isDdl(event.getEventType())) {
+                    || CanalEntry.EntryType.TRANSACTIONEND == event.getEntryType() || isDdl(event.getEventType())) {
                 // 将事务头/尾设置可被为ack的点
                 range.setAck(CanalEventUtils.createPosition(event));
                 break;
@@ -353,7 +351,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             profiling(result.getEvents(), OP.GET);
             return result;
         } else {
-            return new Events<Event>();
+            return new Events<>();
         }
     }
 
@@ -365,7 +363,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             if (firstSeqeuence == INIT_SEQUENCE && firstSeqeuence < putSequence.get()) {
                 // 没有ack过数据
                 Event event = entries[getIndex(firstSeqeuence + 1)]; // 最后一次ack为-1，需要移动到下一条,included
-                                                                     // = false
+                // = false
                 return CanalEventUtils.createPosition(event, false);
             } else if (firstSeqeuence > INIT_SEQUENCE && firstSeqeuence < putSequence.get()) {
                 // ack未追上put操作
@@ -375,7 +373,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             } else if (firstSeqeuence > INIT_SEQUENCE && firstSeqeuence == putSequence.get()) {
                 // 已经追上，store中没有数据
                 Event event = entries[getIndex(firstSeqeuence)]; // 最后一次ack的位置数据，和last为同一条，included
-                                                                 // = false
+                // = false
                 return CanalEventUtils.createPosition(event, false);
             } else {
                 // 没有任何数据
@@ -397,8 +395,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             } else if (latestSequence > INIT_SEQUENCE && latestSequence == ackSequence.get()) {
                 // ack已经追上了put操作
                 Event event = entries[(int) putSequence.get() & indexMask]; // 最后一次写入的数据，included
-                                                                            // =
-                                                                            // false
+                // =
+                // false
                 return CanalEventUtils.createPosition(event, false);
             } else {
                 // 没有任何数据
@@ -516,7 +514,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     private long getMinimumGetOrAck() {
         long get = getSequence.get();
         long ack = ackSequence.get();
-        return ack <= get ? ack : get;
+        return Math.min(ack, get);
     }
 
     /**
@@ -531,11 +529,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             // 在bufferSize模式上，再增加memSize控制
             if (batchMode.isMemSize()) {
                 final long memsize = putMemSize.get() - ackMemSize.get();
-                if (memsize < bufferSize * bufferMemUnit) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return memsize < bufferSize * bufferMemUnit;
             } else {
                 return true;
             }
@@ -553,22 +547,12 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             if (startPosition == null || !startPosition.getPostion().isIncluded()) { // 第一次订阅之后，需要包含一下start位置，防止丢失第一条记录
                 next = next + 1;// 少一条数据
             }
-
-            if (current < maxAbleSequence && next + batchSize - 1 <= maxAbleSequence) {
-                return true;
-            } else {
-                return false;
-            }
+            return current < maxAbleSequence && next + batchSize - 1 <= maxAbleSequence;
         } else {
             // 处理内存大小判断
             long currentSize = getMemSize.get();
             long maxAbleSize = putMemSize.get();
-
-            if (maxAbleSize - currentSize >= batchSize * bufferMemUnit) {
-                return true;
-            } else {
-                return false;
-            }
+            return maxAbleSize - currentSize >= batchSize * bufferMemUnit;
         }
     }
 
@@ -583,8 +567,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
 
     private boolean isDdl(EventType type) {
         return type == EventType.ALTER || type == EventType.CREATE || type == EventType.ERASE
-               || type == EventType.RENAME || type == EventType.TRUNCATE || type == EventType.CINDEX
-               || type == EventType.DINDEX;
+                || type == EventType.RENAME || type == EventType.TRUNCATE || type == EventType.CINDEX
+                || type == EventType.DINDEX;
     }
 
     private void profiling(List<Event> events, OP op) {
@@ -698,5 +682,4 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     public AtomicLong getAckTableRows() {
         return ackTableRows;
     }
-
 }

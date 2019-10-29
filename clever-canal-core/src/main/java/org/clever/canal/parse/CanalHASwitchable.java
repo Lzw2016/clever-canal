@@ -1,10 +1,11 @@
 package org.clever.canal.parse;
 
-import sun.net.www.protocol.http.AuthenticationInfo;
+import org.clever.canal.parse.support.AuthenticationInfo;
 
 /**
  * 支持可切换的数据复制控制器
  */
+@SuppressWarnings("unused")
 public interface CanalHASwitchable {
 
     void doSwitch();

@@ -1,10 +1,10 @@
 package org.clever.canal.parse.inbound;
 
-import com.alibaba.otter.canal.common.AbstractCanalLifeCycle;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
-import com.alibaba.otter.canal.store.CanalStoreException;
-import org.springframework.util.Assert;
+import org.clever.canal.common.AbstractCanalLifeCycle;
+import org.clever.canal.common.utils.Assert;
+import org.clever.canal.protocol.CanalEntry;
+import org.clever.canal.protocol.CanalEntry.EventType;
+import org.clever.canal.store.CanalStoreException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +12,24 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 缓冲event队列，提供按事务刷新数据的机制
- * 
- * @author jianghang 2012-12-6 上午11:05:12
- * @version 1.0.0
  */
+@SuppressWarnings({"WeakerAccess", "DuplicateBranchesInSwitch", "unused"})
 public class EventTransactionBuffer extends AbstractCanalLifeCycle {
 
-    private static final long        INIT_SQEUENCE = -1;
-    private int                      bufferSize    = 1024;
-    private int                      indexMask;
-    private CanalEntry.Entry[]       entries;
+    private static final long INIT_SQEUENCE = -1;
+    private int bufferSize = 1024;
+    private int indexMask;
+    private CanalEntry.Entry[] entries;
 
-    private AtomicLong               putSequence   = new AtomicLong(INIT_SQEUENCE); // 代表当前put操作最后一次写操作发生的位置
-    private AtomicLong               flushSequence = new AtomicLong(INIT_SQEUENCE); // 代表满足flush条件后最后一次数据flush的时间
+    private AtomicLong putSequence = new AtomicLong(INIT_SQEUENCE);     // 代表当前put操作最后一次写操作发生的位置
+    private AtomicLong flushSequence = new AtomicLong(INIT_SQEUENCE);   // 代表满足flush条件后最后一次数据flush的时间
 
     private TransactionFlushCallback flushCallback;
 
-    public EventTransactionBuffer(){
-
+    public EventTransactionBuffer() {
     }
 
-    public EventTransactionBuffer(TransactionFlushCallback flushCallback){
+    public EventTransactionBuffer(TransactionFlushCallback flushCallback) {
         this.flushCallback = flushCallback;
     }
 
@@ -41,7 +38,6 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
         if (Integer.bitCount(bufferSize) != 1) {
             throw new IllegalArgumentException("bufferSize must be a power of 2");
         }
-
         Assert.notNull(flushCallback, "flush callback is null!");
         indexMask = bufferSize - 1;
         entries = new CanalEntry.Entry[bufferSize];
@@ -50,7 +46,6 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
     public void stop() throws CanalStoreException {
         putSequence.set(INIT_SQEUENCE);
         flushSequence.set(INIT_SQEUENCE);
-
         entries = null;
         super.stop();
     }
@@ -99,37 +94,36 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
         if (checkFreeSlotAt(putSequence.get() + 1)) {
             long current = putSequence.get();
             long next = current + 1;
-
             // 先写数据，再更新对应的cursor,并发度高的情况，putSequence会被get请求可见，拿出了ringbuffer中的老的Entry值
             entries[getIndex(next)] = data;
             putSequence.set(next);
         } else {
-            flush();// buffer区满了，刷新一下
-            put(data);// 继续加一下新数据
+            flush();    // buffer区满了，刷新一下
+            put(data);  // 继续加一下新数据
         }
     }
 
     private void flush() throws InterruptedException {
         long start = this.flushSequence.get() + 1;
         long end = this.putSequence.get();
-
         if (start <= end) {
-            List<CanalEntry.Entry> transaction = new ArrayList<CanalEntry.Entry>();
+            List<CanalEntry.Entry> transaction = new ArrayList<>();
             for (long next = start; next <= end; next++) {
                 transaction.add(this.entries[getIndex(next)]);
             }
-
             flushCallback.flush(transaction);
-            flushSequence.set(end);// flush成功后，更新flush位置
+            flushSequence.set(end); // flush成功后，更新flush位置
         }
     }
 
     /**
      * 查询是否有空位
      */
+    @SuppressWarnings("RedundantIfStatement")
     private boolean checkFreeSlotAt(final long sequence) {
         final long wrapPoint = sequence - bufferSize;
-        if (wrapPoint > flushSequence.get()) { // 刚好追上一轮
+        if (wrapPoint > flushSequence.get()) {
+            // 刚好追上一轮
             return false;
         } else {
             return true;
@@ -156,13 +150,9 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
 
     /**
      * 事务刷新机制
-     * 
-     * @author jianghang 2012-12-6 上午11:57:38
-     * @version 1.0.0
      */
+    @SuppressWarnings("UnnecessaryInterfaceModifier")
     public static interface TransactionFlushCallback {
-
-        public void flush(List<CanalEntry.Entry> transaction) throws InterruptedException;
+        void flush(List<CanalEntry.Entry> transaction) throws InterruptedException;
     }
-
 }

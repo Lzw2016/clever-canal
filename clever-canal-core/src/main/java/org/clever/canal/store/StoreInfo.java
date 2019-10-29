@@ -1,9 +1,6 @@
 package org.clever.canal.store;
 
-/**
- * @author zebin.xuzb 2012-10-30 下午1:05:13
- * @since 1.0.0
- */
+@SuppressWarnings("WeakerAccess")
 public class StoreInfo {
 
     private String storeName;
@@ -24,5 +21,4 @@ public class StoreInfo {
     public void setFilter(String filter) {
         this.filter = filter;
     }
-
 }

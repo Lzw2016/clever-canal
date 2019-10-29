@@ -1,18 +1,18 @@
 package org.clever.canal.parse.index;
 
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.protocol.position.LogPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by yinxiu on 17/3/18. Email: marklin.hz@gmail.com
  * 实现基于failover查找的机制完成meta的操作
  *
  * <pre>
  * 应用场景：比如针对内存buffer，出现HA切换，先尝试从内存buffer区中找到lastest position，如果不存在才尝试找一下meta里消费的信息
  * </pre>
  */
+@SuppressWarnings("unused")
 public class FailbackLogPositionManager extends AbstractLogPositionManager {
 
     private final static Logger logger = LoggerFactory.getLogger(FailbackLogPositionManager.class);
@@ -20,7 +20,7 @@ public class FailbackLogPositionManager extends AbstractLogPositionManager {
     private final CanalLogPositionManager primary;
     private final CanalLogPositionManager secondary;
 
-    public FailbackLogPositionManager(CanalLogPositionManager primary, CanalLogPositionManager secondary){
+    public FailbackLogPositionManager(CanalLogPositionManager primary, CanalLogPositionManager secondary) {
         if (primary == null) {
             throw new NullPointerException("nul primary LogPositionManager");
         }
@@ -35,11 +35,9 @@ public class FailbackLogPositionManager extends AbstractLogPositionManager {
     @Override
     public void start() {
         super.start();
-
         if (!primary.isStart()) {
             primary.start();
         }
-
         if (!secondary.isStart()) {
             secondary.start();
         }
@@ -48,11 +46,9 @@ public class FailbackLogPositionManager extends AbstractLogPositionManager {
     @Override
     public void stop() {
         super.stop();
-
         if (secondary.isStart()) {
             secondary.stop();
         }
-
         if (primary.isStart()) {
             primary.stop();
         }
@@ -72,10 +68,7 @@ public class FailbackLogPositionManager extends AbstractLogPositionManager {
         try {
             primary.persistLogPosition(destination, logPosition);
         } catch (CanalParseException e) {
-            logger.warn("persistLogPosition use primary log position manager exception. destination: {}, logPosition: {}",
-                destination,
-                logPosition,
-                e);
+            logger.warn("persistLogPosition use primary log position manager exception. destination: {}, logPosition: {}", destination, logPosition, e);
             secondary.persistLogPosition(destination, logPosition);
         }
     }

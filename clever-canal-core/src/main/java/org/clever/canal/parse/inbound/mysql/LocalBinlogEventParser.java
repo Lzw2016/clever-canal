@@ -1,38 +1,36 @@
 package org.clever.canal.parse.inbound.mysql;
 
-import com.alibaba.otter.canal.parse.CanalEventParser;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.parse.inbound.ErosaConnection;
-import com.alibaba.otter.canal.parse.inbound.mysql.dbsync.LogEventConvert;
-import com.alibaba.otter.canal.parse.inbound.mysql.dbsync.TableMetaCache;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
-import com.alibaba.otter.canal.parse.index.CanalLogPositionManager;
-import com.alibaba.otter.canal.parse.support.AuthenticationInfo;
-import com.alibaba.otter.canal.protocol.position.EntryPosition;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.CanalEventParser;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.parse.inbound.ErosaConnection;
+import org.clever.canal.parse.inbound.mysql.dbsync.LogEventConvert;
+import org.clever.canal.parse.inbound.mysql.dbsync.TableMetaCache;
+import org.clever.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
+import org.clever.canal.parse.index.CanalLogPositionManager;
+import org.clever.canal.parse.support.AuthenticationInfo;
+import org.clever.canal.protocol.position.EntryPosition;
+import org.clever.canal.protocol.position.LogPosition;
 
 import java.io.IOException;
 
 /**
  * 基于本地binlog文件的复制
- * 
- * @author jianghang 2012-6-21 下午04:07:33
- * @version 1.0.0
  */
+@SuppressWarnings({"WeakerAccess", "DuplicatedCode", "unused"})
 public class LocalBinlogEventParser extends AbstractMysqlEventParser implements CanalEventParser {
 
     // 数据库信息
     protected AuthenticationInfo masterInfo;
-    protected EntryPosition      masterPosition;        // binlog信息
-    protected MysqlConnection    metaConnection;        // 查询meta信息的链接
-    protected TableMetaCache     tableMetaCache;        // 对应meta
+    protected EntryPosition masterPosition;     // binlog信息
+    protected MysqlConnection metaConnection;   // 查询meta信息的链接
+    protected TableMetaCache tableMetaCache;    // 对应meta
 
-    protected String             directory;
-    protected boolean            needWait   = false;
-    protected int                bufferSize = 16 * 1024;
+    protected String directory;
+    protected boolean needWait = false;
+    protected int bufferSize = 16 * 1024;
 
-    public LocalBinlogEventParser(){
+    public LocalBinlogEventParser() {
         // this.runningInfo = new AuthenticationInfo();
     }
 
@@ -49,16 +47,14 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
         } catch (IOException e) {
             throw new CanalParseException(e);
         }
-
         if (tableMetaTSDB != null && tableMetaTSDB instanceof DatabaseTableMeta) {
             ((DatabaseTableMeta) tableMetaTSDB).setConnection(metaConnection);
             ((DatabaseTableMeta) tableMetaTSDB).setFilter(eventFilter);
             ((DatabaseTableMeta) tableMetaTSDB).setBlackFilter(eventBlackFilter);
             ((DatabaseTableMeta) tableMetaTSDB).setSnapshotInterval(tsdbSnapshotInterval);
             ((DatabaseTableMeta) tableMetaTSDB).setSnapshotExpire(tsdbSnapshotExpire);
-            ((DatabaseTableMeta) tableMetaTSDB).init(destination);
+            tableMetaTSDB.init(destination);
         }
-
         tableMetaCache = new TableMetaCache(metaConnection, tableMetaTSDB);
         ((LogEventConvert) binlogParser).setTableMetaCache(tableMetaCache);
     }
@@ -69,8 +65,7 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
             try {
                 metaConnection.disconnect();
             } catch (IOException e) {
-                logger.error("ERROR # disconnect meta connection for address:{}", metaConnection.getConnector()
-                    .getAddress(), e);
+                logger.error("ERROR # disconnect meta connection for address:{}", metaConnection.getConnector().getAddress(), e);
             }
         }
     }
@@ -79,7 +74,6 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
         if (runningInfo == null) { // 第一次链接主库
             runningInfo = masterInfo;
         }
-
         super.start();
     }
 
@@ -89,34 +83,25 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
             try {
                 metaConnection.disconnect();
             } catch (IOException e) {
-                logger.error("ERROR # disconnect meta connection for address:{}", metaConnection.getConnector()
-                    .getAddress(), e);
+                logger.error("ERROR # disconnect meta connection for address:{}", metaConnection.getConnector().getAddress(), e);
             }
         }
-
         if (tableMetaCache != null) {
             tableMetaCache.clearTableMeta();
         }
-
         super.stop();
     }
 
     private ErosaConnection buildLocalBinLogConnection() {
         LocalBinLogConnection connection = new LocalBinLogConnection();
-
         connection.setBufferSize(this.bufferSize);
         connection.setDirectory(this.directory);
         connection.setNeedWait(this.needWait);
-
         return connection;
     }
 
     private MysqlConnection buildMysqlConnection() {
-        MysqlConnection connection = new MysqlConnection(runningInfo.getAddress(),
-            runningInfo.getUsername(),
-            runningInfo.getPassword(),
-            connectionCharsetNumber,
-            runningInfo.getDefaultDatabaseName());
+        MysqlConnection connection = new MysqlConnection(runningInfo.getAddress(), runningInfo.getUsername(), runningInfo.getPassword(), connectionCharsetNumber, runningInfo.getDefaultDatabaseName());
         connection.getConnector().setReceiveBufferSize(64 * 1024);
         connection.getConnector().setSendBufferSize(64 * 1024);
         connection.getConnector().setSoTimeout(30 * 1000);
@@ -129,13 +114,12 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
         // 处理逻辑
         // 1. 首先查询上一次解析成功的最后一条记录
         // 2. 存在最后一条记录，判断一下当前记录是否发生过主备切换
-        // // a. 无机器切换，直接返回
-        // // b. 存在机器切换，按最后一条记录的stamptime进行查找
+        //    a. 无机器切换，直接返回
+        //    b. 存在机器切换，按最后一条记录的stamptime进行查找
         // 3. 不存在最后一条记录，则从默认的位置开始启动
         LogPosition logPosition = logPositionManager.getLatestIndexBy(destination);
         if (logPosition == null) {// 找不到历史成功记录
             EntryPosition entryPosition = masterPosition;
-
             // 判断一下是否需要按时间订阅
             if (StringUtils.isEmpty(entryPosition.getJournalName())) {
                 // 如果没有指定binlogName，尝试按照timestamp进行查找
@@ -153,7 +137,6 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
         } else {
             return logPosition.getPostion();
         }
-
         return null;
     }
 

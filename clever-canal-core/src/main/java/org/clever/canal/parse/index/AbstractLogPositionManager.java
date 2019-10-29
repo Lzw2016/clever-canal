@@ -1,9 +1,7 @@
 package org.clever.canal.parse.index;
 
-import com.alibaba.otter.canal.common.AbstractCanalLifeCycle;
+import org.clever.canal.common.AbstractCanalLifeCycle;
 
-/**
- * Created by yinxiu on 17/3/17. Email: marklin.hz@gmail.com
- */
+@SuppressWarnings("WeakerAccess")
 public abstract class AbstractLogPositionManager extends AbstractCanalLifeCycle implements CanalLogPositionManager {
 }

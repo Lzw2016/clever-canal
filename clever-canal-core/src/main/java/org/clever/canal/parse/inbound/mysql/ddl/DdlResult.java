@@ -1,37 +1,34 @@
 package org.clever.canal.parse.inbound.mysql.ddl;
 
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
+import org.clever.canal.protocol.CanalEntry.EventType;
 
-/**
- * @author agapple 2017年8月1日 下午7:30:42
- * @since 3.2.5
- */
+@SuppressWarnings({"WeakerAccess", "MethodDoesntCallSuperMethod"})
 public class DdlResult {
 
-    private String    schemaName;
-    private String    tableName;
-    private String    oriSchemaName;    // rename ddl中的源表
-    private String    oriTableName;     // rename ddl中的目标表
+    private String schemaName;
+    private String tableName;
+    private String oriSchemaName;           // rename ddl中的源表
+    private String oriTableName;            // rename ddl中的目标表
     private EventType type;
-    private DdlResult renameTableResult; // 多个rename table的存储
+    private DdlResult renameTableResult;    // 多个rename table的存储
 
     /*
      * RENAME TABLE tbl_name TO new_tbl_name [, tbl_name2 TO new_tbl_name2] ...
      */
 
-    public DdlResult(){
+    public DdlResult() {
     }
 
-    public DdlResult(String schemaName){
+    public DdlResult(String schemaName) {
         this.schemaName = schemaName;
     }
 
-    public DdlResult(String schemaName, String tableName){
+    public DdlResult(String schemaName, String tableName) {
         this.schemaName = schemaName;
         this.tableName = tableName;
     }
 
-    public DdlResult(String schemaName, String tableName, String oriSchemaName, String oriTableName){
+    public DdlResult(String schemaName, String tableName, String oriSchemaName, String oriTableName) {
         this.schemaName = schemaName;
         this.tableName = tableName;
         this.oriSchemaName = oriSchemaName;
@@ -100,14 +97,16 @@ public class DdlResult {
     @Override
     public String toString() {
         DdlResult ddlResult = this;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         do {
-            sb.append(String.format("DdlResult [schemaName=%s , tableName=%s , oriSchemaName=%s , oriTableName=%s , type=%s ];",
-                ddlResult.schemaName,
-                ddlResult.tableName,
-                ddlResult.oriSchemaName,
-                ddlResult.oriTableName,
-                ddlResult.type));
+            sb.append(String.format(
+                    "DdlResult [schemaName=%s , tableName=%s , oriSchemaName=%s , oriTableName=%s , type=%s ];",
+                    ddlResult.schemaName,
+                    ddlResult.tableName,
+                    ddlResult.oriSchemaName,
+                    ddlResult.oriTableName,
+                    ddlResult.type
+            ));
             ddlResult = ddlResult.renameTableResult;
         } while (ddlResult != null);
         return sb.toString();

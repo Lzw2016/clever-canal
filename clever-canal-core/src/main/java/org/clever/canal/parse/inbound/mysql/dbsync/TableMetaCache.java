@@ -1,20 +1,20 @@
 package org.clever.canal.parse.inbound.mysql.dbsync;
 
-import com.alibaba.otter.canal.parse.driver.mysql.packets.server.FieldPacket;
-import com.alibaba.otter.canal.parse.driver.mysql.packets.server.ResultSetPacket;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.parse.inbound.TableMeta;
-import com.alibaba.otter.canal.parse.inbound.TableMeta.FieldMeta;
-import com.alibaba.otter.canal.parse.inbound.mysql.MysqlConnection;
-import com.alibaba.otter.canal.parse.inbound.mysql.ddl.DruidDdlParser;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.MemoryTableMeta;
-import com.alibaba.otter.canal.parse.inbound.mysql.tsdb.TableMetaTSDB;
-import com.alibaba.otter.canal.protocol.position.EntryPosition;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.driver.mysql.packets.server.FieldPacket;
+import org.clever.canal.parse.driver.mysql.packets.server.ResultSetPacket;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.parse.inbound.TableMeta;
+import org.clever.canal.parse.inbound.TableMeta.FieldMeta;
+import org.clever.canal.parse.inbound.mysql.MysqlConnection;
+import org.clever.canal.parse.inbound.mysql.ddl.DruidDdlParser;
+import org.clever.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
+import org.clever.canal.parse.inbound.mysql.tsdb.MemoryTableMeta;
+import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTSDB;
+import org.clever.canal.protocol.position.EntryPosition;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,35 +24,32 @@ import java.util.Map;
 
 /**
  * 处理table meta解析和缓存
- *
- * @author jianghang 2013-1-17 下午10:15:16
- * @version 1.0.0
  */
+@SuppressWarnings({"WeakerAccess", "UnstableApiUsage"})
 public class TableMetaCache {
 
-    public static final String              COLUMN_NAME    = "COLUMN_NAME";
-    public static final String              COLUMN_TYPE    = "COLUMN_TYPE";
-    public static final String              IS_NULLABLE    = "IS_NULLABLE";
-    public static final String              COLUMN_KEY     = "COLUMN_KEY";
-    public static final String              COLUMN_DEFAULT = "COLUMN_DEFAULT";
-    public static final String              EXTRA          = "EXTRA";
-    private MysqlConnection                 connection;
-    private boolean                         isOnRDS        = false;
-    private boolean                         isOnTSDB       = false;
+    public static final String COLUMN_NAME = "COLUMN_NAME";
+    public static final String COLUMN_TYPE = "COLUMN_TYPE";
+    public static final String IS_NULLABLE = "IS_NULLABLE";
+    public static final String COLUMN_KEY = "COLUMN_KEY";
+    public static final String COLUMN_DEFAULT = "COLUMN_DEFAULT";
+    public static final String EXTRA = "EXTRA";
+    private MysqlConnection connection;
+    private boolean isOnRDS = false;
+    private boolean isOnTSDB = false;
 
-    private TableMetaTSDB                   tableMetaTSDB;
+    private TableMetaTSDB tableMetaTSDB;
     // 第一层tableId,第二层schema.table,解决tableId重复，对应多张表
     private LoadingCache<String, TableMeta> tableMetaDB;
 
-    public TableMetaCache(MysqlConnection con, TableMetaTSDB tableMetaTSDB){
+    public TableMetaCache(MysqlConnection con, TableMetaTSDB tableMetaTSDB) {
         this.connection = con;
         this.tableMetaTSDB = tableMetaTSDB;
         // 如果持久存储的表结构为空，从db里面获取下
         if (tableMetaTSDB == null) {
             this.tableMetaDB = CacheBuilder.newBuilder().build(new CacheLoader<String, TableMeta>() {
-
                 @Override
-                public TableMeta load(String name) throws Exception {
+                public TableMeta load(String name) {
                     try {
                         return getTableMetaByDB(name);
                     } catch (Throwable e) {
@@ -65,7 +62,6 @@ public class TableMetaCache {
                         }
                     }
                 }
-
             });
         } else {
             isOnTSDB = true;
@@ -127,13 +123,13 @@ public class TableMetaCache {
             meta.setColumnName(packet.getFieldValues().get(nameMaps.get(COLUMN_NAME) + i * size).intern());
             meta.setColumnType(packet.getFieldValues().get(nameMaps.get(COLUMN_TYPE) + i * size));
             meta.setNullable(StringUtils.equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(IS_NULLABLE) + i
-                                                                                      * size),
-                "YES"));
+                            * size),
+                    "YES"));
             meta.setKey("PRI".equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(COLUMN_KEY) + i * size)));
             meta.setUnique("UNI".equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(COLUMN_KEY) + i * size)));
             // 特殊处理引号
             meta.setDefaultValue(DruidDdlParser.unescapeQuotaName(packet.getFieldValues()
-                .get(nameMaps.get(COLUMN_DEFAULT) + i * size)));
+                    .get(nameMaps.get(COLUMN_DEFAULT) + i * size)));
             meta.setExtra(packet.getFieldValues().get(nameMaps.get(EXTRA) + i * size));
 
             result.add(meta);
@@ -244,13 +240,13 @@ public class TableMetaCache {
     private String getFullName(String schema, String table) {
         StringBuilder builder = new StringBuilder();
         return builder.append('`')
-            .append(schema)
-            .append('`')
-            .append('.')
-            .append('`')
-            .append(table)
-            .append('`')
-            .toString();
+                .append(schema)
+                .append('`')
+                .append('.')
+                .append('`')
+                .append(table)
+                .append('`')
+                .toString();
     }
 
 

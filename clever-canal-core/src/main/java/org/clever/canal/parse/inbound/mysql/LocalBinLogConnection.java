@@ -1,15 +1,16 @@
 package org.clever.canal.parse.inbound.mysql;
 
-import com.alibaba.otter.canal.parse.driver.mysql.packets.GTIDSet;
-import com.alibaba.otter.canal.parse.exception.CanalParseException;
-import com.alibaba.otter.canal.parse.exception.ServerIdNotMatchException;
-import com.alibaba.otter.canal.parse.inbound.ErosaConnection;
-import com.alibaba.otter.canal.parse.inbound.MultiStageCoprocessor;
-import com.alibaba.otter.canal.parse.inbound.SinkFunction;
-import com.alibaba.otter.canal.parse.inbound.mysql.local.BinLogFileQueue;
-import com.taobao.tddl.dbsync.binlog.event.QueryLogEvent;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.parse.dbsync.binlog.*;
+import org.clever.canal.parse.dbsync.binlog.event.QueryLogEvent;
+import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.exception.CanalParseException;
+import org.clever.canal.parse.exception.ServerIdNotMatchException;
+import org.clever.canal.parse.inbound.ErosaConnection;
+import org.clever.canal.parse.inbound.MultiStageCoprocessor;
+import org.clever.canal.parse.inbound.SinkFunction;
+import org.clever.canal.parse.inbound.mysql.local.BinLogFileQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,30 +20,29 @@ import java.util.List;
 
 /**
  * local bin log connection (not real connection)
- * 
- * @author yuanzu Date: 12-9-27 Time: 下午6:14
  */
+@SuppressWarnings({"unchecked", "WeakerAccess", "unused", "DuplicatedCode"})
 public class LocalBinLogConnection implements ErosaConnection {
 
-    private static final Logger logger     = LoggerFactory.getLogger(LocalBinLogConnection.class);
-    private BinLogFileQueue     binlogs    = null;
-    private boolean             needWait;
-    private String              directory;
-    private int                 bufferSize = 16 * 1024;
-    private boolean             running    = false;
-    private long                serverId;
-    private FileParserListener  parserListener;
+    private static final Logger logger = LoggerFactory.getLogger(LocalBinLogConnection.class);
+    private BinLogFileQueue binlogs = null;
+    private boolean needWait;
+    private String directory;
+    private int bufferSize = 16 * 1024;
+    private boolean running = false;
+    private long serverId;
+    private FileParserListener parserListener;
 
-    public LocalBinLogConnection(){
+    public LocalBinLogConnection() {
     }
 
-    public LocalBinLogConnection(String directory, boolean needWait){
+    public LocalBinLogConnection(String directory, boolean needWait) {
         this.needWait = needWait;
         this.directory = directory;
     }
 
     @Override
-    public void connect() throws IOException {
+    public void connect() {
         if (this.binlogs == null) {
             this.binlogs = new BinLogFileQueue(this.directory);
         }
@@ -50,13 +50,13 @@ public class LocalBinLogConnection implements ErosaConnection {
     }
 
     @Override
-    public void reconnect() throws IOException {
+    public void reconnect() {
         disconnect();
         connect();
     }
 
     @Override
-    public void disconnect() throws IOException {
+    public void disconnect() {
         this.running = false;
         if (this.binlogs != null) {
             this.binlogs.destory();
@@ -69,21 +69,19 @@ public class LocalBinLogConnection implements ErosaConnection {
         return running;
     }
 
-    public void seek(String binlogfilename, Long binlogPosition, String gtid, SinkFunction func) throws IOException {
+    public void seek(String binlogfilename, Long binlogPosition, String gtid, SinkFunction func) {
     }
 
     public void dump(String binlogfilename, Long binlogPosition, SinkFunction func) throws IOException {
         File current = new File(directory, binlogfilename);
-
-        FileLogFetcher fetcher = new FileLogFetcher(bufferSize);
-        LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
-        LogContext context = new LogContext();
-        try {
+        try (FileLogFetcher fetcher = new FileLogFetcher(bufferSize)) {
+            LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
+            LogContext context = new LogContext();
             fetcher.open(current, binlogPosition);
             context.setLogPosition(new LogPosition(binlogfilename, binlogPosition));
             while (running) {
                 boolean needContinue = true;
-                LogEvent event = null;
+                LogEvent event;
                 while (fetcher.fetch()) {
                     event = decoder.decode(fetcher, context);
                     if (event == null) {
@@ -92,28 +90,23 @@ public class LocalBinLogConnection implements ErosaConnection {
                     if (serverId != 0 && event.getServerId() != serverId) {
                         throw new ServerIdNotMatchException("unexpected serverId " + serverId + " in binlog file !");
                     }
-
                     if (!func.sink(event)) {
                         needContinue = false;
                         break;
                     }
                 }
-
                 fetcher.close(); // 关闭上一个文件
                 parserFinish(current.getName());
                 if (needContinue) {// 读取下一个
-
                     File nextFile;
                     if (needWait) {
                         nextFile = binlogs.waitForNextFile(current);
                     } else {
                         nextFile = binlogs.getNextFile(current);
                     }
-
                     if (nextFile == null) {
                         break;
                     }
-
                     current = nextFile;
                     fetcher.open(current);
                     context.setLogPosition(new LogPosition(nextFile.getName()));
@@ -123,10 +116,6 @@ public class LocalBinLogConnection implements ErosaConnection {
             }
         } catch (InterruptedException e) {
             logger.warn("LocalBinLogConnection dump interrupted");
-        } finally {
-            if (fetcher != null) {
-                fetcher.close();
-            }
         }
     }
 
@@ -200,16 +189,14 @@ public class LocalBinLogConnection implements ErosaConnection {
                 }
             }
         } finally {
-            if (fetcher != null) {
-                fetcher.close();
-            }
+            fetcher.close();
         }
 
         dump(binlogFilename, binlogFileOffset, func);
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, SinkFunction func) throws IOException {
+    public void dump(GTIDSet gtidSet, SinkFunction func) {
         throw new NotImplementedException(this.getClass().getName());
     }
 
@@ -219,16 +206,14 @@ public class LocalBinLogConnection implements ErosaConnection {
         if (!current.exists()) {
             throw new CanalParseException("binlog:" + binlogfilename + " is not found");
         }
-
-        FileLogFetcher fetcher = new FileLogFetcher(bufferSize);
-        LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
-        LogContext context = new LogContext();
-        try {
+        try (FileLogFetcher fetcher = new FileLogFetcher(bufferSize)) {
+            LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
+            LogContext context = new LogContext();
             fetcher.open(current, binlogPosition);
             context.setLogPosition(new LogPosition(binlogfilename, binlogPosition));
             while (running) {
                 boolean needContinue = true;
-                LogEvent event = null;
+                LogEvent event;
                 while (fetcher.fetch()) {
                     event = decoder.decode(fetcher, context);
                     if (event == null) {
@@ -237,13 +222,11 @@ public class LocalBinLogConnection implements ErosaConnection {
                     if (serverId != 0 && event.getServerId() != serverId) {
                         throw new ServerIdNotMatchException("unexpected serverId " + serverId + " in binlog file !");
                     }
-
                     if (!coprocessor.publish(event)) {
                         needContinue = false;
                         break;
                     }
                 }
-
                 fetcher.close(); // 关闭上一个文件
                 parserFinish(binlogfilename);
                 if (needContinue) {// 读取下一个
@@ -253,11 +236,9 @@ public class LocalBinLogConnection implements ErosaConnection {
                     } else {
                         nextFile = binlogs.getNextFile(current);
                     }
-
                     if (nextFile == null) {
                         break;
                     }
-
                     current = nextFile;
                     fetcher.open(current);
                     binlogfilename = nextFile.getName();
@@ -267,10 +248,6 @@ public class LocalBinLogConnection implements ErosaConnection {
             }
         } catch (InterruptedException e) {
             logger.warn("LocalBinLogConnection dump interrupted");
-        } finally {
-            if (fetcher != null) {
-                fetcher.close();
-            }
         }
     }
 
@@ -351,16 +328,13 @@ public class LocalBinLogConnection implements ErosaConnection {
                 }
             }
         } finally {
-            if (fetcher != null) {
-                fetcher.close();
-            }
+            fetcher.close();
         }
-
         dump(binlogFilename, binlogFileOffset, coprocessor);
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, MultiStageCoprocessor coprocessor) throws IOException {
+    public void dump(GTIDSet gtidSet, MultiStageCoprocessor coprocessor) {
         throw new NotImplementedException(this.getClass().getName());
     }
 
@@ -415,8 +389,6 @@ public class LocalBinLogConnection implements ErosaConnection {
     }
 
     public interface FileParserListener {
-
         void onFinish(String fileName);
     }
-
 }

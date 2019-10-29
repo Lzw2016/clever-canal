@@ -1,13 +1,14 @@
 package org.clever.canal.store.helper;
 
-import com.alibaba.otter.canal.protocol.position.EntryPosition;
-import com.alibaba.otter.canal.protocol.position.LogPosition;
-import com.alibaba.otter.canal.store.model.Event;
 import org.apache.commons.lang3.StringUtils;
+import org.clever.canal.protocol.position.EntryPosition;
+import org.clever.canal.protocol.position.LogPosition;
+import org.clever.canal.store.model.Event;
 
 /**
  * 相关的操作工具
  */
+@SuppressWarnings({"DuplicatedCode", "unused"})
 public class CanalEventUtils {
 
     /**
@@ -86,8 +87,9 @@ public class CanalEventUtils {
         boolean exactely = (StringUtils.isBlank(position.getJournalName()) && position.getPosition() == null);
         if (!exactely) {// 精确匹配
             result &= position.getPosition().equals(event.getPosition());
-            if (result) {// short path
-                result &= StringUtils.equals(event.getJournalName(), position.getJournalName());
+            if (result) {
+                // short path
+                result = StringUtils.equals(event.getJournalName(), position.getJournalName());
             }
         }
         return result;
