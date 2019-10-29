@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * 处理table meta解析和缓存
  */
-@SuppressWarnings({"WeakerAccess", "UnstableApiUsage"})
+@SuppressWarnings({"WeakerAccess", "UnstableApiUsage", "UnusedReturnValue", "StatementWithEmptyBody", "unused", "NullableProblems"})
 public class TableMetaCache {
 
     public static final String COLUMN_NAME = "COLUMN_NAME";
@@ -66,13 +66,12 @@ public class TableMetaCache {
         } else {
             isOnTSDB = true;
         }
-
         try {
             ResultSetPacket packet = connection.query("show global variables  like 'rds\\_%'");
             if (packet.getFieldValues().size() > 0) {
                 isOnRDS = true;
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -81,13 +80,13 @@ public class TableMetaCache {
             ResultSetPacket packet = connection.query("show create table " + fullname);
             String[] names = StringUtils.split(fullname, "`.`");
             String schema = names[0];
-            String table = names[1].substring(0, names[1].length());
+            String table = names[1];
             return new TableMeta(schema, table, parseTableMeta(schema, table, packet));
         } catch (Throwable e) { // fallback to desc table
             ResultSetPacket packet = connection.query("desc " + fullname);
             String[] names = StringUtils.split(fullname, "`.`");
             String schema = names[0];
-            String table = names[1].substring(0, names[1].length());
+            String table = names[1];
             return new TableMeta(schema, table, parseTableMetaByDesc(packet));
         }
     }
@@ -100,7 +99,7 @@ public class TableMetaCache {
             TableMeta tableMeta = memoryTableMeta.find(schema, table);
             return tableMeta.getFields();
         } else {
-            return new ArrayList<FieldMeta>();
+            return new ArrayList<>();
         }
     }
 
@@ -108,33 +107,27 @@ public class TableMetaCache {
      * 处理desc table的结果
      */
     public static List<FieldMeta> parseTableMetaByDesc(ResultSetPacket packet) {
-        Map<String, Integer> nameMaps = new HashMap<String, Integer>(6, 1f);
+        Map<String, Integer> nameMaps = new HashMap<>(6, 1f);
         int index = 0;
         for (FieldPacket fieldPacket : packet.getFieldDescriptors()) {
             nameMaps.put(fieldPacket.getOriginalName(), index++);
         }
-
         int size = packet.getFieldDescriptors().size();
         int count = packet.getFieldValues().size() / packet.getFieldDescriptors().size();
-        List<FieldMeta> result = new ArrayList<FieldMeta>();
+        List<FieldMeta> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             FieldMeta meta = new FieldMeta();
             // 做一个优化，使用String.intern()，共享String对象，减少内存使用
             meta.setColumnName(packet.getFieldValues().get(nameMaps.get(COLUMN_NAME) + i * size).intern());
             meta.setColumnType(packet.getFieldValues().get(nameMaps.get(COLUMN_TYPE) + i * size));
-            meta.setNullable(StringUtils.equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(IS_NULLABLE) + i
-                            * size),
-                    "YES"));
+            meta.setNullable(StringUtils.equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(IS_NULLABLE) + i * size), "YES"));
             meta.setKey("PRI".equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(COLUMN_KEY) + i * size)));
             meta.setUnique("UNI".equalsIgnoreCase(packet.getFieldValues().get(nameMaps.get(COLUMN_KEY) + i * size)));
             // 特殊处理引号
-            meta.setDefaultValue(DruidDdlParser.unescapeQuotaName(packet.getFieldValues()
-                    .get(nameMaps.get(COLUMN_DEFAULT) + i * size)));
+            meta.setDefaultValue(DruidDdlParser.unescapeQuotaName(packet.getFieldValues().get(nameMaps.get(COLUMN_DEFAULT) + i * size)));
             meta.setExtra(packet.getFieldValues().get(nameMaps.get(EXTRA) + i * size));
-
             result.add(meta);
         }
-
         return result;
     }
 
@@ -146,7 +139,6 @@ public class TableMetaCache {
         if (!useCache) {
             tableMetaDB.invalidate(getFullName(schema, table));
         }
-
         return tableMetaDB.getUnchecked(getFullName(schema, table));
     }
 
@@ -155,13 +147,13 @@ public class TableMetaCache {
     }
 
     public synchronized TableMeta getTableMeta(String schema, String table, boolean useCache, EntryPosition position) {
-        TableMeta tableMeta = null;
+        TableMeta tableMeta;
         if (tableMetaTSDB != null) {
             tableMeta = tableMetaTSDB.find(schema, table);
             if (tableMeta == null) {
                 // 因为条件变化，可能第一次的tableMeta没取到，需要从db获取一次，并记录到snapshot中
                 String fullName = getFullName(schema, table);
-                ResultSetPacket packet = null;
+                ResultSetPacket packet;
                 String createDDL = null;
                 try {
                     try {
@@ -186,7 +178,6 @@ public class TableMetaCache {
             if (!useCache) {
                 tableMetaDB.invalidate(getFullName(schema, table));
             }
-
             return tableMetaDB.getUnchecked(getFullName(schema, table));
         }
     }
@@ -222,11 +213,6 @@ public class TableMetaCache {
 
     /**
      * 更新一下本地的表结构内存
-     *
-     * @param position
-     * @param schema
-     * @param ddl
-     * @return
      */
     public boolean apply(EntryPosition position, String schema, String ddl, String extra) {
         if (tableMetaTSDB != null) {
@@ -238,17 +224,8 @@ public class TableMetaCache {
     }
 
     private String getFullName(String schema, String table) {
-        StringBuilder builder = new StringBuilder();
-        return builder.append('`')
-                .append(schema)
-                .append('`')
-                .append('.')
-                .append('`')
-                .append(table)
-                .append('`')
-                .toString();
+        return '`' + schema + '`' + '.' + '`' + table + '`';
     }
-
 
     public boolean isOnTSDB() {
         return isOnTSDB;
@@ -265,5 +242,4 @@ public class TableMetaCache {
     public void setOnRDS(boolean isOnRDS) {
         this.isOnRDS = isOnRDS;
     }
-
 }

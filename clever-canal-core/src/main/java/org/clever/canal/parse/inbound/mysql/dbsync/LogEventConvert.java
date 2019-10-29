@@ -79,7 +79,6 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
         if (logEvent == null || logEvent instanceof UnknownLogEvent) {
             return null;
         }
-
         int eventType = logEvent.getHeader().getType();
         switch (eventType) {
             case LogEvent.QUERY_EVENT:
@@ -140,14 +139,12 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
         Pair.Builder builder = Pair.newBuilder();
         builder.setKey("gtid");
         builder.setValue(logEvent.getGtidStr());
-
         if (logEvent.getLastCommitted() != null) {
             builder.setKey("lastCommitted");
             builder.setValue(String.valueOf(logEvent.getLastCommitted()));
             builder.setKey("sequenceNumber");
             builder.setValue(String.valueOf(logEvent.getSequenceNumber()));
         }
-
         Header header = createHeader(logHeader, "", "", EventType.GTID);
         return createEntry(header, EntryType.GTIDLOG, builder.build().toByteString());
     }
@@ -226,20 +223,16 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
                 schemaName = result.getSchemaName();
                 tableName = result.getTableName();
             }
-
             if (!notFilter) {
                 // 如果是过滤的数据就不处理了
                 return null;
             }
-
             boolean isDml = (type == EventType.INSERT || type == EventType.UPDATE || type == EventType.DELETE);
-
             if (!isSeek && !isDml) {
                 // 使用新的表结构元数据管理方式
                 EntryPosition position = createPosition(event.getHeader());
                 tableMetaCache.apply(position, event.getDbName(), queryString, null);
             }
-
             Header header = createHeader(event.getHeader(), schemaName, tableName, type);
             RowChange.Builder rowChangeBuider = RowChange.newBuilder();
             if (type != EventType.QUERY && !isDml) {
