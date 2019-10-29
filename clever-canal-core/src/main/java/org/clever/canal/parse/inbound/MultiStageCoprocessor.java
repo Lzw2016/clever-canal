@@ -14,9 +14,8 @@ import org.clever.canal.parse.dbsync.binlog.LogEvent;
  * 4. 投递到store (单线程)
  * </pre>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public interface MultiStageCoprocessor extends CanalLifeCycle {
-
     /**
      * 网络数据投递
      */

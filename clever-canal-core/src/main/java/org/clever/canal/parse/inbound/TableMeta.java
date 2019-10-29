@@ -102,7 +102,7 @@ public class TableMeta {
         return data.toString();
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"})
+    @SuppressWarnings({"unused"})
     public static class FieldMeta {
 
         public FieldMeta() {

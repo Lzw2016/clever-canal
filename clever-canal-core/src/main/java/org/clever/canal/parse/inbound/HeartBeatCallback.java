@@ -5,7 +5,6 @@ package org.clever.canal.parse.inbound;
  */
 @SuppressWarnings("unused")
 public interface HeartBeatCallback {
-
     /**
      * 心跳发送成功
      */

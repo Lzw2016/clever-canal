@@ -6,9 +6,6 @@ import java.util.HashMap;
 
 /**
  * canal数据的存储 TODO lzw
- *
- * @author wanshao 2017年7月27日 下午10:51:55
- * @since 3.2.5
  */
 @SuppressWarnings("deprecation")
 public class MetaSnapshotDAO extends MetaBaseDAO {

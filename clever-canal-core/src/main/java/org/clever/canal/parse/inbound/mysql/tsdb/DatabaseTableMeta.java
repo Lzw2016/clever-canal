@@ -40,9 +40,6 @@ import java.util.regex.Pattern;
 
 /**
  * 基于db远程管理 see internal class: CanalTableMeta , ConsoleTableMetaTSDB
- *
- * @author agapple 2017年7月27日 下午10:47:55
- * @since 3.2.5
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused", "ConstantConditions", "StatementWithEmptyBody", "DuplicatedCode", "unchecked", "FieldCanBeLocal"})
 public class DatabaseTableMeta implements TableMetaTSDB {
