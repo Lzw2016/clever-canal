@@ -8,7 +8,7 @@
 //
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.Executors;
-//
+// TODO lzw
 //public class MixedLogPositionManager extends AbstractLogPositionManager {
 //
 //    private final Logger logger = LoggerFactory.getLogger(MixedLogPositionManager.class);

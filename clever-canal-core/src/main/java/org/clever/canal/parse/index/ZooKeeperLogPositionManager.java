@@ -6,7 +6,7 @@
 //import org.clever.canal.common.zookeeper.ZookeeperPathUtils;
 //import org.clever.canal.parse.exception.CanalParseException;
 //import org.clever.canal.protocol.position.LogPosition;
-//
+// TODO lzw
 //public class ZooKeeperLogPositionManager extends AbstractLogPositionManager {
 //
 //    private final ZkClientx zkClientx;

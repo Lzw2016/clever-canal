@@ -1,6 +1,6 @@
 //package org.clever.canal.parse.inbound.mysql.tsdb;
 //
-///**
+///** TODO lzw
 // * @author agapple 2017年10月11日 下午8:45:40
 // * @since 1.0.25
 // */
