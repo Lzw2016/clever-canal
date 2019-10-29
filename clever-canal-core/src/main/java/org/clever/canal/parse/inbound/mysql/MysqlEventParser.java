@@ -140,7 +140,8 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
     }
 
     public void start() throws CanalParseException {
-        if (runningInfo == null) { // 第一次链接主库
+        if (runningInfo == null) {
+            // 第一次链接主库
             runningInfo = masterInfo;
         }
         super.start();

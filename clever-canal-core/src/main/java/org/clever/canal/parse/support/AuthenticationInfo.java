@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 /**
  * 数据库认证信息
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused"})
 public class AuthenticationInfo {
     private InetSocketAddress address;  // 主库信息
     private String username;            // 帐号
