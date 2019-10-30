@@ -1,10 +1,10 @@
 package org.clever.canal.server.embedded;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.MigrateMap;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.CollectionUtils;
+import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.instance.core.CanalInstance;
 import org.clever.canal.instance.core.CanalInstanceGenerator;
 import org.clever.canal.protocol.ClientIdentity;
@@ -70,7 +70,14 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
 //            loadCanalMetrics(); TODO lzw
 //            metrics.setServerPort(metricsPort); TODO lzw
 //            metrics.initialize(); TODO lzw
-            canalInstances = MigrateMap.makeComputingMap(destination -> canalInstanceGenerator.generate(destination));
+
+            canalInstances = MigrateMap.makeComputingMap(canalInstanceGenerator::generate);
+//            canalInstances = MigrateMap.makeComputingMap(new CacheLoader<String, CanalInstance>() {
+//                @Override
+//                public CanalInstance load(String destination) {
+//                    return canalInstanceGenerator.generate(destination);
+//                }
+//            });
             // lastRollbackPostions = new MapMaker().makeMap();
         }
     }

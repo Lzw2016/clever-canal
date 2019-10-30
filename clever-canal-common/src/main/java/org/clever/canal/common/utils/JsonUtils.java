@@ -74,7 +74,7 @@ public class JsonUtils {
 
     public static class InetAddressSerializer implements ObjectSerializer {
 
-        public static InetAddressSerializer instance = new InetAddressSerializer();
+        public static final InetAddressSerializer instance = new InetAddressSerializer();
 
         @Override
         public void write(JSONSerializer serializer, Object object, Object fieldName, Type fieldType, int features) {

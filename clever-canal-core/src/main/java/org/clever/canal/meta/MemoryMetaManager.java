@@ -1,10 +1,11 @@
 package org.clever.canal.meta;
 
+import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-import com.google.common.collect.MigrateMap;
 import org.clever.canal.common.AbstractCanalLifeCycle;
+import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.meta.exception.CanalMetaManagerException;
 import org.clever.canal.protocol.ClientIdentity;
 import org.clever.canal.protocol.position.Position;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * 内存版实现
  */
-@SuppressWarnings({"RedundantCollectionOperation", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMetaManager {
 
     protected Map<String, List<ClientIdentity>> destinations;
@@ -28,9 +29,19 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
     public void start() {
         super.start();
-        batches = MigrateMap.makeComputingMap(MemoryClientIdentityBatch::create);
+        batches = MigrateMap.makeComputingMap(new CacheLoader<ClientIdentity, MemoryClientIdentityBatch>() {
+            @Override
+            public MemoryClientIdentityBatch load(ClientIdentity clientIdentity) {
+                return MemoryClientIdentityBatch.create(clientIdentity);
+            }
+        });
         cursors = new MapMaker().makeMap();
-        destinations = MigrateMap.makeComputingMap(destination -> Lists.newArrayList());
+        destinations = MigrateMap.makeComputingMap(new CacheLoader<String, List<ClientIdentity>>() {
+            @Override
+            public List<ClientIdentity> load(String destination) {
+                return Lists.newArrayList();
+            }
+        });
     }
 
     public void stop() {
@@ -44,9 +55,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
     public synchronized void subscribe(ClientIdentity clientIdentity) throws CanalMetaManagerException {
         List<ClientIdentity> clientIdentitys = destinations.get(clientIdentity.getDestination());
-        if (clientIdentitys.contains(clientIdentity)) {
-            clientIdentitys.remove(clientIdentity);
-        }
+        clientIdentitys.remove(clientIdentity);
         clientIdentitys.add(clientIdentity);
     }
 
@@ -57,7 +66,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
     public synchronized void unsubscribe(ClientIdentity clientIdentity) throws CanalMetaManagerException {
         List<ClientIdentity> clientIdentitys = destinations.get(clientIdentity.getDestination());
-        if (clientIdentitys != null && clientIdentitys.contains(clientIdentity)) {
+        if (clientIdentitys != null) {
             clientIdentitys.remove(clientIdentity);
         }
     }

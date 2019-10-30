@@ -9,14 +9,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class NamedThreadFactory implements ThreadFactory {
-
-    private static final Logger logger = LoggerFactory.getLogger(NamedThreadFactory.class);
+    final private static Logger logger = LoggerFactory.getLogger(NamedThreadFactory.class);
     final private static String DEFAULT_NAME = "canal-worker";
     final private String name;
     final private boolean daemon;
     final private ThreadGroup group;
     final private AtomicInteger threadNumber = new AtomicInteger(0);
-    final static UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
+    final private static UncaughtExceptionHandler uncaughtExceptionHandler = (t, e) -> {
         if (e instanceof InterruptedException || (e.getCause() != null && e.getCause() instanceof InterruptedException)) {
             return;
         }

@@ -1,8 +1,9 @@
 package org.clever.canal.parse.index;
 
-import com.google.common.collect.MigrateMap;
+import com.google.common.cache.CacheLoader;
 import org.apache.commons.io.FileUtils;
 import org.clever.canal.common.utils.JsonUtils;
+import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.meta.exception.CanalMetaManagerException;
 import org.clever.canal.parse.exception.CanalParseException;
 import org.clever.canal.protocol.position.LogPosition;
@@ -55,7 +56,12 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
         this.dataDir = dataDir;
         this.period = period;
         this.memoryLogPositionManager = memoryLogPositionManager;
-        this.dataFileCaches = MigrateMap.makeComputingMap(this::getDataFile);
+        this.dataFileCaches = MigrateMap.makeComputingMap(new CacheLoader<String, File>() {
+            @Override
+            public File load(String destination) {
+                return getDataFile(destination);
+            }
+        });
         this.executorService = Executors.newScheduledThreadPool(1);
         this.persistTasks = Collections.synchronizedSet(new HashSet<>());
     }

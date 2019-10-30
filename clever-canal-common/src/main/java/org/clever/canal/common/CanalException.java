@@ -1,9 +1,6 @@
 package org.clever.canal.common;
 
-import org.apache.commons.lang.exception.NestableRuntimeException;
-
-@SuppressWarnings({"unused"})
-public class CanalException extends NestableRuntimeException {
+public class CanalException extends RuntimeException {
 
     private static final long serialVersionUID = -654893533794556357L;
 

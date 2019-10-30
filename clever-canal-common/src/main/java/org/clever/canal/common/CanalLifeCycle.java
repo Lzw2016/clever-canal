@@ -1,6 +1,5 @@
 package org.clever.canal.common;
 
-@SuppressWarnings("unused")
 public interface CanalLifeCycle {
 
     /**
