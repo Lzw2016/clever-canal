@@ -28,7 +28,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
+        <dependency><!--TODO 移除-->
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
@@ -56,7 +56,7 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-        <dependency>
+        <dependency><!--TODO 移除-->
             <groupId>com.googlecode.aviator</groupId>
             <artifactId>aviator</artifactId>
         </dependency>
@@ -64,7 +64,7 @@
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
         </dependency>
-        <dependency>
+        <dependency><!--TODO 移除-->
             <groupId>oro</groupId>
             <artifactId>oro</artifactId>
         </dependency>
@@ -72,7 +72,7 @@
             <groupId>com.alibaba.fastsql</groupId>
             <artifactId>fastsql</artifactId>
         </dependency>
-        <!--netty-->
+        <!--netty--><!--TODO 移除-->
         <dependency>
             <groupId>org.jboss.netty</groupId>
             <artifactId>netty</artifactId>
