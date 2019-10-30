@@ -13,6 +13,7 @@ import org.clever.canal.instance.core.AbstractCanalInstance;
 import org.clever.canal.instance.manager.model.Canal;
 import org.clever.canal.instance.manager.model.CanalParameter;
 import org.clever.canal.instance.manager.model.CanalParameter.*;
+import org.clever.canal.meta.MemoryMetaManager;
 import org.clever.canal.parse.CanalEventParser;
 import org.clever.canal.parse.ha.CanalHAController;
 import org.clever.canal.parse.ha.HeartBeatHAController;
@@ -22,6 +23,7 @@ import org.clever.canal.parse.inbound.mysql.LocalBinlogEventParser;
 import org.clever.canal.parse.inbound.mysql.MysqlEventParser;
 import org.clever.canal.parse.inbound.mysql.rds.RdsBinlogEventParserProxy;
 import org.clever.canal.parse.index.CanalLogPositionManager;
+import org.clever.canal.parse.index.MemoryLogPositionManager;
 import org.clever.canal.parse.support.AuthenticationInfo;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.sink.entry.EntryEventSink;
@@ -124,8 +126,9 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
     }
 
     protected void initMetaManager() {
-        logger.info("init metaManager begin...");
+        metaManager = new MemoryMetaManager();
 //        TODO lzw
+        logger.info("init metaManager begin...");
 //        MetaMode mode = parameters.getMetaMode();
 //        if (mode.isMemory()) {
 //            metaManager = new MemoryMetaManager();
@@ -416,6 +419,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         logger.info("init logPositionPersistManager begin...");
         IndexMode indexMode = parameters.getIndexMode();
         CanalLogPositionManager logPositionManager = null;
+        logPositionManager = new MemoryLogPositionManager();
 //        TODO lzw
 //        if (indexMode.isMemory()) {
 //            logPositionManager = new MemoryLogPositionManager();

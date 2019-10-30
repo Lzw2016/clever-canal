@@ -1,21 +1,31 @@
 package org.clever.canal;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.clever.canal.filter.aviater.AviaterRegexFilter;
+import org.clever.canal.instance.manager.CanalConfigClient;
+import org.clever.canal.instance.manager.ManagerCanalInstanceGenerator;
+import org.clever.canal.instance.manager.model.Canal;
+import org.clever.canal.instance.manager.model.CanalParameter;
 import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.inbound.mysql.MysqlConnection;
 import org.clever.canal.parse.inbound.mysql.dbsync.LogEventConvert;
 import org.clever.canal.parse.inbound.mysql.dbsync.TableMetaCache;
 import org.clever.canal.parse.inbound.mysql.tsdb.MemoryTableMeta;
 import org.clever.canal.protocol.CanalEntry;
+import org.clever.canal.protocol.ClientIdentity;
+import org.clever.canal.protocol.Message;
 import org.clever.canal.protocol.position.EntryPosition;
+import org.clever.canal.server.embedded.CanalServerWithEmbedded;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -31,7 +41,95 @@ public class Test01 {
     }
 
     @Test
-    public void t3() throws IOException, InterruptedException {
+    public void t2() throws InterruptedException {
+        CanalConfigClient canalConfigClient = new CanalConfigClient() {
+            @Override
+            public Canal findCanal(String destination) {
+                Canal canal = new Canal();
+                canal.setId(1L);
+                canal.setName("test");
+                canal.setDesc("test");
+                // canal.setStatus(CanalStatus.START);
+                canal.setGmtCreate(new Date());
+                canal.setGmtModified(new Date());
+                CanalParameter canalParameter = new CanalParameter();
+                canal.setCanalParameter(canalParameter);
+                canalParameter.setCanalId(1L);
+                canalParameter.setDbAddresses(new ArrayList<InetSocketAddress>() {{
+                    add(new InetSocketAddress("127.0.0.1", 3306));
+                }});
+                canalParameter.setDbUsername("canal");
+                canalParameter.setDbPassword("canal");
+                canalParameter.setSlaveId(123L);
+                canalParameter.setIndexMode(CanalParameter.IndexMode.MEMORY);
+                return canal;
+            }
+
+            @Override
+            public String findFilter(String destination) {
+                return ".*";
+            }
+        };
+
+        ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator();
+        managerCanalInstanceGenerator.setCanalConfigClient(canalConfigClient);
+        CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.instance();
+        canalServerWithEmbedded.setCanalInstanceGenerator(managerCanalInstanceGenerator);
+//        canalServerWithEmbedded.setMetricsPort(13306);
+        canalServerWithEmbedded.start();
+        canalServerWithEmbedded.start("test");
+
+        ClientIdentity clientIdentity = new ClientIdentity();
+        clientIdentity.setClientId((short) 12);
+        clientIdentity.setDestination("test");
+
+        canalServerWithEmbedded.subscribe(clientIdentity);
+
+        Thread thread = new Thread(() -> {
+            for (int i = 0; i < 1000; i++) {
+                try {
+                    Thread.sleep(1000 * 2);
+                } catch (InterruptedException ignored) {
+                }
+                Message message = canalServerWithEmbedded.getWithoutAck(clientIdentity, 1);
+                if (message.getRawEntries() == null || message.getRawEntries().size() <= 0) {
+                    continue;
+                }
+                for (ByteString rawEntry : message.getRawEntries()) {
+                    if (rawEntry == null) {
+                        log.info("rawEntry = {}", rawEntry);
+                        continue;
+                    }
+                    try {
+                        CanalEntry.Entry entry = CanalEntry.Entry.parseFrom(rawEntry);
+                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
+                        CanalEntry.EventType eventType = rowChange.getEventType();
+                        log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
+                        for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
+                            for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
+                                log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
+                            }
+                            log.info("### -----------------------------------------------------------------------------------------");
+                            for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
+                                log.info("### AfterColumn | {}={}", column.getName(), column.getValue());
+                            }
+                        }
+                        log.info("### =============================================================================================");
+                    } catch (InvalidProtocolBufferException e) {
+                        log.error("", e);
+                    }
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+        Thread.sleep(1000 * 1000);
+        log.info("### end");
+        canalServerWithEmbedded.stop();
+    }
+
+    @Test
+    public void t3() throws IOException {
         // 1.构造Mysql连接
         InetSocketAddress address = new InetSocketAddress("127.0.0.1", 3306);
         MysqlConnection connection = new MysqlConnection(address, "canal", "canal", (byte) 33, null);
