@@ -12,7 +12,7 @@ import java.io.IOException;
 /**
  * 默认输出的数据编码为UTF-8，如有需要请正确转码
  */
-@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
+@SuppressWarnings({"UnusedReturnValue"})
 public class MysqlUpdateExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(MysqlUpdateExecutor.class);
@@ -37,8 +37,7 @@ public class MysqlUpdateExecutor {
         PacketManager.writeBody(connector.getChannel(), bodyBytes);
 
         logger.debug("read update result...");
-        byte[] body = PacketManager.readBytes(connector.getChannel(),
-                PacketManager.readHeader(connector.getChannel(), 4).getPacketBodyLength());
+        byte[] body = PacketManager.readBytes(connector.getChannel(), PacketManager.readHeader(connector.getChannel(), 4).getPacketBodyLength());
         if (body[0] < 0) {
             ErrorPacket packet = new ErrorPacket();
             packet.fromBytes(body);

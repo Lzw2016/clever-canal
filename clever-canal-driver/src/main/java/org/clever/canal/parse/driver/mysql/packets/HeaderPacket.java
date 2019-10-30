@@ -17,7 +17,6 @@ import org.clever.canal.common.utils.CanalToStringStyle;
  * follow this section. Think of it as always there. But logically, it
  * "precedes the packet" rather than "is included in the packet".<br>
  */
-@SuppressWarnings("WeakerAccess")
 public class HeaderPacket implements IPacket {
     /**
      * this field indicates the packet length that follows the header, with

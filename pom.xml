@@ -53,6 +53,8 @@
     </distributionManagement>
 
     <modules>
+        <module>clever-canal-common</module>
+        <module>clever-canal-driver</module>
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
         <module>clever-canal-prometheus</module>
@@ -79,6 +81,16 @@
     <dependencyManagement>
         <dependencies>
             <!--当前项目模块-->
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-driver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-core</artifactId>
@@ -352,6 +364,10 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

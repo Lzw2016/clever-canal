@@ -2,6 +2,7 @@ package org.clever.canal;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.clever.canal.filter.aviater.AviaterRegexFilter;
 import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.inbound.mysql.MysqlConnection;
@@ -23,6 +24,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class Test01 {
+
+    @Test
+    public void t1() {
+        log.info("######## {}", RandomUtils.nextInt(0, 10000));
+    }
 
     @Test
     public void t3() throws IOException, InterruptedException {
