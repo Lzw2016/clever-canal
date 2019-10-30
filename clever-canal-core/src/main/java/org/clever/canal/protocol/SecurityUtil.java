@@ -3,8 +3,6 @@ package org.clever.canal.protocol;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <pre>
@@ -16,17 +14,8 @@ import java.util.Map;
  * 3. checktoken vs password
  * </pre>
  */
-@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "WeakerAccess", "unused", "DuplicatedCode", "FinalStaticMethod"})
+@SuppressWarnings({"WeakerAccess"})
 public class SecurityUtil {
-
-    private static char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-    private static Map<Character, Integer> rDigits = new HashMap<>(16);
-
-    static {
-        for (int i = 0; i < digits.length; ++i) {
-            rDigits.put(digits[i], i);
-        }
-    }
 
     public static String md5String(String content) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("md5");
@@ -37,19 +26,10 @@ public class SecurityUtil {
         return byte2HexStr(bt);
     }
 
-    public static final String scrambleGenPass(byte[] pass) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] pass1 = md.digest(pass);
-        md.reset();
-        byte[] pass2 = md.digest(pass1);
-        return SecurityUtil.byte2HexStr(pass2);
-    }
-
     /**
      * server auth check
      */
-    public static final boolean scrambleServerAuth(byte[] token, byte[] pass, byte[] seed)
-            throws NoSuchAlgorithmException {
+    public static boolean scrambleServerAuth(byte[] token, byte[] pass, byte[] seed) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         md.update(seed);
         byte[] pass1 = md.digest(pass);
@@ -60,20 +40,6 @@ public class SecurityUtil {
         md = MessageDigest.getInstance("SHA-1");
         byte[] pass2 = md.digest(pass1);
         return Arrays.equals(pass, pass2);
-    }
-
-    public static final byte[] scramble411(byte[] pass, byte[] seed) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] pass1 = md.digest(pass);
-        md.reset();
-        byte[] pass2 = md.digest(pass1);
-        md.reset();
-        md.update(seed);
-        byte[] pass3 = md.digest(pass2);
-        for (int i = 0; i < pass3.length; i++) {
-            pass3[i] = (byte) (pass3[i] ^ pass1[i]);
-        }
-        return pass3;
     }
 
     /**

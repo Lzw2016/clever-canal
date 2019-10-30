@@ -91,7 +91,7 @@ public class Test01 {
                     Thread.sleep(1000 * 2);
                 } catch (InterruptedException ignored) {
                 }
-                Message message = canalServerWithEmbedded.getWithoutAck(clientIdentity, 1);
+                Message message = canalServerWithEmbedded.get(clientIdentity, 1);
                 if (message.getRawEntries() == null || message.getRawEntries().size() <= 0) {
                     continue;
                 }

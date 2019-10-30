@@ -14,7 +14,6 @@ public class ClientIdentity implements Serializable {
     private String filter;
 
     public ClientIdentity() {
-
     }
 
     public ClientIdentity(String destination, short clientId) {

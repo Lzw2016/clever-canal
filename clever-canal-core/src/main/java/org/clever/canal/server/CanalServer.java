@@ -10,7 +10,13 @@ import org.clever.canal.server.exception.CanalServerException;
 @SuppressWarnings("unused")
 public interface CanalServer extends CanalLifeCycle {
 
+    /**
+     * 启动
+     */
     void start() throws CanalServerException;
 
+    /**
+     * 停止
+     */
     void stop() throws CanalServerException;
 }

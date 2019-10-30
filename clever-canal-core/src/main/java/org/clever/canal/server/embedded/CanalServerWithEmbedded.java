@@ -230,8 +230,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
      * </pre>
      */
     @Override
-    public Message get(ClientIdentity clientIdentity, int batchSize, Long timeout, TimeUnit unit)
-            throws CanalServerException {
+    public Message get(ClientIdentity clientIdentity, int batchSize, Long timeout, TimeUnit unit) throws CanalServerException {
         checkStart(clientIdentity.getDestination());
         checkSubscribe(clientIdentity);
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
@@ -304,8 +303,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
      * </pre>
      */
     @Override
-    public Message getWithoutAck(ClientIdentity clientIdentity, int batchSize, Long timeout, TimeUnit unit)
-            throws CanalServerException {
+    public Message getWithoutAck(ClientIdentity clientIdentity, int batchSize, Long timeout, TimeUnit unit) throws CanalServerException {
         checkStart(clientIdentity.getDestination());
         checkSubscribe(clientIdentity);
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
@@ -323,11 +321,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
                 events = getEvents(canalInstance.getEventStore(), start, batchSize, timeout, unit);
             }
             if (CollectionUtils.isEmpty(events.getEvents())) {
-                // logger.debug("getWithoutAck successfully, clientId:{}
-                // batchSize:{} but result
-                // is null",
-                // clientIdentity.getClientId(),
-                // batchSize);
+                // logger.debug("getWithoutAck successfully, clientId:{} batchSize:{} but result is null", clientIdentity.getClientId(), batchSize);
                 return new Message(-1, true, new ArrayList()); // 返回空包，避免生成batchId，浪费性能
             } else {
                 // 记录到流式信息
