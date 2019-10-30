@@ -55,6 +55,7 @@
     <modules>
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
+        <module>clever-canal-prometheus</module>
         <module>clever-canal-server</module>
     </modules>
 
@@ -86,6 +87,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-node</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-prometheus</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -218,12 +224,6 @@
                 <artifactId>canal.parse</artifactId>
                 <version>${otter.version}</version>
             </dependency>
-            <!--            <dependency>-->
-            <!--                <groupId>com.alibaba.otter</groupId>-->
-            <!--                <artifactId>canal.instance</artifactId>-->
-            <!--                <version>${otter.version}</version>-->
-            <!--                <type>pom</type>-->
-            <!--            </dependency>-->
             <dependency>
                 <groupId>com.alibaba.otter</groupId>
                 <artifactId>canal.instance.core</artifactId>
@@ -315,6 +315,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>1.1.20</version>
+            </dependency>
+            <!--prometheus-->
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient</artifactId>
+                <version>0.7.0</version>
             </dependency>
             <!--jwt-->
             <dependency>

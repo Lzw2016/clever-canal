@@ -10,19 +10,17 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>clever-canal-node</artifactId>
+    <artifactId>clever-canal-prometheus</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.shyiko</groupId>
-            <artifactId>mysql-binlog-connector-java</artifactId>
-            <version>0.20.1</version>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-canal-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.alibaba.otter</groupId>
-            <artifactId>canal.server</artifactId>
-            <version>${otter.version}</version>
+            <groupId>io.prometheus</groupId>
+            <artifactId>simpleclient</artifactId>
         </dependency>
     </dependencies>
 </project>
