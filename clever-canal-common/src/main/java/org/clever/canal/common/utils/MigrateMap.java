@@ -1,11 +1,8 @@
 package org.clever.canal.common.utils;
 
-import com.google.common.base.Function;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 /**
  * 作者：lizw <br/>
@@ -13,15 +10,46 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class MigrateMap {
 
-    public static <K, V> ConcurrentMap<K, V> makeComputingMap(CacheBuilder<Object, Object> cacheBuilder, CacheLoader<K, V> loader) {
-        return cacheBuilder.build(loader).asMap();
+    public static <K, V> ConcurrentMap<K, V> makeComputingMap(int maxInitialCapacity, Function<? super K, ? extends V> mappingFunction) {
+        return new ComputingConcurrentHashMap<>(maxInitialCapacity, mappingFunction);
     }
 
-    public static <K, V> ConcurrentMap<K, V> makeComputingMap(Function<K, V> computingFunction) {
-        return CacheBuilder.newBuilder().build(CacheLoader.from(computingFunction)).asMap();
+    public static <K, V> ConcurrentMap<K, V> makeComputingMap(Function<? super K, ? extends V> computingFunction) {
+        return new ComputingConcurrentHashMap<>(computingFunction);
     }
 
-    public static <K, V> LoadingCache<K, V> makeComputingMap(CacheLoader<? super K, V> loader) {
-        return CacheBuilder.newBuilder().build(loader);
+    @SuppressWarnings("WeakerAccess")
+    public static final class ComputingConcurrentHashMap<K, V> extends ConcurrentHashMap<K, V> {
+
+        private final int maxInitialCapacity;
+        private final Function<? super K, ? extends V> mappingFunction;
+
+        public ComputingConcurrentHashMap(int maxInitialCapacity, Function<? super K, ? extends V> mappingFunction) {
+            super(-1);
+            Assert.notNull(mappingFunction);
+            this.mappingFunction = mappingFunction;
+            this.maxInitialCapacity = maxInitialCapacity;
+        }
+
+        public ComputingConcurrentHashMap(Function<? super K, ? extends V> mappingFunction) {
+            super(-1);
+            Assert.notNull(mappingFunction);
+            this.mappingFunction = mappingFunction;
+            maxInitialCapacity = -1;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public V get(Object key) {
+            V value = super.get(key);
+            if (value == null) {
+                K keyTmp = (K) key;
+                if (maxInitialCapacity > 0 && this.size() > maxInitialCapacity) {
+                    this.clear();
+                }
+                return super.computeIfAbsent(keyTmp, mappingFunction);
+            }
+            return value;
+        }
     }
 }

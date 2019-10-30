@@ -1,6 +1,5 @@
 package org.clever.canal.meta;
 
-import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.clever.canal.common.utils.Assert;
@@ -59,30 +58,17 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
         if (!dataDir.canRead() || !dataDir.canWrite()) {
             throw new CanalMetaManagerException("dir[" + dataDir.getPath() + "] can not read/write");
         }
-        dataFileCaches = MigrateMap.makeComputingMap(new CacheLoader<String, File>() {
-            @Override
-            public File load(String destination) {
-                return getDataFile(destination);
-            }
-        });
+        dataFileCaches = MigrateMap.makeComputingMap(this::getDataFile);
         executor = Executors.newScheduledThreadPool(1);
-        destinations = MigrateMap.makeComputingMap(new CacheLoader<String, List<ClientIdentity>>() {
-            @Override
-            public List<ClientIdentity> load(String destination) {
-                return loadClientIdentity(destination);
-            }
-        });
-        cursors = MigrateMap.makeComputingMap(new CacheLoader<ClientIdentity, Position>() {
-            @Override
-            public Position load(ClientIdentity clientIdentity) {
-                Assert.notNull(clientIdentity);
-                Position position = loadCursor(clientIdentity.getDestination(), clientIdentity);
-                if (position == null) {
-                    // 返回一个空对象标识，避免出现异常
-                    return nullCursor;
-                } else {
-                    return position;
-                }
+        destinations = MigrateMap.makeComputingMap(this::loadClientIdentity);
+        cursors = MigrateMap.makeComputingMap(clientIdentity -> {
+            Assert.notNull(clientIdentity);
+            Position position = loadCursor(clientIdentity.getDestination(), clientIdentity);
+            if (position == null) {
+                // 返回一个空对象标识，避免出现异常
+                return nullCursor;
+            } else {
+                return position;
             }
         });
         updateCursorTasks = Collections.synchronizedSet(new HashSet<>());

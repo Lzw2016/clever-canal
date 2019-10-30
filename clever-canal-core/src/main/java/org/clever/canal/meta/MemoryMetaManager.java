@@ -1,6 +1,5 @@
 package org.clever.canal.meta;
 
-import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
@@ -29,19 +28,9 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
     public void start() {
         super.start();
-        batches = MigrateMap.makeComputingMap(new CacheLoader<ClientIdentity, MemoryClientIdentityBatch>() {
-            @Override
-            public MemoryClientIdentityBatch load(ClientIdentity clientIdentity) {
-                return MemoryClientIdentityBatch.create(clientIdentity);
-            }
-        });
+        batches = MigrateMap.makeComputingMap(MemoryClientIdentityBatch::create);
         cursors = new MapMaker().makeMap();
-        destinations = MigrateMap.makeComputingMap(new CacheLoader<String, List<ClientIdentity>>() {
-            @Override
-            public List<ClientIdentity> load(String destination) {
-                return Lists.newArrayList();
-            }
-        });
+        destinations = MigrateMap.makeComputingMap(destination -> Lists.newArrayList());
     }
 
     public void stop() {
