@@ -25,14 +25,12 @@ public class MigrateMap {
         private final Function<? super K, ? extends V> mappingFunction;
 
         public ComputingConcurrentHashMap(int maxInitialCapacity, Function<? super K, ? extends V> mappingFunction) {
-            super(-1);
             Assert.notNull(mappingFunction);
             this.mappingFunction = mappingFunction;
             this.maxInitialCapacity = maxInitialCapacity;
         }
 
         public ComputingConcurrentHashMap(Function<? super K, ? extends V> mappingFunction) {
-            super(-1);
             Assert.notNull(mappingFunction);
             this.mappingFunction = mappingFunction;
             maxInitialCapacity = -1;

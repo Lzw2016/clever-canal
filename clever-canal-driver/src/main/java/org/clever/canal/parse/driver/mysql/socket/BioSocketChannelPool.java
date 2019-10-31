@@ -7,7 +7,6 @@ import java.net.SocketAddress;
  * 实现channel的管理（监听连接、读数据、回收） 2016-12-28
  * 2018-3-3 保留<code>open</code>减少文件变更数量
  */
-@SuppressWarnings("WeakerAccess")
 public abstract class BioSocketChannelPool {
 
     public static BioSocketChannel open(SocketAddress address) throws Exception {
