@@ -4,7 +4,7 @@ import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.Assert;
 import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.CanalEntry.EventType;
-import org.clever.canal.store.CanalStoreException;
+import org.clever.canal.store.exception.CanalStoreException;
 
 import java.util.ArrayList;
 import java.util.List;

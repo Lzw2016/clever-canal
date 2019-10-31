@@ -2,6 +2,7 @@ package org.clever.canal.store;
 
 import org.clever.canal.common.CanalLifeCycle;
 import org.clever.canal.protocol.position.Position;
+import org.clever.canal.store.exception.CanalStoreException;
 import org.clever.canal.store.model.Events;
 
 import java.util.List;

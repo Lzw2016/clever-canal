@@ -1,4 +1,4 @@
-package org.clever.canal.store;
+package org.clever.canal.store.exception;
 
 import org.clever.canal.common.CanalException;
 
