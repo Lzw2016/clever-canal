@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * store存储数据对象
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused"})
 public class Event implements Serializable {
 
     private static final long serialVersionUID = 1333330351758762739L;

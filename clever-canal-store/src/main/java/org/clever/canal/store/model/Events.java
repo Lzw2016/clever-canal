@@ -11,9 +11,7 @@ import java.util.List;
 /**
  * 代表一组数据对象的集合
  */
-@SuppressWarnings("unused")
 public class Events<EVENT> implements Serializable {
-
     private static final long serialVersionUID = -7337454954300706044L;
 
     private PositionRange positionRange = new PositionRange();

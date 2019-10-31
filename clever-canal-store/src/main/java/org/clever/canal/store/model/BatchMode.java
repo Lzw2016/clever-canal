@@ -3,7 +3,6 @@ package org.clever.canal.store.model;
 /**
  * 批处理模式
  */
-@SuppressWarnings("unused")
 public enum BatchMode {
 
     /**
