@@ -5,7 +5,7 @@ import org.clever.canal.instance.manager.model.Canal;
 /**
  * 对应canal的配置
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused"})
 public class CanalConfigClient {
 
     /**

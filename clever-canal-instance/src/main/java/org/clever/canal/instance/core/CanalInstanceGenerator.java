@@ -1,6 +1,5 @@
 package org.clever.canal.instance.core;
 
-@SuppressWarnings("unused")
 public interface CanalInstanceGenerator {
 
     /**
