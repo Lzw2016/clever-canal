@@ -6,6 +6,7 @@ clever-canal-meta
     需要支持etcd
 
 clever-canal-filter
+    源码分析 - 增加注释                     ### OK
     支持更简单的过滤规则
 
 clever-canal-store
