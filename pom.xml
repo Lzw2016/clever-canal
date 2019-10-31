@@ -63,11 +63,9 @@
         <module>clever-canal-dbsync</module>
         <module>clever-canal-parse</module>
         <module>clever-canal-instance</module>
-
-        <module>clever-canal-core</module>
-        <module>clever-canal-node</module>
-        <module>clever-canal-prometheus</module>
         <module>clever-canal-server</module>
+        <module>clever-canal-prometheus</module>
+        <module>clever-canal-admin</module>
     </modules>
 
     <properties>
@@ -83,7 +81,6 @@
         <mybatis-plus.version>3.1.2</mybatis-plus.version>
         <common.version>1.0.2.RELEASES</common.version>
         <security.version>1.0.1.RELEASES</security.version>
-        <otter.version>1.1.4</otter.version>
         <protobuf.version>3.10.0</protobuf.version>
     </properties>
 
@@ -140,26 +137,14 @@
                 <artifactId>clever-canal-instance</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-
             <dependency>
                 <groupId>org.clever</groupId>
-                <artifactId>clever-canal-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-canal-node</artifactId>
+                <artifactId>clever-canal-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-prometheus</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.clever</groupId>
-                <artifactId>clever-canal-server</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--clever common-->
@@ -218,96 +203,7 @@
                 <artifactId>swagger-models</artifactId>
                 <version>1.5.21</version>
             </dependency>
-            <!--mysql-binlog-connector-->
-            <dependency>
-                <groupId>com.github.shyiko</groupId>
-                <artifactId>mysql-binlog-connector-java</artifactId>
-                <version>0.20.1</version>
-            </dependency>
-            <!--jdbc-client-->
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.12</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zaxxer</groupId>
-                <artifactId>HikariCP</artifactId>
-                <version>3.2.0</version>
-            </dependency>
-            <!--mybatis-plus-->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-annotation</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-core</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-extension</artifactId>
-                <version>${mybatis-plus.version}</version>
-            </dependency>
-            <!--canal otter-->
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.common</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.protocol</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.meta</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.sink</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.store</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.parse</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.instance.core</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.instance.manager</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.server</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba.otter</groupId>
-                <artifactId>canal.deployer</artifactId>
-                <version>${otter.version}</version>
-            </dependency>
-            <!--依赖包-->
+            <!--clever-canal依赖-->
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
@@ -368,11 +264,44 @@
                 <artifactId>druid</artifactId>
                 <version>1.1.20</version>
             </dependency>
-            <!--prometheus-->
             <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient</artifactId>
                 <version>0.7.0</version>
+            </dependency>
+
+            <!--clever-canal-admin依赖-->
+            <!--jdbc-client-->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.12</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>3.2.0</version>
+            </dependency>
+            <!--mybatis-plus-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-core</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-extension</artifactId>
+                <version>${mybatis-plus.version}</version>
             </dependency>
             <!--jwt-->
             <dependency>
@@ -390,6 +319,12 @@
                 <artifactId>jjwt-jackson</artifactId>
                 <version>0.10.5</version>
             </dependency>
+            <!--mysql-binlog-connector-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.github.shyiko</groupId>-->
+            <!--                <artifactId>mysql-binlog-connector-java</artifactId>-->
+            <!--                <version>0.20.1</version>-->
+            <!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 

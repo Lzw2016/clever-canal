@@ -13,4 +13,14 @@
     <artifactId>clever-canal-server</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-canal-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-canal-instance</artifactId>
+        </dependency>
+    </dependencies>
 </project>
