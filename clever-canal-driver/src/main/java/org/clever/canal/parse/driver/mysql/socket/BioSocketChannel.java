@@ -13,7 +13,6 @@ import java.nio.channels.ClosedByInterruptException;
 /**
  * 使用BIO进行dump
  */
-@SuppressWarnings("ConstantConditions")
 public class BioSocketChannel implements SocketChannel {
 
     static final int DEFAULT_CONNECT_TIMEOUT = 10 * 1000;
@@ -63,6 +62,7 @@ public class BioSocketChannel implements SocketChannel {
         return data;
     }
 
+    @SuppressWarnings("ConstantConditions")
     public byte[] read(int readSize, int timeout) throws IOException {
         InputStream input = this.input;
         byte[] data = new byte[readSize];
@@ -94,6 +94,7 @@ public class BioSocketChannel implements SocketChannel {
         return data;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void read(byte[] data, int off, int len, int timeout) throws IOException {
         InputStream input = this.input;

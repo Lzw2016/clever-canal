@@ -5,7 +5,7 @@ import org.clever.canal.parse.driver.mysql.utils.ByteHelper;
 
 import java.io.ByteArrayOutputStream;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess"})
 public class EOFPacket extends PacketWithHeaderPacket {
 
     public byte fieldCount;

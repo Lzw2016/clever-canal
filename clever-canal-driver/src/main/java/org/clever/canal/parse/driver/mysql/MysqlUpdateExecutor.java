@@ -12,7 +12,6 @@ import java.io.IOException;
 /**
  * 默认输出的数据编码为UTF-8，如有需要请正确转码
  */
-@SuppressWarnings({"UnusedReturnValue"})
 public class MysqlUpdateExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(MysqlUpdateExecutor.class);

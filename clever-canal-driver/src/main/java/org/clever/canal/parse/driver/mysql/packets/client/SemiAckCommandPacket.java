@@ -10,7 +10,6 @@ import java.io.IOException;
 /**
  * semi ack command
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class SemiAckCommandPacket extends CommandPacket {
 
     public long binlogPosition;

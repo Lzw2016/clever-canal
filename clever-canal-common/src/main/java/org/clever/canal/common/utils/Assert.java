@@ -28,4 +28,11 @@ public class Assert {
             throw new IllegalArgumentException(message);
         }
     }
+
+    public static <T> T checkNotNull(T reference) {
+        if (reference == null) {
+            throw new NullPointerException();
+        }
+        return reference;
+    }
 }

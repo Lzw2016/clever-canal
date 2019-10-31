@@ -31,19 +31,17 @@ public class UUIDSet {
         return out.toByteArray();
     }
 
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
         if (this == o) return true;
-
+        if (!(o instanceof UUIDSet)) return false;
         UUIDSet us = (UUIDSet) o;
         Collections.sort(intervals);
         Collections.sort(us.intervals);
         return SID.equals(us.SID) && intervals.equals(us.intervals);
     }
 
-    @SuppressWarnings("WeakerAccess")
     public static class Interval implements Comparable<Interval> {
         public long start;
         public long stop;

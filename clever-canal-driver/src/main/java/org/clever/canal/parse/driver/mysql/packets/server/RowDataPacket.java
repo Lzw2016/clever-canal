@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused"})
 public class RowDataPacket extends PacketWithHeaderPacket {
 
     private List<String> columns = new ArrayList<>();

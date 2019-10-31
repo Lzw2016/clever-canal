@@ -6,7 +6,6 @@ import org.clever.canal.parse.driver.mysql.utils.ByteHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class Reply323Packet extends PacketWithHeaderPacket {
 
     public byte[] seed;

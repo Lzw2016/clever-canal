@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class MysqlGTIDSet implements GTIDSet {
-
     public Map<String, UUIDSet> sets;
 
     @Override
@@ -36,11 +34,11 @@ public class MysqlGTIDSet implements GTIDSet {
         }
     }
 
-    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         if (o == null) return false;
         if (this == o) return true;
+        if (!(o instanceof MysqlGTIDSet)) return false;
         MysqlGTIDSet gs = (MysqlGTIDSet) o;
         if (gs.sets == null) return false;
         for (Map.Entry<String, UUIDSet> entry : sets.entrySet()) {

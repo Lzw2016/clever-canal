@@ -118,7 +118,6 @@ public class MysqlConnector {
         }
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isConnected() {
         return this.channel != null && this.channel.isConnected();
     }

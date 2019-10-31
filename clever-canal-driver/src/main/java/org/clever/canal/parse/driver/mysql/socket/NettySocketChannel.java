@@ -17,7 +17,7 @@ import java.net.SocketAddress;
 /**
  * 封装netty的通信channel和数据接收缓存，实现读、写、连接校验的功能。 2016-12-28
  */
-@SuppressWarnings({"SynchronizeOnNonFinalField", "CatchMayIgnoreException", "WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class NettySocketChannel implements SocketChannel {
 
     private static final Logger logger = LoggerFactory.getLogger(SocketChannel.class);
@@ -27,7 +27,7 @@ public class NettySocketChannel implements SocketChannel {
     // < 256 * 256 * 256 = 16MB
     private static final int DEFAULT_MAX_BUFFER_SIZE = 16 * DEFAULT_INIT_BUFFER_SIZE; // 16MB，默认最大缓存大小
     private Channel channel = null;
-    private Object lock = new Object();
+    private final Object lock = new Object();
     private ByteBuf cache = PooledByteBufAllocator.DEFAULT.directBuffer(DEFAULT_INIT_BUFFER_SIZE); // 缓存大小
     private int maxDirectBuffer = cache.maxCapacity();
 
@@ -74,16 +74,17 @@ public class NettySocketChannel implements SocketChannel {
                                             oldCapacity - newCapacity,
                                             newCapacity
                                     );
-                                } catch (OutOfMemoryError ignore) {
+                                } catch (OutOfMemoryError err) {
                                     maxDirectBuffer = oldCapacity; // 未来不再超过当前容量，记录日志后继续
-                                    logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, ignore);
+                                    logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, err);
                                 }
                             }
                         }
                     } else { // 尝试扩容
                         int oldCapacity = cache.capacity();
                         if (oldCapacity < maxDirectBuffer) {
-                            int quarter = (oldCapacity >> 2); // 至少扩容四分之一
+                            // 至少扩容四分之一
+                            int quarter = (oldCapacity >> 2);
                             quarter = ((quarter - 1) / DEFAULT_INIT_BUFFER_SIZE + 1) * DEFAULT_INIT_BUFFER_SIZE; // 对齐
                             deltaSize = ((deltaSize - 1) / quarter + 1) * quarter; // 对齐
                             int newCapacity = oldCapacity + deltaSize;
@@ -114,17 +115,19 @@ public class NettySocketChannel implements SocketChannel {
                                                 oldCapacity,
                                                 newCapacity - oldCapacity,
                                                 newCapacity);
-                                    } catch (OutOfMemoryError ignore) {
-                                        maxDirectBuffer = oldCapacity; // 未来不再超过当前容量，记录日志后继续
-                                        logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, ignore);
+                                    } catch (OutOfMemoryError err) {
+                                        // 未来不再超过当前容量，记录日志后继续
+                                        maxDirectBuffer = oldCapacity;
+                                        logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, err);
                                     }
                                 } else {
                                     maxDirectBuffer = oldCapacity; // 未来不再超过当前容量，记录日志后继续
                                     logger.warn("cache OutOfDirectMemoryError: {} bytes", newCapacity, e);
                                 }
-                            } catch (OutOfMemoryError ignore) {
-                                maxDirectBuffer = oldCapacity; // 未来不再超过当前容量，记录日志后继续
-                                logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, ignore);
+                            } catch (OutOfMemoryError err) {
+                                // 未来不再超过当前容量，记录日志后继续
+                                maxDirectBuffer = oldCapacity;
+                                logger.warn("cache OutOfMemoryError: {} bytes", newCapacity, err);
                             }
                         }
                     }

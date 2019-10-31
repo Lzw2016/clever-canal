@@ -8,7 +8,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * COM_REGISTER_SLAVE
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"unused"})
 public class RegisterSlaveCommandPacket extends CommandPacket {
 
     public String reportHost;

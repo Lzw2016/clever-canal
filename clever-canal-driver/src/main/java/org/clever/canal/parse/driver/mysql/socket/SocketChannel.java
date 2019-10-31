@@ -3,7 +3,6 @@ package org.clever.canal.parse.driver.mysql.socket;
 import java.io.IOException;
 import java.net.SocketAddress;
 
-@SuppressWarnings("unused")
 public interface SocketChannel {
 
     void write(byte[]... buf) throws IOException;

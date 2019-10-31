@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * quit cmd
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"WeakerAccess"})
 public class QuitCommandPacket extends CommandPacket {
 
     public static final byte[] QUIT = new byte[]{1, 0, 0, 0, 1};

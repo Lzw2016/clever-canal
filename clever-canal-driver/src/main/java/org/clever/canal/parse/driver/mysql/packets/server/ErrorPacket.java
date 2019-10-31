@@ -3,7 +3,7 @@ package org.clever.canal.parse.driver.mysql.packets.server;
 import org.clever.canal.parse.driver.mysql.packets.PacketWithHeaderPacket;
 import org.clever.canal.parse.driver.mysql.utils.ByteHelper;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess"})
 public class ErrorPacket extends PacketWithHeaderPacket {
 
     public byte fieldCount;

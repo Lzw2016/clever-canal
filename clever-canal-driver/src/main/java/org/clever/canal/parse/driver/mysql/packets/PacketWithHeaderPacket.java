@@ -1,10 +1,9 @@
 package org.clever.canal.parse.driver.mysql.packets;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.clever.canal.common.utils.Assert;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
-@SuppressWarnings("WeakerAccess")
 public abstract class PacketWithHeaderPacket implements IPacket {
 
     protected HeaderPacket header;
@@ -17,7 +16,7 @@ public abstract class PacketWithHeaderPacket implements IPacket {
     }
 
     public void setHeader(HeaderPacket header) {
-        Preconditions.checkNotNull(header);
+        Assert.checkNotNull(header);
         this.header = header;
     }
 

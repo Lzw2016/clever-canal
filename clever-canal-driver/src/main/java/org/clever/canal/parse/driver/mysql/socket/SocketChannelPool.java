@@ -4,7 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.SocketAddress;
 
-@SuppressWarnings("unused")
 public abstract class SocketChannelPool {
 
     public static SocketChannel open(SocketAddress address) throws Exception {

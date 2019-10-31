@@ -18,7 +18,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * 实现channel的管理（监听连接、读数据、回收） 2016-12-28
  */
-@SuppressWarnings({"rawtypes", "deprecation", "WeakerAccess"})
+@SuppressWarnings("deprecation")
 public abstract class NettySocketChannelPool {
     private static EventLoopGroup group = new NioEventLoopGroup(); // 非阻塞IO线程组
     private static Bootstrap boot = new Bootstrap(); // 主
@@ -37,7 +37,8 @@ public abstract class NettySocketChannelPool {
                 .handler(new ChannelInitializer() {
                     @Override
                     protected void initChannel(Channel ch) {
-                        ch.pipeline().addLast(new BusinessHandler());// 命令过滤和handler添加管理
+                        // 命令过滤和handler添加管理
+                        ch.pipeline().addLast(new BusinessHandler());
                     }
                 });
     }

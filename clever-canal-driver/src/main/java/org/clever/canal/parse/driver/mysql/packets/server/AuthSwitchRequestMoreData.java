@@ -4,7 +4,6 @@ package org.clever.canal.parse.driver.mysql.packets.server;
 import org.clever.canal.parse.driver.mysql.packets.CommandPacket;
 import org.clever.canal.parse.driver.mysql.utils.ByteHelper;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class AuthSwitchRequestMoreData extends CommandPacket {
 
     public int status;
