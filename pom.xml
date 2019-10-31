@@ -59,8 +59,8 @@
         <module>clever-canal-filter</module>
         <module>clever-canal-store</module>
         <module>clever-canal-sink</module>
-
         <module>clever-canal-driver</module>
+        <module>clever-canal-dbsync</module>
 
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
@@ -123,6 +123,13 @@
                 <artifactId>clever-canal-driver</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-dbsync</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-core</artifactId>

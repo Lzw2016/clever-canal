@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * // connection closed.
  * </pre>
  */
-@SuppressWarnings({"unused", "WeakerAccess", "FinalPrivateMethod", "FinalStaticMethod", "SameParameterValue", "BooleanMethodIsAlwaysInverted"})
+@SuppressWarnings({"unused", "WeakerAccess", "FinalPrivateMethod", "FinalStaticMethod", "SameParameterValue", "BooleanMethodIsAlwaysInverted", "DuplicatedCode"})
 public final class DirectLogFetcher extends LogFetcher {
 
     protected static final Logger logger = LoggerFactory.getLogger(DirectLogFetcher.class);

@@ -18,7 +18,7 @@ import java.util.BitSet;
  *
  * @since mysql-5.1.60/sql/log_event.cc - Rows_log_event::print_verbose_one_row
  */
-@SuppressWarnings({"WeakerAccess", "DuplicatedCode", "unused", "DuplicateBranchesInSwitch", "ConstantConditions"})
+@SuppressWarnings({"WeakerAccess", "DuplicatedCode", "unused", "DuplicateBranchesInSwitch", "ConstantConditions", "UnusedReturnValue"})
 public final class RowsLogBuffer {
 
     protected static final Logger logger = LoggerFactory.getLogger(RowsLogBuffer.class);

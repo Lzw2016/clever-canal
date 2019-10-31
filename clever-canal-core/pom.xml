@@ -42,6 +42,10 @@
             <groupId>org.clever</groupId>
             <artifactId>clever-canal-driver</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
+            <artifactId>clever-canal-dbsync</artifactId>
+        </dependency>
         <!-- log -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
