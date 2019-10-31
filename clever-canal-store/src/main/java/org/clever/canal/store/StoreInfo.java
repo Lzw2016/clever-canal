@@ -1,6 +1,6 @@
 package org.clever.canal.store;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class StoreInfo {
 
     private String storeName;

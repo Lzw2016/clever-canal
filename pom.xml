@@ -57,7 +57,9 @@
         <module>clever-canal-protocol</module>
         <module>clever-canal-meta</module>
         <module>clever-canal-filter</module>
+        <module>clever-canal-store</module>
         <module>clever-canal-driver</module>
+
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
         <module>clever-canal-prometheus</module>
@@ -102,6 +104,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-filter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-store</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
