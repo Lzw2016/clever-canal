@@ -1,6 +1,5 @@
 package org.clever.canal.meta;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
 import org.clever.canal.common.utils.Assert;
 import org.clever.canal.common.utils.JsonUtils;
@@ -182,7 +181,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
         if (destinations.containsKey(destination)) {
             synchronized (destination.intern()) { // 基于destination控制一下并发更新
                 data.setDestination(destination);
-                List<FileMetaClientIdentityData> clientDatas = Lists.newArrayList();
+                List<FileMetaClientIdentityData> clientDatas = new ArrayList<>();
                 List<ClientIdentity> clientIdentitys = destinations.get(destination);
                 for (ClientIdentity clientIdentity : clientIdentitys) {
                     FileMetaClientIdentityData clientData = new FileMetaClientIdentityData();
@@ -206,7 +205,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     }
 
     private List<ClientIdentity> loadClientIdentity(String destination) {
-        List<ClientIdentity> result = Lists.newArrayList();
+        List<ClientIdentity> result = new ArrayList<>();
 
         FileMetaInstanceData data = loadDataFromFile(dataFileCaches.get(destination));
         if (data == null) {

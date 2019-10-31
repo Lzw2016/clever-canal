@@ -1,8 +1,5 @@
 package org.clever.canal.meta;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Maps;
 import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.meta.exception.CanalMetaManagerException;
@@ -10,10 +7,8 @@ import org.clever.canal.protocol.ClientIdentity;
 import org.clever.canal.protocol.position.Position;
 import org.clever.canal.protocol.position.PositionRange;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -29,8 +24,8 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
     public void start() {
         super.start();
         batches = MigrateMap.makeComputingMap(MemoryClientIdentityBatch::create);
-        cursors = new MapMaker().makeMap();
-        destinations = MigrateMap.makeComputingMap(destination -> Lists.newArrayList());
+        cursors = new ConcurrentHashMap<>();
+        destinations = MigrateMap.makeComputingMap(destination -> new ArrayList<>());
     }
 
     public void stop() {
@@ -62,7 +57,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
     public synchronized List<ClientIdentity> listAllSubscribeInfo(String destination) throws CanalMetaManagerException {
         // fixed issue #657, fixed ConcurrentModificationException
-        return Lists.newArrayList(destinations.get(destination));
+        return new ArrayList<>(destinations.get(destination));
     }
 
     public Position getCursor(ClientIdentity clientIdentity) throws CanalMetaManagerException {
@@ -112,7 +107,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
     public static class MemoryClientIdentityBatch {
 
         private ClientIdentity clientIdentity;
-        private Map<Long, PositionRange> batches = new MapMaker().makeMap();
+        private Map<Long, PositionRange> batches = new ConcurrentHashMap<>();
         private AtomicLong atomicMaxBatchId = new AtomicLong(1);
 
         public static MemoryClientIdentityBatch create(ClientIdentity clientIdentity) {
@@ -177,10 +172,9 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
 
         public synchronized Map<Long, PositionRange> listAllPositionRange() {
             Set<Long> batchIdSets = batches.keySet();
-            List<Long> batchIds = Lists.newArrayList(batchIdSets);
-            Collections.sort(Lists.newArrayList(batchIds));
-
-            return Maps.newHashMap(batches);
+            List<Long> batchIds = new ArrayList<>(batchIdSets);
+            Collections.sort(new ArrayList<>(batchIds));
+            return new HashMap<>(batches);
         }
 
         public synchronized void clearPositionRanges() {

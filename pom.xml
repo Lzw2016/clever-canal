@@ -55,6 +55,7 @@
     <modules>
         <module>clever-canal-common</module>
         <module>clever-canal-protocol</module>
+        <module>clever-canal-meta</module>
         <module>clever-canal-driver</module>
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
@@ -90,6 +91,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-protocol</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-meta</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
