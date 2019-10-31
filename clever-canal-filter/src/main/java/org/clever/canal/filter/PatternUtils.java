@@ -11,7 +11,7 @@ import java.util.Map;
 public class PatternUtils {
 
     private static Map<String, Pattern> patterns = MigrateMap.makeComputingMap(
-            256,
+            1024,
             pattern -> {
                 try {
                     PatternCompiler pc = new Perl5Compiler();

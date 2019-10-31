@@ -24,6 +24,10 @@
         </dependency>
         <dependency>
             <groupId>org.clever</groupId>
+            <artifactId>clever-canal-filter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
             <artifactId>clever-canal-driver</artifactId>
         </dependency>
         <!-- log -->
@@ -60,17 +64,9 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-        <dependency><!--TODO 移除-->
-            <groupId>com.googlecode.aviator</groupId>
-            <artifactId>aviator</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.lmax</groupId>
             <artifactId>disruptor</artifactId>
-        </dependency>
-        <dependency><!--TODO 移除-->
-            <groupId>oro</groupId>
-            <artifactId>oro</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastsql</groupId>

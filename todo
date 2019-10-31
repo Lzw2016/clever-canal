@@ -7,6 +7,9 @@ clever-canal-protocol
 clever-canal-meta
     需要支持etcd
 
+clever-canal-filter
+    支持更简单的过滤规则
+
 
 -
 
