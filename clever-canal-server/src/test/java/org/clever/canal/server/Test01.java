@@ -21,6 +21,7 @@ import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.server.embedded.CanalServerWithEmbedded;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -38,6 +39,7 @@ public class Test01 {
     @Test
     public void t1() {
         log.info("######## {}", RandomUtils.nextInt(0, 10000));
+        log.info("######## {}", new File("./").getAbsolutePath());
     }
 
     @Test

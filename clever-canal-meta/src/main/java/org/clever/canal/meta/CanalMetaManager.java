@@ -11,10 +11,6 @@ import java.util.Map;
 
 /**
  * meta信息管理器
- *
- * @author jianghang 2012-6-14 下午09:28:48
- * @author zebin.xuzb
- * @version 1.0.0
  */
 @SuppressWarnings("unused")
 public interface CanalMetaManager extends CanalLifeCycle {
@@ -51,43 +47,42 @@ public interface CanalMetaManager extends CanalLifeCycle {
     List<ClientIdentity> listAllSubscribeInfo(String destination) throws CanalMetaManagerException;
 
     /**
-     * 获得该client最新的一个位置
+     * 获得该client的第一个位置的position范围数据
      */
     PositionRange getFirstBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException;
 
     /**
-     * 获得该clientId最新的一个位置
+     * 获得该client最新的一个位置的position范围数据(最后一个位置)
      */
-    PositionRange getLastestBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException;
+    PositionRange getLatestBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException;
 
     /**
-     * 为 client 产生一个唯一、递增的id
+     * 插入batch数据(position范围数据)，返回自动生成的唯一的batchId
      */
     Long addBatch(ClientIdentity clientIdentity, PositionRange positionRange) throws CanalMetaManagerException;
 
     /**
-     * 指定batchId，插入batch数据
+     * 指定batchId，插入batch数据(position范围数据)
      */
-    void addBatch(ClientIdentity clientIdentity, PositionRange positionRange, Long batchId)
-            throws CanalMetaManagerException;
+    void addBatch(ClientIdentity clientIdentity, PositionRange positionRange, Long batchId) throws CanalMetaManagerException;
 
     /**
-     * 根据唯一messageId，查找对应的数据起始信息
+     * 根据唯一batchId，查找对应的 Position范围数据
      */
     PositionRange getBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException;
 
     /**
-     * 对一个batch的确认
+     * 对一个batch的Ack(确认)
      */
     PositionRange removeBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException;
 
     /**
      * 查询当前的所有batch信息
      */
-    Map<Long, PositionRange> listAllBatchs(ClientIdentity clientIdentity) throws CanalMetaManagerException;
+    Map<Long, PositionRange> listAllBatches(ClientIdentity clientIdentity) throws CanalMetaManagerException;
 
     /**
      * 清除对应的batch信息
      */
-    void clearAllBatchs(ClientIdentity clientIdentity) throws CanalMetaManagerException;
+    void clearAllBatches(ClientIdentity clientIdentity) throws CanalMetaManagerException;
 }

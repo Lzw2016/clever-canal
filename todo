@@ -1,10 +1,8 @@
-clever-canal-driver
-    使用 Bio 还是 Netty?
-
 clever-canal-protocol
     源码分析 - 增加注释
 
 clever-canal-meta
+    源码分析 - 增加注释                     ### OK
     需要支持etcd
 
 clever-canal-filter
@@ -12,32 +10,24 @@ clever-canal-filter
 
 clever-canal-store
     源码分析 - 增加注释
+
+clever-canal-sink
+    源码分析 - 增加注释
+
+clever-canal-driver
+    使用 Bio 还是 Netty?
+
+clever-canal-dbsync
+    源码分析 - 增加注释
+
+clever-canal-parse
+    源码分析 - 增加注释 减少依赖
+
+clever-canal-instance
+    源码分析 - 增加注释
+
+clever-canal-server
+    源码分析 - 增加注释
 -
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

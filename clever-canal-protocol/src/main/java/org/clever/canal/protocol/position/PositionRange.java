@@ -6,7 +6,7 @@ import org.clever.canal.common.utils.CanalToStringStyle;
 import java.io.Serializable;
 
 /**
- * 描述一个position范围
+ * 描述一个position范围 (binlog Position 范围)
  */
 @SuppressWarnings("unused")
 public class PositionRange<T extends Position> implements Serializable {

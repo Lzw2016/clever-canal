@@ -13,7 +13,7 @@ import org.clever.canal.instance.core.AbstractCanalInstance;
 import org.clever.canal.instance.manager.model.Canal;
 import org.clever.canal.instance.manager.model.CanalParameter;
 import org.clever.canal.instance.manager.model.CanalParameter.*;
-import org.clever.canal.meta.MemoryMetaManager;
+import org.clever.canal.meta.FileMixedMetaManager;
 import org.clever.canal.parse.CanalEventParser;
 import org.clever.canal.parse.ha.CanalHAController;
 import org.clever.canal.parse.ha.HeartBeatHAController;
@@ -126,7 +126,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
     }
 
     protected void initMetaManager() {
-        metaManager = new MemoryMetaManager();
+        metaManager = new FileMixedMetaManager(new File("./meta-manager"), "meta.dat.json", parameters.getMetaFileFlushPeriod());
 //        TODO lzw
         logger.info("init metaManager begin...");
 //        MetaMode mode = parameters.getMetaMode();

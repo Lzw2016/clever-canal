@@ -6,31 +6,53 @@ import org.clever.canal.common.utils.CanalToStringStyle;
 
 import java.io.Serializable;
 
+/**
+ * 客户端标识
+ */
 @SuppressWarnings("unused")
 public class ClientIdentity implements Serializable {
     private static final long serialVersionUID = -8262100681930834834L;
+
+    /**
+     * 客户端需要订阅的数据源名称
+     */
     private String destination;
+    /**
+     * 客户端ID
+     */
     private short clientId;
+    /**
+     * 客户端过滤配置
+     */
     private String filter;
 
     public ClientIdentity() {
     }
 
+    /**
+     * @param destination 客户端需要订阅的数据源名称
+     * @param clientId    客户端ID
+     */
     public ClientIdentity(String destination, short clientId) {
         this.clientId = clientId;
         this.destination = destination;
     }
 
+    /**
+     * @param destination 客户端需要订阅的数据源名称
+     * @param clientId    客户端ID
+     * @param filter      客户端过滤配置
+     */
     public ClientIdentity(String destination, short clientId, String filter) {
         this.clientId = clientId;
         this.destination = destination;
         this.filter = filter;
     }
 
+    /**
+     * 是否有过滤规则配置
+     */
     public Boolean hasFilter() {
-        if (filter == null) {
-            return false;
-        }
         return StringUtils.isNotBlank(filter);
     }
 

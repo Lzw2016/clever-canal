@@ -149,16 +149,16 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
             // 处理下logManager位点问题
             LogPosition logPosition = logPositionManager.getLatestIndexBy(destination);
             Long timestamp = 0L;
-            if (logPosition != null && logPosition.getPostion() != null) {
-                timestamp = logPosition.getPostion().getTimestamp();
-                EntryPosition position = logPosition.getPostion();
+            if (logPosition != null && logPosition.getPosition() != null) {
+                timestamp = logPosition.getPosition().getTimestamp();
+                EntryPosition position = logPosition.getPosition();
                 LogPosition newLogPosition = new LogPosition();
                 String journalName = position.getJournalName();
                 int sepIdx = journalName.indexOf(".");
                 String fileIndex = journalName.substring(sepIdx + 1);
                 int index = NumberUtils.toInt(fileIndex) + 1;
                 String newJournalName = journalName.substring(0, sepIdx) + "." + StringUtils.leftPad(String.valueOf(index), fileIndex.length(), "0");
-                newLogPosition.setPostion(new EntryPosition(newJournalName, 4L, position.getTimestamp(), position.getServerId()));
+                newLogPosition.setPosition(new EntryPosition(newJournalName, 4L, position.getTimestamp(), position.getServerId()));
                 newLogPosition.setIdentity(logPosition.getIdentity());
                 logPositionManager.persistLogPosition(destination, newLogPosition);
             }

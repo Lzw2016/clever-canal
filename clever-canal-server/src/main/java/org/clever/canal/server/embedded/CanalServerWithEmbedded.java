@@ -41,28 +41,29 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings({"unchecked", "SynchronizationOnLocalVariableOrMethodParameter", "DuplicatedCode", "unused", "WeakerAccess"})
 public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements CanalServer, CanalService {
-
     private static final Logger logger = LoggerFactory.getLogger(CanalServerWithEmbedded.class);
+
+    private static final CanalServerWithEmbedded CANAL_SERVER_WITH_EMBEDDED = new CanalServerWithEmbedded();
+
     private Map<String, CanalInstance> canalInstances;
     // private Map<ClientIdentity, Position> lastRollbackPostions;
     private CanalInstanceGenerator canalInstanceGenerator;
     //    private int metricsPort; TODO lzw
     //    private CanalMetricsService metrics = NopCanalMetricsService.NOP; TODO lzw
     private String user;
-    private String passwd;
+    private String password;
 
-    private static class SingletonHolder {
-        private static final CanalServerWithEmbedded CANAL_SERVER_WITH_EMBEDDED = new CanalServerWithEmbedded();
-    }
 
     public CanalServerWithEmbedded() {
-        // 希望也保留用户new单独实例的需求,兼容历史
     }
 
     public static CanalServerWithEmbedded instance() {
-        return SingletonHolder.CANAL_SERVER_WITH_EMBEDDED;
+        return CANAL_SERVER_WITH_EMBEDDED;
     }
 
+    /**
+     * 初始化 CanalServer
+     */
     public void start() {
         if (!isStart()) {
             super.start();
@@ -107,7 +108,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
     public boolean auth(String user, String passwd, byte[] seed) {
         // 如果user/passwd密码为空,则任何用户账户都能登录
         if ((StringUtils.isEmpty(this.user) || StringUtils.equals(this.user, user))) {
-            if (StringUtils.isEmpty(this.passwd)) {
+            if (StringUtils.isEmpty(this.password)) {
                 return true;
             } else if (StringUtils.isEmpty(passwd)) {
                 // 如果server密码有配置,客户端密码为空,则拒绝
@@ -115,7 +116,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
             }
             try {
                 byte[] passForClient = SecurityUtil.hexStr2Bytes(passwd);
-                return SecurityUtil.scrambleServerAuth(passForClient, SecurityUtil.hexStr2Bytes(this.passwd), seed);
+                return SecurityUtil.scrambleServerAuth(passForClient, SecurityUtil.hexStr2Bytes(this.password), seed);
             } catch (NoSuchAlgorithmException e) {
                 return false;
             }
@@ -123,6 +124,9 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         return false;
     }
 
+    /**
+     * 初始化 destination 对应的 CanalInstance
+     */
     public void start(final String destination) {
         final CanalInstance canalInstance = canalInstances.get(destination);
         if (!canalInstance.isStart()) {
@@ -140,7 +144,10 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         }
     }
 
-    public void stop(String destination) {
+    /**
+     * 停止 destination 对应的 CanalInstance
+     */
+    public void stop(final String destination) {
         CanalInstance canalInstance = canalInstances.remove(destination);
         if (canalInstance != null) {
             if (canalInstance.isStart()) {
@@ -159,7 +166,10 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         }
     }
 
-    public boolean isStart(String destination) {
+    /**
+     * 判断 destination 对应的 CanalInstance 是否正在运行
+     */
+    public boolean isStart(final String destination) {
         return canalInstances.containsKey(destination) && canalInstances.get(destination).isStart();
     }
 
@@ -175,7 +185,6 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         }
         // 执行一下meta订阅
         canalInstance.getMetaManager().subscribe(clientIdentity);
-
         Position position = canalInstance.getMetaManager().getCursor(clientIdentity);
         if (position == null) {
             // 获取一下store中的第一条
@@ -243,7 +252,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
         synchronized (canalInstance) {
             // 获取到流式数据中的最后一批获取的位置
-            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().getLastestBatch(clientIdentity);
+            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().getLatestBatch(clientIdentity);
             if (positionRanges != null) {
                 throw new CanalServerException(String.format("clientId:%s has last batch:[%s] isn't ack , maybe loss data", clientIdentity.getClientId(), positionRanges));
             }
@@ -316,7 +325,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
         synchronized (canalInstance) {
             // 获取到流式数据中的最后一批获取的位置
-            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().getLastestBatch(clientIdentity);
+            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().getLatestBatch(clientIdentity);
             Events<Event> events;
             if (positionRanges != null) { // 存在流数据
                 events = getEvents(canalInstance.getEventStore(), positionRanges.getStart(), batchSize, timeout, unit);
@@ -362,7 +371,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         checkStart(clientIdentity.getDestination());
         checkSubscribe(clientIdentity);
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
-        Map<Long, PositionRange> batchs = canalInstance.getMetaManager().listAllBatchs(clientIdentity);
+        Map<Long, PositionRange> batchs = canalInstance.getMetaManager().listAllBatches(clientIdentity);
         List<Long> result = new ArrayList<>(batchs.keySet());
         Collections.sort(result);
         return result;
@@ -429,7 +438,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         }
         synchronized (canalInstance) {
             // 清除batch信息
-            canalInstance.getMetaManager().clearAllBatchs(clientIdentity);
+            canalInstance.getMetaManager().clearAllBatches(clientIdentity);
             // rollback eventStore中的状态信息
             canalInstance.getEventStore().rollback();
             logger.info("rollback successfully, clientId:{}", new Object[]{clientIdentity.getClientId()});
@@ -546,7 +555,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         this.user = user;
     }
 
-    public void setPasswd(String passwd) {
-        this.passwd = passwd;
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
