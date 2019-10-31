@@ -58,6 +58,8 @@
         <module>clever-canal-meta</module>
         <module>clever-canal-filter</module>
         <module>clever-canal-store</module>
+        <module>clever-canal-sink</module>
+
         <module>clever-canal-driver</module>
 
         <module>clever-canal-core</module>
@@ -109,6 +111,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-store</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-sink</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

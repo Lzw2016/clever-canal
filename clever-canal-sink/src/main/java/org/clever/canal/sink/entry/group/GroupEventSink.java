@@ -17,7 +17,7 @@ import java.util.List;
  *    a. 因为一旦库解析异常，就不会再sink数据，此时groupSize就会一直缺少，就会阻塞其他库的合并，也就是不会有数据写入到store中
  * </pre>
  */
-@SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
+@SuppressWarnings({"unchecked", "unused"})
 public class GroupEventSink extends EntryEventSink {
 
     private int groupSize;

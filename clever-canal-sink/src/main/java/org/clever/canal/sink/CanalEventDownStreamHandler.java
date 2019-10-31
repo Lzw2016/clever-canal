@@ -5,7 +5,6 @@ import org.clever.canal.common.CanalLifeCycle;
 /**
  * 处理下sink时的数据流
  */
-@SuppressWarnings("unused")
 public interface CanalEventDownStreamHandler<T> extends CanalLifeCycle {
 
     /**
