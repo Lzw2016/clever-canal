@@ -9,7 +9,6 @@ import java.io.Serializable;
  * 事件唯一标示
  */
 public abstract class Position implements Serializable {
-
     private static final long serialVersionUID = 2332798099928474975L;
 
     public String toString() {

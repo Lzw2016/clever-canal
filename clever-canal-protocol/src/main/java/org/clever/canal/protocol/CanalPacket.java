@@ -3,6 +3,7 @@
 
 package org.clever.canal.protocol;
 
+@SuppressWarnings("ALL")
 public final class CanalPacket {
   private CanalPacket() {}
   public static void registerAllExtensions(

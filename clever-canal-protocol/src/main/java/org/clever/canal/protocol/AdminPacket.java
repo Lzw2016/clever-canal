@@ -3,6 +3,7 @@
 
 package org.clever.canal.protocol;
 
+@SuppressWarnings("ALL")
 public final class AdminPacket {
   private AdminPacket() {}
   public static void registerAllExtensions(

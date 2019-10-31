@@ -2,7 +2,6 @@ package org.clever.canal.protocol.position;
 
 @SuppressWarnings("unused")
 public class MetaqPosition extends Position {
-
     private static final long serialVersionUID = -8673508769040569273L;
 
     private String topic;

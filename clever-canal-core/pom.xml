@@ -16,6 +16,10 @@
     <dependencies>
         <dependency>
             <groupId>org.clever</groupId>
+            <artifactId>clever-canal-protocol</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.clever</groupId>
             <artifactId>clever-canal-driver</artifactId>
         </dependency>
         <!-- log -->
@@ -31,10 +35,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -84,34 +84,5 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <extensions>
-            <extension>
-                <groupId>kr.motd.maven</groupId>
-                <artifactId>os-maven-plugin</artifactId>
-                <version>1.6.2</version>
-            </extension>
-        </extensions>
-        <plugins>
-            <plugin>
-                <groupId>org.xolstice.maven.plugins</groupId>
-                <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
-                <configuration>
-                    <protoSourceRoot>${project.basedir}/src/main/java/org/clever/canal/protocol/proto</protoSourceRoot>
-                    <!--<outputDirectory>${project.basedir}/src/main/java/org/clever/canal/protocol/</outputDirectory>-->
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <!--<goal>compile</goal>-->
-                            <!--<goal>compile-custom</goal>-->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+
 </project>

@@ -10,8 +10,8 @@ import java.io.Serializable;
  */
 @SuppressWarnings("unused")
 public class PositionRange<T extends Position> implements Serializable {
-
     private static final long serialVersionUID = -9162037079815694784L;
+
     private T start;
     // add by ljh at 2012-09-05，用于记录一个可被ack的位置，保证每次提交到cursor中的位置是一个完整事务的结束
     private T ack;

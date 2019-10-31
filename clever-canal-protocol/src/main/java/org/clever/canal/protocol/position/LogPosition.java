@@ -5,8 +5,8 @@ package org.clever.canal.protocol.position;
  */
 @SuppressWarnings("unused")
 public class LogPosition extends Position {
-
     private static final long serialVersionUID = 3875012010277005819L;
+
     private LogIdentity identity;
     private EntryPosition postion;
 

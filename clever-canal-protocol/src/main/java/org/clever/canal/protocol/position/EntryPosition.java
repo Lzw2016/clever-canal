@@ -3,10 +3,10 @@ package org.clever.canal.protocol.position;
 /**
  * 数据库对象的唯一标示
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public class EntryPosition extends TimePosition {
-
     private static final long serialVersionUID = 81432665066427482L;
+
     public static final int EVENTIDENTITY_SEGMENT = 3;
     public static final char EVENTIDENTITY_SPLIT = (char) 5;
 

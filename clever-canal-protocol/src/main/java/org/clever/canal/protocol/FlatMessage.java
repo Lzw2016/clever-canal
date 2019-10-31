@@ -1,8 +1,7 @@
 package org.clever.canal.protocol;
 
-import com.google.common.collect.Lists;
-
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +62,7 @@ public class FlatMessage implements Serializable {
 
     public void addPkName(String pkName) {
         if (this.pkNames == null) {
-            this.pkNames = Lists.newArrayList();
+            this.pkNames = new ArrayList<>();
         }
         this.pkNames.add(pkName);
     }

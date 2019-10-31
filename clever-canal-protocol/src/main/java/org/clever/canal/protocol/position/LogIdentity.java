@@ -7,8 +7,8 @@ import java.net.InetSocketAddress;
 
 @SuppressWarnings("unused")
 public class LogIdentity extends Position {
-
     private static final long serialVersionUID = 5530225131455662581L;
+
     private InetSocketAddress sourceAddress;    // 链接服务器的地址
     private Long slaveId;                       // 对应的slaveId
 
