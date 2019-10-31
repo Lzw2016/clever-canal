@@ -51,7 +51,7 @@ public class Test01 {
                 canal.setId(1L);
                 canal.setName("test");
                 canal.setDesc("test");
-                // canal.setStatus(CanalStatus.START);
+//                 canal.setStatus(CanalStatus.START);
                 canal.setGmtCreate(new Date());
                 canal.setGmtModified(new Date());
                 CanalParameter canalParameter = new CanalParameter();

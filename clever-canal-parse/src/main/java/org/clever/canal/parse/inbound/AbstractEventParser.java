@@ -210,9 +210,9 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
                         if (parallel) {
                             // build stage processor
                             multiStageCoprocessor = buildMultiStageCoprocessor();
-                            if (isGTIDMode() && StringUtils.isNotEmpty(startPosition.getGtid())) {
+                            if (isGTIDMode() && StringUtils.isNotEmpty(startPosition.getGtId())) {
                                 // 判断所属instance是否启用GTID模式，是的话调用ErosaConnection中GTID对应方法dump数据
-                                GTIDSet gtidSet = MysqlGTIDSet.parse(startPosition.getGtid());
+                                GTIDSet gtidSet = MysqlGTIDSet.parse(startPosition.getGtId());
                                 ((MysqlMultiStageCoprocessor) multiStageCoprocessor).setGtidSet(gtidSet);
                                 multiStageCoprocessor.start();
                                 erosaConnection.dump(gtidSet, multiStageCoprocessor);
@@ -225,9 +225,9 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
                                 }
                             }
                         } else {
-                            if (isGTIDMode() && StringUtils.isNotEmpty(startPosition.getGtid())) {
+                            if (isGTIDMode() && StringUtils.isNotEmpty(startPosition.getGtId())) {
                                 // 判断所属instance是否启用GTID模式，是的话调用ErosaConnection中GTID对应方法dump数据
-                                erosaConnection.dump(MysqlGTIDSet.parse(startPosition.getGtid()), sinkHandler);
+                                erosaConnection.dump(MysqlGTIDSet.parse(startPosition.getGtId()), sinkHandler);
                             } else {
                                 if (StringUtils.isEmpty(startPosition.getJournalName()) && startPosition.getTimestamp() != null) {
                                     erosaConnection.dump(startPosition.getTimestamp(), sinkHandler);
@@ -384,7 +384,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
         // add serverId at 2016-06-28
         position.setServerId(entry.getHeader().getServerId());
         // set gtid
-        position.setGtid(entry.getHeader().getGtid());
+        position.setGtId(entry.getHeader().getGtid());
         logPosition.setPosition(position);
         LogIdentity identity = new LogIdentity(runningInfo.getAddress(), -1L);
         logPosition.setIdentity(identity);

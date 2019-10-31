@@ -7,7 +7,13 @@ package org.clever.canal.protocol.position;
 public class LogPosition extends Position {
     private static final long serialVersionUID = 3875012010277005819L;
 
+    /**
+     * MySql服务器标识
+     */
     private LogIdentity identity;
+    /**
+     * binlog 位置信息
+     */
     private EntryPosition position;
 
     public LogIdentity getIdentity() {

@@ -134,7 +134,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
                                         cursor.getPosition().getPosition(),
                                         cursor.getPosition().getTimestamp(),
                                         cursor.getPosition().getServerId(),
-                                        cursor.getPosition().getGtid(),
+                                        cursor.getPosition().getGtId(),
                                         cursor.getIdentity().getSourceAddress().toString()
                                 );
                             }

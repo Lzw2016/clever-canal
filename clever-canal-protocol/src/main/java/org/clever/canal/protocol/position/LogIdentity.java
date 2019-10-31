@@ -5,12 +5,21 @@ import org.clever.canal.common.utils.CanalToStringStyle;
 
 import java.net.InetSocketAddress;
 
+/**
+ *
+ */
 @SuppressWarnings("unused")
 public class LogIdentity extends Position {
     private static final long serialVersionUID = 5530225131455662581L;
 
-    private InetSocketAddress sourceAddress;    // 链接服务器的地址
-    private Long slaveId;                       // 对应的slaveId
+    /**
+     * 链接服务器的地址
+     */
+    private InetSocketAddress sourceAddress;
+    /**
+     * 对应的slaveId(注：这个值没有意义，赋值永远是-1，没有读取)
+     */
+    private Long slaveId;
 
     public LogIdentity() {
     }
@@ -63,5 +72,4 @@ public class LogIdentity extends Position {
             return other.sourceAddress == null;
         } else return sourceAddress.equals(other.sourceAddress);
     }
-
 }

@@ -4,8 +4,10 @@ package org.clever.canal.common;
  * 基本实现
  */
 public abstract class AbstractCanalLifeCycle implements CanalLifeCycle {
-
-    protected volatile boolean running = false; // 是否处于运行中
+    /**
+     * 是否处于运行中
+     */
+    protected volatile boolean running = false;
 
     public boolean isStart() {
         return running;

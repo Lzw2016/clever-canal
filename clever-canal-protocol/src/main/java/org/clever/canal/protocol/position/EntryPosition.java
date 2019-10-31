@@ -1,21 +1,33 @@
 package org.clever.canal.protocol.position;
 
 /**
- * 数据库对象的唯一标示
+ * 数据库对象的唯一标示（binlog位置信息）
  */
 @SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
 public class EntryPosition extends TimePosition {
     private static final long serialVersionUID = 81432665066427482L;
 
-    public static final int EVENTIDENTITY_SEGMENT = 3;
-    public static final char EVENTIDENTITY_SPLIT = (char) 5;
-
+    /**
+     * 包含标识(MemoryEventStoreWithBuffer 使用)
+     */
     private boolean included = false;
+    /**
+     * binlog 文件名称(如：mysql-bin.000027)
+     */
     private String journalName;
+    /**
+     * 读取 binlog 文件位置
+     */
     private Long position;
     // add by agapple at 2016-06-28
-    private Long serverId = null; // 记录一下位点对应的serverId
-    private String gtid = null;
+    /**
+     * Mysql Server Id (记录一下位点对应的serverId)
+     */
+    private Long serverId = null;
+    /**
+     * 全局事务ID
+     */
+    private String gtId = null;
 
     public EntryPosition() {
         super(null);
@@ -72,12 +84,12 @@ public class EntryPosition extends TimePosition {
         this.serverId = serverId;
     }
 
-    public String getGtid() {
-        return gtid;
+    public String getGtId() {
+        return gtId;
     }
 
-    public void setGtid(String gtid) {
-        this.gtid = gtid;
+    public void setGtId(String gtId) {
+        this.gtId = gtId;
     }
 
     @Override

@@ -272,7 +272,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         long next = current;
         long end = current;
         // 如果startPosition为null，说明是第一次，默认+1处理
-        if (startPosition == null || !startPosition.getPosition().isIncluded()) { // 第一次订阅之后，需要包含一下start位置，防止丢失第一条记录
+        // 第一次订阅之后，需要包含一下start位置，防止丢失第一条记录
+        if (startPosition == null || !startPosition.getPosition().isIncluded()) {
             next = next + 1;
         }
 
@@ -362,18 +363,18 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             long firstSeqeuence = ackSequence.get();
             if (firstSeqeuence == INIT_SEQUENCE && firstSeqeuence < putSequence.get()) {
                 // 没有ack过数据
-                Event event = entries[getIndex(firstSeqeuence + 1)]; // 最后一次ack为-1，需要移动到下一条,included
-                // = false
+                Event event = entries[getIndex(firstSeqeuence + 1)];
+                // 最后一次ack为-1，需要移动到下一条,included = false
                 return CanalEventUtils.createPosition(event, false);
             } else if (firstSeqeuence > INIT_SEQUENCE && firstSeqeuence < putSequence.get()) {
                 // ack未追上put操作
-                Event event = entries[getIndex(firstSeqeuence)]; // 最后一次ack的位置数据,需要移动到下一条,included
-                // = false
+                Event event = entries[getIndex(firstSeqeuence)];
+                // 最后一次ack的位置数据,需要移动到下一条,included = false
                 return CanalEventUtils.createPosition(event, false);
             } else if (firstSeqeuence > INIT_SEQUENCE && firstSeqeuence == putSequence.get()) {
                 // 已经追上，store中没有数据
-                Event event = entries[getIndex(firstSeqeuence)]; // 最后一次ack的位置数据，和last为同一条，included
-                // = false
+                Event event = entries[getIndex(firstSeqeuence)];
+                // 最后一次ack的位置数据，和last为同一条，included = false
                 return CanalEventUtils.createPosition(event, false);
             } else {
                 // 没有任何数据
@@ -390,13 +391,13 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         try {
             long latestSequence = putSequence.get();
             if (latestSequence > INIT_SEQUENCE && latestSequence != ackSequence.get()) {
-                Event event = entries[(int) putSequence.get() & indexMask]; // 最后一次写入的数据，最后一条未消费的数据
+                Event event = entries[(int) putSequence.get() & indexMask];
+                // 最后一次写入的数据，最后一条未消费的数据
                 return CanalEventUtils.createPosition(event, true);
             } else if (latestSequence > INIT_SEQUENCE && latestSequence == ackSequence.get()) {
                 // ack已经追上了put操作
-                Event event = entries[(int) putSequence.get() & indexMask]; // 最后一次写入的数据，included
-                // =
-                // false
+                Event event = entries[(int) putSequence.get() & indexMask];
+                // 最后一次写入的数据，included = false
                 return CanalEventUtils.createPosition(event, false);
             } else {
                 // 没有任何数据
