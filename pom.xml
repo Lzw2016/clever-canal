@@ -61,6 +61,7 @@
         <module>clever-canal-sink</module>
         <module>clever-canal-driver</module>
         <module>clever-canal-dbsync</module>
+        <module>clever-canal-parse</module>
 
         <module>clever-canal-core</module>
         <module>clever-canal-node</module>
@@ -126,6 +127,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-dbsync</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-parse</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

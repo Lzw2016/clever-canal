@@ -66,8 +66,7 @@ public class HttpHelper {
                 return EntityUtils.toByteArray(response.getEntity());
             } else {
                 String errorMsg = EntityUtils.toString(response.getEntity());
-                throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode
-                        + ", error msg=" + errorMsg);
+                throw new RuntimeException("requestGet remote error, url=" + uri.toString() + ", code=" + statusCode + ", error msg=" + errorMsg);
             }
         } finally {
             httpGet.releaseConnection();

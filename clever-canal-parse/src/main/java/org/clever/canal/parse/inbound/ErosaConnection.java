@@ -7,7 +7,6 @@ import java.io.IOException;
 /**
  * 通用的Erosa的链接接口, 用于一般化处理mysql/oracle的解析过程
  */
-@SuppressWarnings("unused")
 public interface ErosaConnection {
 
     void connect() throws IOException;

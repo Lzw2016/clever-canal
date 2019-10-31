@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * 处理table meta解析和缓存
  */
-@SuppressWarnings({"WeakerAccess", "UnstableApiUsage", "UnusedReturnValue", "StatementWithEmptyBody", "unused", "NullableProblems"})
+@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "StatementWithEmptyBody", "unused", "NullableProblems"})
 public class TableMetaCache {
 
     public static final String COLUMN_NAME = "COLUMN_NAME";

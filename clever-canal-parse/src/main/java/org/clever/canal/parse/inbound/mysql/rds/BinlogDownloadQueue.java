@@ -33,7 +33,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-@SuppressWarnings({"WeakerAccess", "ConstantConditions", "ResultOfMethodCallIgnored"})
+@SuppressWarnings({"WeakerAccess", "ConstantConditions", "ResultOfMethodCallIgnored", "UnusedAssignment", "UnusedReturnValue"})
 public class BinlogDownloadQueue {
 
     private static final Logger logger = LoggerFactory.getLogger(BinlogDownloadQueue.class);

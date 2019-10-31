@@ -1,7 +1,5 @@
 package org.clever.canal.parse.inbound.mysql.tsdb.dao;
 
-import com.google.common.collect.Maps;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +7,7 @@ import java.util.List;
 /**
  * canal数据的存储 TODO lzw
  */
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "UnusedReturnValue", "unused"})
 public class MetaHistoryDAO extends MetaBaseDAO {
 
     public Long insert(MetaHistoryDO metaDO) {
@@ -18,7 +16,7 @@ public class MetaHistoryDAO extends MetaBaseDAO {
     }
 
     public List<MetaHistoryDO> findByTimestamp(String destination, Long snapshotTimestamp, Long timestamp) {
-        HashMap params = Maps.newHashMapWithExpectedSize(2);
+        HashMap<String, Object> params = new HashMap<>();
         params.put("destination", destination);
         params.put("snapshotTimestamp", snapshotTimestamp == null ? 0L : snapshotTimestamp);
         params.put("timestamp", timestamp == null ? 0L : timestamp);
@@ -27,7 +25,7 @@ public class MetaHistoryDAO extends MetaBaseDAO {
     }
 
     public Integer deleteByName(String destination) {
-        HashMap params = Maps.newHashMapWithExpectedSize(2);
+        HashMap<String, Object> params = new HashMap<>();
         params.put("destination", destination);
 //        return getSqlMapClientTemplate().delete("meta_history.deleteByName", params);
         return 0;
@@ -37,7 +35,7 @@ public class MetaHistoryDAO extends MetaBaseDAO {
      * 删除interval秒之前的数据
      */
     public Integer deleteByTimestamp(String destination, int interval) {
-        HashMap params = Maps.newHashMapWithExpectedSize(2);
+        HashMap<String, Object> params = new HashMap<>();
         long timestamp = System.currentTimeMillis() - interval * 1000;
         params.put("timestamp", timestamp);
         params.put("destination", destination);

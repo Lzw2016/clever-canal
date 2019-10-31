@@ -10,8 +10,8 @@ import java.sql.SQLException;
 /**
  * TODO lzw
  */
-@SuppressWarnings("deprecation")
-public class MetaBaseDAO  {
+@SuppressWarnings({"WeakerAccess", "RedundantThrows", "unused"})
+public class MetaBaseDAO {
 //    extends SqlMapClientDaoSupport
 
     protected boolean isH2 = false;
