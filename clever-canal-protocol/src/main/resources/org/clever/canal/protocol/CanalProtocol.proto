@@ -1,0 +1,207 @@
+syntax = "proto3";
+package org.clever.canal.protocol;
+
+option java_package = "org.clever.canal.protocol";
+option java_outer_classname = "CanalPacket";
+option optimize_for = SPEED;
+option java_multiple_files = false;
+
+// 使用的压缩算法类型
+enum Compression {
+    // 为了兼容 proto2
+    COMPRESSION_TYPE_COMPATIBLE_PROTO2 = 0;
+    // 不压缩
+    NONE = 1;
+    // zlib 压缩
+    ZLIB = 2;
+    // gzip 压缩
+    GZIP = 3;
+    // lzf 压缩
+    LZF = 4;
+}
+
+// 数据Packet类型
+enum PacketType {
+    // 为了兼容 proto2
+    PACKET_TYPE_COMPATIBLE_PROTO2 = 0;
+    // 连接握手
+    HANDSHAKE = 1;
+    // 客户端授权
+    CLIENT_AUTHENTICATION = 2;
+    // ack
+    ACK = 3;
+    // subscription(订阅)
+    SUBSCRIPTION = 4;
+    // unsubscription(取消订阅)
+    UNSUBSCRIPTION = 5;
+    // Get(PullRequest)
+    GET = 6;
+    // messages
+    MESSAGES = 7;
+    // client ack
+    CLIENT_ACK = 8;
+    // shutdown(关闭)
+    SHUTDOWN = 9;
+    // dump (integration)
+    DUMP = 10;
+    // 心跳
+    PACKET_HEARTBEAT = 11;
+    // client rollback
+    CLIENT_ROLLBACK = 12;
+}
+
+// Packet数据
+message Packet {
+    //[default = 17];
+    oneof magic_number_present {
+        int32 magic_number = 1;
+    }
+    // version [default = 1];
+    oneof version_present {
+        int32 version = 2;
+    };
+    // 数据Packet类型
+    PacketType type = 3;
+    // 压缩算法 [default = NONE];
+    oneof compression_present {
+        Compression compression = 4;
+    }
+    // 数据Body
+    bytes body = 5;
+}
+
+// 心跳数据
+message HeartBeat {
+    // 发送时间搓
+    int64 sendTimestamp = 1;
+    // 开始时间搓
+    int64 startTimestamp = 2;
+}
+
+// 握手数据
+message Handshake {
+    // 通信编码 [default = "utf8"];
+    oneof communicationEncoding_present {
+        string communicationEncoding = 1;
+    }
+    // 心跳数据
+    bytes seeds = 2;
+    // 支持(使用)的压缩算法
+    Compression supportedCompressions = 3;
+}
+
+// 客户端授权数据
+message ClientAuth {
+    // 用户名
+    string username = 1;
+    // 密码(握手消息种子散列密码)
+    bytes password = 2;
+    // 网络读取超时时间(单位是秒) [default = 0]
+    oneof netReadTimeout_present {
+        int32 netReadTimeout = 3;
+    }
+    // 网络写入超时时间(单位是秒) [default = 0];
+    oneof netWriteTimeout_present {
+        int32 netWriteTimeout = 4;
+    }
+    // 数据源名称
+    string destination = 5;
+    // 客户端ID
+    string clientId = 6;
+    // 过滤字符串
+    string filter = 7;
+    // 开始时间
+    int64 startTimestamp = 8;
+}
+
+// Ack数据
+message Ack {
+    // 错误code [default = 0]
+    oneof errorCode_present {
+        int32 errorCode = 1;
+    }
+    // 错误消息
+    string errorMessage = 2;
+}
+
+// Client Ack数据
+message ClientAck {
+    // 据源名称
+    string destination = 1;
+    // 客户端ID
+    string clientId = 2;
+    // batch Id
+    int64 batchId = 3;
+}
+
+// 订阅数据(subscription)
+message Sub {
+    // 据源名称
+    string destination = 1;
+    // 客户端ID
+    string clientId = 2;
+    // 过滤字符串
+    string filter = 7;
+}
+
+// 取消订阅数据(Unsubscription)
+message Unsub {
+    // 据源名称
+    string destination = 1;
+    // 客户端ID
+    string clientId = 2;
+    // 过滤字符串
+    string filter = 7;
+}
+
+// 拉取数据请求(PullRequest)
+message Get {
+    // 据源名称
+    string destination = 1;
+    // 客户端ID
+    string clientId = 2;
+    // 读取数据量
+    int32 fetchSize = 3;
+    // 超时时间 默认-1时代表不控制 [default = -1]
+    oneof timeout_present {
+        int64 timeout = 4;
+    }
+    // 超时时间单位 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天 [default = 2]
+    oneof unit_present {
+        int32 unit = 5;
+    }
+    // 是否自动ack [default = false]
+    oneof autoAck_present {
+        bool autoAck = 6;
+    }
+}
+
+// 消息数据
+message Messages {
+    // batch Id
+    int64 batchId = 1;
+    // messages内容
+    repeated bytes messages = 2;
+}
+
+// Dump数据(TBD when new packets are required)
+message Dump {
+    // binlog文件名称
+    string journal = 1;
+    // binlog位置
+    int64 position = 2;
+    // 时间搓 [default = 0]
+    oneof timestamp_present {
+        int64 timestamp = 3;
+    }
+}
+
+// Client Rollback数据
+message ClientRollback {
+    // 据源名称
+    string destination = 1;
+    // 客户端ID
+    string clientId = 2;
+    // batch Id
+    int64 batchId = 3;
+}

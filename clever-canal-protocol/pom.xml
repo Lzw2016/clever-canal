@@ -38,8 +38,8 @@
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>0.6.1</version>
                 <configuration>
-                    <protoSourceRoot>${project.basedir}/src/main/java/org/clever/canal/protocol/proto</protoSourceRoot>
-                    <outputDirectory>${project.basedir}/src/main/resources/proto/</outputDirectory>
+                    <protoSourceRoot>${project.basedir}/src/main/resources/org/clever/canal/protocol</protoSourceRoot>
+                    <outputDirectory>${project.basedir}/src/test/java/</outputDirectory>
                     <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
                     <pluginId>grpc-java</pluginId>
                 </configuration>

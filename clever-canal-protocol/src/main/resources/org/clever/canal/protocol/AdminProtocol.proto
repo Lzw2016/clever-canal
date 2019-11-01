@@ -1,0 +1,109 @@
+syntax = "proto3";
+package org.clever.canal.protocol;
+
+option java_package = "org.clever.canal.protocol";
+option java_outer_classname = "AdminPacket";
+option optimize_for = SPEED;
+option java_multiple_files = false;
+
+// 数据Packet类型
+enum PacketTypeAdmin {
+    // 为了兼容 proto2
+    ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2 = 0;
+    // 连接握手
+    ADMIN_HANDSHAKE = 1;
+    // 客户端授权
+    ADMIN_CLIENT_AUTHENTICATION = 2;
+    // ack
+    ADMIN_ACK = 3;
+    // server
+    ADMIN_SERVER = 4;
+    // instance
+    ADMIN_INSTANCE = 5;
+    // log
+    ADMIN_LOG = 6;
+}
+
+// Packet数据
+message PacketAdmin {
+    // [default = 17];
+    oneof magic_number_present {
+        int32 magic_number = 1;
+    }
+    // Version [default = 1]
+    oneof version_present {
+        int32 version = 2;
+    };
+    // 数据Packet类型
+    PacketTypeAdmin type = 3;
+    // 数据Body
+    bytes body = 4;
+}
+
+// Ack数据
+message AckAdmin {
+    // 错误code [default = 0]
+    oneof errorCode_present {
+        int32 errorCode = 1;
+    }
+    // 错误消息
+    string message = 2;
+}
+
+// 握手数据
+message HandshakeAdmin {
+    // 通信编码 [default = "utf8"];
+    oneof communicationEncoding_present {
+        string communicationEncoding = 1;
+    }
+    // 心跳数据
+    bytes seeds = 2;
+}
+
+// 客户端授权数据
+message ClientAuthAdmin {
+    // 用户名
+    string username = 1;
+    // 密码(握手消息种子散列密码)
+    bytes password = 2;
+    // 网络读取超时时间(单位是秒) [default = 0]
+    oneof net_read_timeout_present {
+        int32 netReadTimeout = 3;
+    }
+    // 网络写入超时时间(单位是秒) [default = 0];
+    oneof netWriteTimeout_present {
+        int32 netWriteTimeout = 4;
+    }
+}
+
+// Admin控制台操作数据
+message ServerAdmin {
+    // 操作类型 check/start/stop/restart/list
+    string action = 1;
+}
+
+// Instance Admin 数据
+message InstanceAdmin {
+    string destination = 1;
+    // 操作类型 check/start/stop/reload
+    string action = 2;
+}
+
+// Admin控制台日志
+message LogAdmin {
+    // 日志类型 canal/instance
+    string type = 1;
+    //
+    string action = 2;
+
+    oneof destination_present {
+        string destination = 3;
+    }
+    oneof file_present {
+        string file = 4;
+    }
+    // 日志行数 默认tail 100行，最大不超过4MB
+    oneof count_present {
+        int32 count = 5;
+    }
+}

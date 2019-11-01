@@ -1,0 +1,205 @@
+syntax = "proto3";
+package org.clever.canal.protocol;
+
+option java_package = "org.clever.canal.protocol";
+option java_outer_classname = "CanalEntry";
+option optimize_for = SPEED;
+option java_multiple_files = false;
+
+// 打散后的事件类型，主要用于标识事务的开始，变更数据，结束
+enum EntryType {
+    // 为了兼容 proto2
+    ENTRY_TYPE_COMPATIBLE_PROTO2 = 0;
+    // 事件开始
+    TRANSACTION_BEGIN = 1;
+    // 行数据
+    ROW_DATA = 2;
+    // 事件结束
+    TRANSACTION_END = 3;
+    // 心跳类型，内部使用，外部暂不可见，可忽略
+    ENTRY_HEARTBEAT = 4;
+    // 全局事务 GtID log
+    GT_ID_LOG = 5;
+}
+
+// 事件类型
+enum EventType {
+    // 为了兼容 proto2
+    EVENT_TYPE_COMPATIBLE_PROTO2 = 0;
+    // insert 事件
+    INSERT = 1;
+    // update 事件
+    UPDATE = 2;
+    // delete 事件
+    DELETE = 3;
+    // create 事件
+    CREATE = 4;
+    // alter 事件
+    ALTER = 5;
+    // erase 事件
+    ERASE = 6;
+    // query 事件
+    QUERY = 7;
+    // truncate 事件
+    TRUNCATE = 8;
+    // rename 事件
+    RENAME = 9;
+    // create index 事件
+    C_INDEX = 10;
+    // delete index 事件
+    D_INDEX = 11;
+    // 全局事务 GtID 事件
+    GT_ID = 12;
+    // XA分布式事务 commit 事件
+    XA_COMMIT = 13;
+    // XA分布式事务 rollback 事件
+    XA_ROLLBACK = 14;
+    // master heartbeat master心跳 事件
+    M_HEARTBEAT = 15;
+}
+
+// 数据库类型
+enum Type {
+    // 为了兼容 proto2
+    TYPE_COMPATIBLE_PROTO2 = 0;
+    // oracle 数据库
+    ORACLE = 1;
+    // mysql 数据库
+    MYSQL = 2;
+    // PostgreSQL 数据库
+    PgSQL = 3;
+}
+
+// 预留扩展 key - value
+message Pair {
+    string key = 1;
+    string value = 2;
+}
+
+// 协议头部
+message Header {
+    // 协议的版本号 [default = 1]
+    oneof version_present {
+        int32 version = 1;
+    }
+    // binlog/redolog 文件名
+    string logfileName = 2;
+    // binlog/redolog 文件的偏移位置
+    int64 logfileOffset = 3;
+    // 服务端serverId
+    int64 serverId = 4;
+    // 变更数据的编码
+    string serverEncode = 5;
+    // 变更数据的执行时间
+    int64 executeTime = 6;
+    // 变更数据的来源 [default = MYSQL]
+    oneof sourceType_present {
+        Type sourceType = 7;
+    }
+    // 变更数据的 schemaName
+    string schemaName = 8;
+    // 变更数据的 tableName
+    string tableName = 9;
+    // 每个event的长度
+    int64 eventLength = 10;
+    // 数据变更类型 [default = UPDATE]
+    oneof eventType_present {
+        EventType eventType = 11;
+    }
+    // 预留扩展
+    repeated Pair props = 12;
+    // 当前事务的(全局事务ID) gtId
+    string gtId = 13;
+}
+
+// 解析binlog数据对用的实体
+message Entry {
+    // 协议头部信息
+    Header header = 1;
+    // 打散后的事件类型 [default = ROW_DATA]
+    oneof entryType_present {
+        EntryType entryType = 2;
+    }
+    // 传输的二进制数组
+    bytes storeValue = 3;
+}
+
+// 每个字段的数据结构
+message Column {
+    // 表字段下标位置
+    int32 index = 1;
+    // 表字段java中类型
+    int32 sqlType = 2;
+    // 表字段名称(忽略大小写),在mysql中是没有的
+    string name = 3;
+    // 是否是主键
+    bool isKey = 4;
+    // 如果EventType=UPDATE,用于标识这个字段值是否有修改
+    bool updated = 5;
+    // 标识是否为空 [default = false]
+    oneof isNull_present {
+        bool isNull = 6;
+    }
+    // 预留扩展
+    repeated Pair props = 7;
+    // 字段值 timestamp/Datetime 是一个时间格式的文本
+    string value = 8;
+    // 对应数据对象原始长度
+    int32 length = 9;
+    // 字段mysql类型
+    string mysqlType = 10;
+}
+
+// 行数据(包含更新之前 和 更新之后的数据)
+message RowData {
+    // 字段信息，增量数据(修改前,删除前)
+    repeated Column beforeColumns = 1;
+    // 字段信息，增量数据(修改后,新增后)
+    repeated Column afterColumns = 2;
+    // 预留扩展
+    repeated Pair props = 3;
+}
+
+// 每行变更数据的数据结构
+message RowChange {
+    // tableId 由数据库产生
+    int64 tableId = 1;
+    // 数据变更类型 [default = UPDATE]
+    oneof eventType_present {
+        EventType eventType = 2;
+    }
+    // 标识是否是ddl语句 [default = false]
+    oneof isDdl_present {
+        bool isDdl = 10;
+    }
+    // ddl/query 的sql语句
+    string sql = 11;
+    // 一次数据库变更可能存在多行
+    repeated RowData rowDataList = 12;
+    // 预留扩展
+    repeated Pair props = 13;
+    // ddl/query 的schemaName，会存在跨库ddl，需要保留执行ddl的当前 schemaName
+    string ddlSchemaName = 14;
+}
+
+// 开始事务的一些信息
+message TransactionBegin {
+    // 已废弃，请使用header里的executeTime
+    int64 executeTime = 1;
+    // 已废弃，Begin里不提供事务id
+    string transactionId = 2;
+    // 预留扩展
+    repeated Pair props = 3;
+    // 数据库执行的 thread Id
+    int64 threadId = 4;
+}
+
+// 结束事务的一些信息
+message TransactionEnd {
+    // 已废弃，请使用header里的executeTime
+    int64 executeTime = 1;
+    // 事务号
+    string transactionId = 2;
+    // 预留扩展
+    repeated Pair props = 3;
+}
