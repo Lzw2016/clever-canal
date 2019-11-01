@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -65,7 +66,7 @@ public class Test01 {
                 canalParameter.setDbPassword("canal");
                 canalParameter.setSlaveId(123L);
 //                canalParameter.setMetaMode(CanalParameter.MetaMode.MIXED);
-//                canalParameter.setStorageBatchMode(CanalParameter.BatchMode.MEM_SIZE);
+                canalParameter.setStorageBatchMode(CanalParameter.BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
                 return canal;
             }
@@ -92,12 +93,7 @@ public class Test01 {
 
         Thread thread = new Thread(() -> {
             for (int i = 0; i < 1000; i++) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException ignored) {
-                }
-                Message message = canalServerWithEmbedded.get(clientIdentity, 1);
-                // Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
+                Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
                 if (message.isRaw()) {
                     message.getRawEntries().forEach(rawEntry -> {
                         try {

@@ -137,11 +137,11 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     // ================================================================================================= MemoryEventStoreWithBuffer配置
 
     /**
-     * 默认为对象数量模式
+     * 默认为内存大小模式
      */
     @Getter
     @Setter
-    private BatchMode batchMode = BatchMode.ITEM_SIZE;
+    private BatchMode batchMode = BatchMode.MEM_SIZE;
     /**
      * 是否需要DDL隔离
      */
@@ -633,6 +633,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             // 处理内存大小判断
             long currentSize = getMemSize.get();
             long maxAbleSize = putMemSize.get();
+            // TODO 此处有bug, 当一条数据的大小 小于 bufferMemUnit(1kb) 时有问题(不能触发get)
             return maxAbleSize - currentSize >= batchSize * bufferMemUnit;
         }
     }
