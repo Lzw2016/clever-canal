@@ -31,10 +31,22 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
     private static final Logger logger = LoggerFactory.getLogger(EntryEventSink.class);
     private static final int maxFullTimes = 10;
     private CanalEventStore<Event> eventStore;
-    protected boolean filterTransactionEntry = false;       // 是否需要尽可能过滤事务头/尾
-    protected boolean filterEmtryTransactionEntry = true;   // 是否需要过滤空的事务头/尾
-    protected long emptyTransactionInterval = 5 * 1000;     // 空的事务输出的频率
-    protected long emptyTransctionThresold = 8192;          // 超过8192个事务头，输出一个
+    /**
+     * 是否需要尽可能过滤事务头/尾
+     */
+    protected boolean filterTransactionEntry = false;
+    /**
+     * 是否需要过滤空的事务头/尾
+     */
+    protected boolean filterEmptyTransactionEntry = true;
+    /**
+     * 空的事务输出的频率
+     */
+    protected long emptyTransactionInterval = 5 * 1000;
+    /**
+     * 超过8192个事务头，输出一个
+     */
+    protected long emptyTransactionThreshold = 8192;
 
     protected volatile long lastTransactionTimestamp = 0L;
     protected AtomicLong lastTransactionCount = new AtomicLong(0L);
@@ -70,7 +82,6 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
     }
 
     public boolean filter(List<Entry> event, InetSocketAddress remoteAddress, String destination) {
-
         return false;
     }
 
@@ -89,7 +100,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
             if (filterTransactionEntry && (entry.getEntryType() == EntryType.TRANSACTION_BEGIN || entry.getEntryType() == EntryType.TRANSACTION_END)) {
                 long currentTimestamp = entry.getHeader().getExecuteTime();
                 // 基于一定的策略控制，放过空的事务头和尾，便于及时更新数据库位点，表明工作正常
-                if (lastTransactionCount.incrementAndGet() <= emptyTransctionThresold && Math.abs(currentTimestamp - lastTransactionTimestamp) <= emptyTransactionInterval) {
+                if (lastTransactionCount.incrementAndGet() <= emptyTransactionThreshold && Math.abs(currentTimestamp - lastTransactionTimestamp) <= emptyTransactionInterval) {
                     continue;
                 } else {
                     lastTransactionCount.set(0L);
@@ -106,10 +117,10 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
             return doSink(events);
         } else {
             // 需要过滤的数据
-            if (filterEmtryTransactionEntry && !CollectionUtils.isEmpty(events)) {
+            if (filterEmptyTransactionEntry && !CollectionUtils.isEmpty(events)) {
                 long currentTimestamp = events.get(0).getExecuteTime();
                 // 基于一定的策略控制，放过空的事务头和尾，便于及时更新数据库位点，表明工作正常
-                if (Math.abs(currentTimestamp - lastEmptyTransactionTimestamp) > emptyTransactionInterval || lastEmptyTransactionCount.incrementAndGet() > emptyTransctionThresold) {
+                if (Math.abs(currentTimestamp - lastEmptyTransactionTimestamp) > emptyTransactionInterval || lastEmptyTransactionCount.incrementAndGet() > emptyTransactionThreshold) {
                     lastEmptyTransactionCount.set(0L);
                     lastEmptyTransactionTimestamp = currentTimestamp;
                     return doSink(events);
@@ -161,11 +172,9 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
                     blockingStart = nextStart;
                 }
             }
-
             for (CanalEventDownStreamHandler<List<Event>> handler : getHandlers()) {
                 events = handler.retry(events);
             }
-
         } while (running && !Thread.interrupted());
         return false;
     }
@@ -173,9 +182,11 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
     // 处理无数据的情况，避免空循环挂死
     private void applyWait(int fullTimes) {
         int newFullTimes = Math.min(fullTimes, maxFullTimes);
-        if (fullTimes <= 3) { // 3次以内
+        // 3次以内
+        if (fullTimes <= 3) {
             Thread.yield();
-        } else { // 超过3次，最多只sleep 10ms
+        } else {
+            // 超过3次，最多只sleep 10ms
             LockSupport.parkNanos(1000 * 1000L * newFullTimes);
         }
     }
@@ -192,16 +203,16 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         this.filterTransactionEntry = filterTransactionEntry;
     }
 
-    public void setFilterEmtryTransactionEntry(boolean filterEmtryTransactionEntry) {
-        this.filterEmtryTransactionEntry = filterEmtryTransactionEntry;
+    public void setFilterEmptyTransactionEntry(boolean filterEmptyTransactionEntry) {
+        this.filterEmptyTransactionEntry = filterEmptyTransactionEntry;
     }
 
     public void setEmptyTransactionInterval(long emptyTransactionInterval) {
         this.emptyTransactionInterval = emptyTransactionInterval;
     }
 
-    public void setEmptyTransctionThresold(long emptyTransctionThresold) {
-        this.emptyTransctionThresold = emptyTransctionThresold;
+    public void setEmptyTransactionThreshold(long emptyTransactionThreshold) {
+        this.emptyTransactionThreshold = emptyTransactionThreshold;
     }
 
     public AtomicLong getEventsSinkBlockingTime() {

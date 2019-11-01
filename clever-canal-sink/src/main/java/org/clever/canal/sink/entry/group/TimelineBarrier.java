@@ -30,7 +30,10 @@ public class TimelineBarrier implements GroupBarrier<Event> {
     protected ReentrantLock lock = new ReentrantLock();
     protected Condition condition = lock.newCondition();
     protected volatile long threshold;
-    protected BlockingQueue<Long> lastTimestamps = new PriorityBlockingQueue<>(); // 当前通道最后一次single的时间戳
+    /**
+     * 当前通道最后一次single的时间戳
+     */
+    protected BlockingQueue<Long> lastTimestamps = new PriorityBlockingQueue<>();
 
     public TimelineBarrier(int groupSize) {
         this.groupSize = groupSize;

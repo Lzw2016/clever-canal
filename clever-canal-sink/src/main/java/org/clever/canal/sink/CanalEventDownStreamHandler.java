@@ -6,7 +6,6 @@ import org.clever.canal.common.CanalLifeCycle;
  * 处理下sink时的数据流
  */
 public interface CanalEventDownStreamHandler<T> extends CanalLifeCycle {
-
     /**
      * 提交到store之前做一下处理，允许替换Event
      */

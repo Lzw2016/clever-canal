@@ -14,7 +14,6 @@ import java.net.InetSocketAddress;
  * </pre>
  */
 public interface CanalEventSink<T> extends CanalLifeCycle {
-
     /**
      * 提交数据
      */

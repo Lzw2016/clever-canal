@@ -21,7 +21,10 @@ import java.util.List;
 public class GroupEventSink extends EntryEventSink {
 
     private int groupSize;
-    private GroupBarrier barrier; // 归并排序需要预先知道组的大小，用于判断是否组内所有的sink都已经开始正常取数据
+    /**
+     * 归并排序需要预先知道组的大小，用于判断是否组内所有的sink都已经开始正常取数据
+     */
+    private GroupBarrier barrier;
 
     public GroupEventSink() {
         this(1);
@@ -38,7 +41,8 @@ public class GroupEventSink extends EntryEventSink {
         if (filterTransactionEntry) {
             barrier = new TimelineBarrier(groupSize);
         } else {
-            barrier = new TimelineTransactionBarrier(groupSize);// 支持事务保留
+            // 支持事务保留
+            barrier = new TimelineTransactionBarrier(groupSize);
         }
     }
 
@@ -47,7 +51,8 @@ public class GroupEventSink extends EntryEventSink {
         for (int i = 0; i < events.size(); i++) {
             Event event = events.get(i);
             try {
-                barrier.await(event);// 进行timeline的归并调度处理
+                // 进行timeline的归并调度处理
+                barrier.await(event);
                 if (filterTransactionEntry) {
                     super.doSink(Collections.singletonList(event));
                 } else if (i == size - 1) {

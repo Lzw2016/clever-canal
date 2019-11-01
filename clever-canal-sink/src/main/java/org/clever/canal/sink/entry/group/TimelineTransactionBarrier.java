@@ -56,13 +56,15 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
         // 应该先判断2，再判断是否是事务尾，因为事务尾也可以导致txState的状态为2
         // 如果先判断事务尾，那么2的状态可能永远没机会被修改了，系统出现死锁
         // CanalSinkException被注释的代码是不是可以放开？？我们内部使用的时候已经放开了，从代码逻辑的分析上以及实践效果来看，应该抛异常
-        if (txState.intValue() == 2) {// 非事务中
+        if (txState.intValue() == 2) {
+            // 非事务中
             boolean result = txState.compareAndSet(2, 0);
             if (!result) {
                 throw new CanalSinkException("state is not correct in non-transaction");
             }
         } else if (isTransactionEnd(event)) {
-            inTransaction.set(false); // 事务结束并且已经成功写入store，清理标记，进入重新排队判断，允许新的事务进入
+            // 事务结束并且已经成功写入store，清理标记，进入重新排队判断，允许新的事务进入
+            inTransaction.set(false);
             boolean result = txState.compareAndSet(1, 0);
             if (!result) {
                 throw new CanalSinkException("state is not correct in transaction");
@@ -72,7 +74,8 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
 
     @SuppressWarnings("RedundantIfStatement")
     protected boolean isPermit(Event event, long state) {
-        if (txState.intValue() == 1 && inTransaction.get()) { // 如果处于事务中，直接允许通过。因为事务头已经做过判断
+        // 如果处于事务中，直接允许通过。因为事务头已经做过判断
+        if (txState.intValue() == 1 && inTransaction.get()) {
             return true;
         } else if (txState.intValue() == 0) {
             boolean result = super.isPermit(event, state);
@@ -83,9 +86,11 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
                         inTransaction.set(true);
                         return true; // 事务允许通过
                     }
-                } else if (txState.compareAndSet(0, 2)) { // 非事务保护中
+                } else if (txState.compareAndSet(0, 2)) {
+                    // 非事务保护中
                     // 当基于zk-cursor启动的时候，拿到的第一个Event是TransactionEnd
-                    return true; // DDL/DCL/TransactionEnd允许通过
+                    // DDL/DCL/TransactionEnd允许通过
+                    return true;
                 }
             }
         }
@@ -100,7 +105,8 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
     // 重新设置状态
     private void reset() {
         inTransaction.remove();
-        txState.set(0);// 重新置位
+        // 重新置位
+        txState.set(0);
     }
 
     private boolean isTransactionBegin(Event event) {

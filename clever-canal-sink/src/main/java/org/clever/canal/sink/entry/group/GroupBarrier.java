@@ -7,7 +7,6 @@ import java.util.concurrent.TimeoutException;
  * 针对group合并的barrier接口，控制多个sink操作的合并处理
  */
 public interface GroupBarrier<T> {
-
     /**
      * 判断当前的数据对象是否允许通过
      */
