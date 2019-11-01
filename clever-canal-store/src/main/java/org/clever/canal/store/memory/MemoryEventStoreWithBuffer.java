@@ -328,6 +328,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                     return doGet(start, batchSize);
                 }
                 try {
+                    // 1毫秒(ms) = 1000000纳秒(ns)
                     nanos = notEmpty.awaitNanos(nanos);
                 } catch (InterruptedException ie) {
                     // propagate to non-interrupted thread

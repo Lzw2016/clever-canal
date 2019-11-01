@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -43,6 +44,8 @@ public class Test01 {
 
     @Test
     public void t2() throws InterruptedException {
+        // 使用 netty 进行通讯， 默认使用 bio
+        // System.setProperty("canal.socketChannel", "netty");
         CanalConfigClient canalConfigClient = new CanalConfigClient() {
             @Override
             public Canal findCanal(String destination) {
@@ -91,10 +94,10 @@ public class Test01 {
         Thread thread = new Thread(() -> {
             for (int i = 0; i < 1000; i++) {
                 try {
-                    Thread.sleep(1000 * 2);
+                    Thread.sleep(10);
                 } catch (InterruptedException ignored) {
                 }
-                Message message = canalServerWithEmbedded.get(clientIdentity, 1);
+                Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
                 if (message.isRaw()) {
                     message.getRawEntries().forEach(rawEntry -> {
                         try {
