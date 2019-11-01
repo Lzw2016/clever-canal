@@ -1,10 +1,14 @@
 package org.clever.canal.protocol.position;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 数据库对象的唯一标示（binlog位置信息）
  */
-@SuppressWarnings({"unused", "BooleanMethodIsAlwaysInverted"})
-public class EntryPosition extends TimePosition {
+@Getter
+@Setter
+public class EntryPosition extends TimePosition implements Comparable<EntryPosition> {
     private static final long serialVersionUID = 81432665066427482L;
 
     /**
@@ -50,46 +54,6 @@ public class EntryPosition extends TimePosition {
     public EntryPosition(String journalName, Long position, Long timestamp, Long serverId) {
         this(journalName, position, timestamp);
         this.serverId = serverId;
-    }
-
-    public String getJournalName() {
-        return journalName;
-    }
-
-    public void setJournalName(String journalName) {
-        this.journalName = journalName;
-    }
-
-    public Long getPosition() {
-        return position;
-    }
-
-    public void setPosition(Long position) {
-        this.position = position;
-    }
-
-    public boolean isIncluded() {
-        return included;
-    }
-
-    public void setIncluded(boolean included) {
-        this.included = included;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
-    }
-
-    public String getGtId() {
-        return gtId;
-    }
-
-    public void setGtId(String gtId) {
-        this.gtId = gtId;
     }
 
     @Override
@@ -140,6 +104,7 @@ public class EntryPosition extends TimePosition {
      *
      * @see Comparable#compareTo(Object)
      */
+    @Override
     public int compareTo(EntryPosition o) {
         final int val = journalName.compareTo(o.journalName);
 

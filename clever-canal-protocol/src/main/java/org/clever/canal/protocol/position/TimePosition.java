@@ -1,26 +1,21 @@
 package org.clever.canal.protocol.position;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 基于时间的位置，position数据不唯一
  */
-@SuppressWarnings("WeakerAccess")
+@Setter
+@Getter
 public class TimePosition extends Position {
     private static final long serialVersionUID = 6185261261064226380L;
-
     /**
      * 时间搓
      */
     protected Long timestamp;
 
-    public TimePosition(Long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public Long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Long timestamp) {
+    TimePosition(Long timestamp) {
         this.timestamp = timestamp;
     }
 

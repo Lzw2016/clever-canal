@@ -1,5 +1,7 @@
 package org.clever.canal.protocol.position;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
@@ -8,10 +10,10 @@ import java.io.Serializable;
 /**
  * 描述一个position范围 (binlog Position 范围)
  */
-@SuppressWarnings("unused")
+@Getter
+@Setter
 public class PositionRange<T extends Position> implements Serializable {
     private static final long serialVersionUID = -9162037079815694784L;
-
     /**
      * 开始位置
      */
@@ -31,43 +33,6 @@ public class PositionRange<T extends Position> implements Serializable {
     private Long endSeq = -1L;
 
     public PositionRange() {
-    }
-
-    public PositionRange(T start, T end) {
-        this.start = start;
-        this.end = end;
-    }
-
-    public T getStart() {
-        return start;
-    }
-
-    public void setStart(T start) {
-        this.start = start;
-    }
-
-    public T getEnd() {
-        return end;
-    }
-
-    public void setEnd(T end) {
-        this.end = end;
-    }
-
-    public T getAck() {
-        return ack;
-    }
-
-    public void setAck(T ack) {
-        this.ack = ack;
-    }
-
-    public Long getEndSeq() {
-        return endSeq;
-    }
-
-    public void setEndSeq(Long endSeq) {
-        this.endSeq = endSeq;
     }
 
     @Override
@@ -115,5 +80,4 @@ public class PositionRange<T extends Position> implements Serializable {
             return other.start == null;
         } else return start.equals(other.start);
     }
-
 }

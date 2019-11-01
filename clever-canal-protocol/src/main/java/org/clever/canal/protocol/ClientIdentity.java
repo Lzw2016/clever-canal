@@ -1,6 +1,7 @@
 package org.clever.canal.protocol;
 
-import org.apache.commons.lang3.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
@@ -9,7 +10,8 @@ import java.io.Serializable;
 /**
  * 客户端标识
  */
-@SuppressWarnings("unused")
+@Getter
+@Setter
 public class ClientIdentity implements Serializable {
     private static final long serialVersionUID = -8262100681930834834L;
 
@@ -49,43 +51,12 @@ public class ClientIdentity implements Serializable {
         this.filter = filter;
     }
 
-    /**
-     * 是否有过滤规则配置
-     */
-    public Boolean hasFilter() {
-        return StringUtils.isNotBlank(filter);
-    }
-
-    // ======== setter =========
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public short getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(short clientId) {
-        this.clientId = clientId;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getFilter() {
-        return filter;
-    }
-
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
+    @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);
     }
 
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -94,6 +65,7 @@ public class ClientIdentity implements Serializable {
         return result;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

@@ -1,12 +1,15 @@
 package org.clever.canal.protocol.position;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 基于mysql/oracle log位置标识
  */
-@SuppressWarnings("unused")
+@Getter
+@Setter
 public class LogPosition extends Position {
     private static final long serialVersionUID = 3875012010277005819L;
-
     /**
      * 记录数据产生的来源(MySql服务器地址 和 消费binlog的客户端ID)
      */
@@ -15,22 +18,6 @@ public class LogPosition extends Position {
      * binlog 位置信息
      */
     private EntryPosition position;
-
-    public LogIdentity getIdentity() {
-        return identity;
-    }
-
-    public void setIdentity(LogIdentity identity) {
-        this.identity = identity;
-    }
-
-    public EntryPosition getPosition() {
-        return position;
-    }
-
-    public void setPosition(EntryPosition position) {
-        this.position = position;
-    }
 
     @Override
     public int hashCode() {

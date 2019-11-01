@@ -1,5 +1,8 @@
 package org.clever.canal.protocol.position;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
@@ -8,7 +11,9 @@ import java.net.InetSocketAddress;
 /**
  * log数据产生的来源
  */
-@SuppressWarnings("unused")
+@NoArgsConstructor
+@Getter
+@Setter
 public class LogIdentity extends Position {
     private static final long serialVersionUID = 5530225131455662581L;
 
@@ -22,27 +27,8 @@ public class LogIdentity extends Position {
      */
     private Long slaveId;
 
-    public LogIdentity() {
-    }
-
     public LogIdentity(InetSocketAddress sourceAddress, Long slaveId) {
         this.sourceAddress = sourceAddress;
-        this.slaveId = slaveId;
-    }
-
-    public InetSocketAddress getSourceAddress() {
-        return sourceAddress;
-    }
-
-    public void setSourceAddress(InetSocketAddress sourceAddress) {
-        this.sourceAddress = sourceAddress;
-    }
-
-    public Long getSlaveId() {
-        return slaveId;
-    }
-
-    public void setSlaveId(Long slaveId) {
         this.slaveId = slaveId;
     }
 
