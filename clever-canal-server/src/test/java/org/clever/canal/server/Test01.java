@@ -26,7 +26,6 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -97,7 +96,8 @@ public class Test01 {
                     Thread.sleep(10);
                 } catch (InterruptedException ignored) {
                 }
-                Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
+                Message message = canalServerWithEmbedded.get(clientIdentity, 1);
+                // Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
                 if (message.isRaw()) {
                     message.getRawEntries().forEach(rawEntry -> {
                         try {
