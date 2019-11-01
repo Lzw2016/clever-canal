@@ -104,10 +104,10 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
     }
 
     private boolean isTransactionBegin(Event event) {
-        return event.getEntryType() == EntryType.TRANSACTIONBEGIN;
+        return event.getEntryType() == EntryType.TRANSACTION_BEGIN;
     }
 
     private boolean isTransactionEnd(Event event) {
-        return event.getEntryType() == EntryType.TRANSACTIONEND;
+        return event.getEntryType() == EntryType.TRANSACTION_END;
     }
 }

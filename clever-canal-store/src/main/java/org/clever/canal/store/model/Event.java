@@ -55,9 +55,9 @@ public class Event implements Serializable {
         this.journalName = entry.getHeader().getLogfileName();
         this.position = entry.getHeader().getLogfileOffset();
         this.serverId = entry.getHeader().getServerId();
-        this.gtid = entry.getHeader().getGtid();
+        this.gtid = entry.getHeader().getGtId();
         this.eventType = entry.getHeader().getEventType();
-        if (entryType == EntryType.ROWDATA) {
+        if (entryType == EntryType.ROW_DATA) {
             List<CanalEntry.Pair> props = entry.getHeader().getPropsList();
             if (props != null) {
                 for (CanalEntry.Pair p : props) {

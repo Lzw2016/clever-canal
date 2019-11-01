@@ -84,12 +84,12 @@ public class SimpleDdlParser {
         }
         result = parseDdl(queryString, schmeaName, CREATE_INDEX_PATTERN, 5);
         if (result != null) {
-            result.setType(EventType.CINDEX);
+            result.setType(EventType.C_INDEX);
             return result;
         }
         result = parseDdl(queryString, schmeaName, DROP_INDEX_PATTERN, 2);
         if (result != null) {
-            result.setType(EventType.DINDEX);
+            result.setType(EventType.D_INDEX);
             return result;
         }
         result = new DdlResult(schmeaName);

@@ -87,7 +87,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
                 continue;
             }
             if (filterTransactionEntry
-                    && (entry.getEntryType() == EntryType.TRANSACTIONBEGIN || entry.getEntryType() == EntryType.TRANSACTIONEND)) {
+                    && (entry.getEntryType() == EntryType.TRANSACTION_BEGIN || entry.getEntryType() == EntryType.TRANSACTION_END)) {
                 long currentTimestamp = entry.getHeader().getExecuteTime();
                 // 基于一定的策略控制，放过空的事务头和尾，便于及时更新数据库位点，表明工作正常
                 if (lastTransactionCount.incrementAndGet() <= emptyTransctionThresold
@@ -98,8 +98,8 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
                     lastTransactionTimestamp = currentTimestamp;
                 }
             }
-            hasRowData |= (entry.getEntryType() == EntryType.ROWDATA);
-            hasHeartBeat |= (entry.getEntryType() == EntryType.HEARTBEAT);
+            hasRowData |= (entry.getEntryType() == EntryType.ROW_DATA);
+            hasHeartBeat |= (entry.getEntryType() == EntryType.ENTRY_HEARTBEAT);
             Event event = new Event(new LogIdentity(remoteAddress, -1L), entry, raw);
             events.add(event);
         }
@@ -125,7 +125,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
 
     @SuppressWarnings("unchecked")
     protected boolean doFilter(CanalEntry.Entry entry) {
-        if (filter != null && entry.getEntryType() == EntryType.ROWDATA) {
+        if (filter != null && entry.getEntryType() == EntryType.ROW_DATA) {
             String name = getSchemaNameAndTableName(entry);
             boolean need = filter.filter(name);
             if (!need) {

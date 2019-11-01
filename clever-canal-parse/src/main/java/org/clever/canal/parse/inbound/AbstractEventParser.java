@@ -368,7 +368,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
     protected LogPosition buildLastTransactionPosition(List<CanalEntry.Entry> entries) { // 初始化一下
         for (int i = entries.size() - 1; i > 0; i--) {
             CanalEntry.Entry entry = entries.get(i);
-            if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND) {// 尽量记录一个事务做为position
+            if (entry.getEntryType() == EntryType.TRANSACTION_END) {// 尽量记录一个事务做为position
                 return buildLastPosition(entry);
             }
         }
@@ -384,7 +384,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
         // add serverId at 2016-06-28
         position.setServerId(entry.getHeader().getServerId());
         // set gtid
-        position.setGtId(entry.getHeader().getGtid());
+        position.setGtId(entry.getHeader().getGtId());
         logPosition.setPosition(position);
         LogIdentity identity = new LogIdentity(runningInfo.getAddress(), -1L);
         logPosition.setIdentity(identity);
@@ -439,7 +439,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
                             headerBuilder.setExecuteTime(now);
                             Entry.Builder entryBuilder = Entry.newBuilder();
                             entryBuilder.setHeader(headerBuilder.build());
-                            entryBuilder.setEntryType(EntryType.HEARTBEAT);
+                            entryBuilder.setEntryType(EntryType.ENTRY_HEARTBEAT);
                             Entry entry = entryBuilder.build();
                             // 提交到sink中，目前不会提交到store中，会在sink中进行忽略
                             consumeTheEventAndProfilingIfNecessary(Collections.singletonList(entry));

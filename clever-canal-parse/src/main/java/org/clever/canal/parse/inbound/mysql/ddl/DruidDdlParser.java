@@ -49,25 +49,25 @@ public class DruidDdlParser {
                     } else if (item instanceof SQLAlterTableAddIndex) {
                         DdlResult ddlResult = new DdlResult();
                         processName(ddlResult, schmeaName, alterTable.getName(), false);
-                        ddlResult.setType(EventType.CINDEX);
+                        ddlResult.setType(EventType.C_INDEX);
                         ddlResults.add(ddlResult);
                     } else if (item instanceof SQLAlterTableDropIndex || item instanceof SQLAlterTableDropKey) {
                         DdlResult ddlResult = new DdlResult();
                         processName(ddlResult, schmeaName, alterTable.getName(), false);
-                        ddlResult.setType(EventType.DINDEX);
+                        ddlResult.setType(EventType.D_INDEX);
                         ddlResults.add(ddlResult);
                     } else if (item instanceof SQLAlterTableAddConstraint) {
                         DdlResult ddlResult = new DdlResult();
                         processName(ddlResult, schmeaName, alterTable.getName(), false);
                         SQLConstraint constraint = ((SQLAlterTableAddConstraint) item).getConstraint();
                         if (constraint instanceof SQLUnique) {
-                            ddlResult.setType(EventType.CINDEX);
+                            ddlResult.setType(EventType.C_INDEX);
                             ddlResults.add(ddlResult);
                         }
                     } else if (item instanceof SQLAlterTableDropConstraint) {
                         DdlResult ddlResult = new DdlResult();
                         processName(ddlResult, schmeaName, alterTable.getName(), false);
-                        ddlResult.setType(EventType.DINDEX);
+                        ddlResult.setType(EventType.D_INDEX);
                         ddlResults.add(ddlResult);
                     } else {
                         DdlResult ddlResult = new DdlResult();
@@ -89,14 +89,14 @@ public class DruidDdlParser {
                 SQLTableSource tableSource = createIndex.getTable();
                 DdlResult ddlResult = new DdlResult();
                 processName(ddlResult, schmeaName, ((SQLExprTableSource) tableSource).getExpr(), false);
-                ddlResult.setType(EventType.CINDEX);
+                ddlResult.setType(EventType.C_INDEX);
                 ddlResults.add(ddlResult);
             } else if (statement instanceof SQLDropIndexStatement) {
                 SQLDropIndexStatement dropIndex = (SQLDropIndexStatement) statement;
                 SQLExprTableSource tableSource = dropIndex.getTableName();
                 DdlResult ddlResult = new DdlResult();
                 processName(ddlResult, schmeaName, tableSource.getExpr(), false);
-                ddlResult.setType(EventType.DINDEX);
+                ddlResult.setType(EventType.D_INDEX);
                 ddlResults.add(ddlResult);
             } else if (statement instanceof SQLTruncateStatement) {
                 SQLTruncateStatement truncate = (SQLTruncateStatement) statement;

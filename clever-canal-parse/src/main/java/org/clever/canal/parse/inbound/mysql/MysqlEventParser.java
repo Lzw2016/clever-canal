@@ -471,7 +471,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                     }
                     // 直接查询第一条业务数据，确认是否为事务Begin
                     // 记录一下transaction begin position
-                    if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN && entry.getHeader().getLogfileOffset() < entryPosition.getPosition()) {
+                    if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTION_BEGIN && entry.getHeader().getLogfileOffset() < entryPosition.getPosition()) {
                         preTransactionStartPosition.set(entry.getHeader().getLogfileOffset());
                     }
                     if (entry.getHeader().getLogfileOffset() >= entryPosition.getPosition()) {
@@ -683,20 +683,20 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                         // 记录一下上一个事务结束的位置，即下一个事务的position
                         // position = current +
                         // data.length，代表该事务的下一条offest，避免多余的事务重复
-                        if (CanalEntry.EntryType.TRANSACTIONEND.equals(entry.getEntryType())) {
+                        if (CanalEntry.EntryType.TRANSACTION_END.equals(entry.getEntryType())) {
                             entryPosition = new EntryPosition(logfilename, logfileoffset, logposTimestamp, serverId);
                             if (logger.isDebugEnabled()) {
                                 logger.debug("set {} to be pending start position before finding another proper one...", entryPosition);
                             }
                             logPosition.setPosition(entryPosition);
-                            entryPosition.setGtId(entry.getHeader().getGtid());
-                        } else if (CanalEntry.EntryType.TRANSACTIONBEGIN.equals(entry.getEntryType())) {
+                            entryPosition.setGtId(entry.getHeader().getGtId());
+                        } else if (CanalEntry.EntryType.TRANSACTION_BEGIN.equals(entry.getEntryType())) {
                             // 当前事务开始位点
                             entryPosition = new EntryPosition(logfilename, logfileoffset, logposTimestamp, serverId);
                             if (logger.isDebugEnabled()) {
                                 logger.debug("set {} to be pending start position before finding another proper one...", entryPosition);
                             }
-                            entryPosition.setGtId(entry.getHeader().getGtid());
+                            entryPosition.setGtId(entry.getHeader().getGtId());
                             logPosition.setPosition(entryPosition);
                         }
                         lastPosition = buildLastPosition(entry);

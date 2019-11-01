@@ -58,15 +58,15 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
 
     public void add(CanalEntry.Entry entry) throws InterruptedException {
         switch (entry.getEntryType()) {
-            case TRANSACTIONBEGIN:
+            case TRANSACTION_BEGIN:
                 flush();// 刷新上一次的数据
                 put(entry);
                 break;
-            case TRANSACTIONEND:
+            case TRANSACTION_END:
                 put(entry);
                 flush();
                 break;
-            case ROWDATA:
+            case ROW_DATA:
                 put(entry);
                 // 针对非DML的数据，直接输出，不进行buffer控制
                 EventType eventType = entry.getHeader().getEventType();
@@ -74,7 +74,7 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
                     flush();
                 }
                 break;
-            case HEARTBEAT:
+            case ENTRY_HEARTBEAT:
                 // master过来的heartbeat，说明binlog已经读完了，是idle状态
                 put(entry);
                 flush();

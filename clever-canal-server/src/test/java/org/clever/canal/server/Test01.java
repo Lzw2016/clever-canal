@@ -107,7 +107,7 @@ public class Test01 {
                         CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
                         CanalEntry.EventType eventType = rowChange.getEventType();
                         log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
-                        for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
+                        for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
                             for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
                                 log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
                             }
@@ -211,7 +211,7 @@ public class Test01 {
             }
             CanalEntry.EventType eventType = rowChange.getEventType();
             log.info("### {} | eventType={} | Sql={}", entry.getEntryType(), eventType, rowChange.getSql());
-            for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
+            for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
                 for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
                     log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
                 }

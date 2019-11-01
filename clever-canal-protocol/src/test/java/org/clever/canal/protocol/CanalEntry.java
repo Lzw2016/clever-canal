@@ -9137,43 +9137,43 @@ public final class CanalEntry {
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
     java.util.List<org.clever.canal.protocol.CanalEntry.RowData> 
-        getRowDataListList();
+        getRowDataList();
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    org.clever.canal.protocol.CanalEntry.RowData getRowDataList(int index);
+    org.clever.canal.protocol.CanalEntry.RowData getRowData(int index);
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    int getRowDataListCount();
+    int getRowDataCount();
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
     java.util.List<? extends org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> 
-        getRowDataListOrBuilderList();
+        getRowDataOrBuilderList();
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataListOrBuilder(
+    org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataOrBuilder(
         int index);
 
     /**
@@ -9262,7 +9262,7 @@ public final class CanalEntry {
     }
     private RowChange() {
       sql_ = "";
-      rowDataList_ = java.util.Collections.emptyList();
+      rowData_ = java.util.Collections.emptyList();
       props_ = java.util.Collections.emptyList();
       ddlSchemaName_ = "";
     }
@@ -9322,10 +9322,10 @@ public final class CanalEntry {
             }
             case 98: {
               if (!((mutable_bitField0_ & 0x00000001) != 0)) {
-                rowDataList_ = new java.util.ArrayList<org.clever.canal.protocol.CanalEntry.RowData>();
+                rowData_ = new java.util.ArrayList<org.clever.canal.protocol.CanalEntry.RowData>();
                 mutable_bitField0_ |= 0x00000001;
               }
-              rowDataList_.add(
+              rowData_.add(
                   input.readMessage(org.clever.canal.protocol.CanalEntry.RowData.parser(), extensionRegistry));
               break;
             }
@@ -9360,7 +9360,7 @@ public final class CanalEntry {
             e).setUnfinishedMessage(this);
       } finally {
         if (((mutable_bitField0_ & 0x00000001) != 0)) {
-          rowDataList_ = java.util.Collections.unmodifiableList(rowDataList_);
+          rowData_ = java.util.Collections.unmodifiableList(rowData_);
         }
         if (((mutable_bitField0_ & 0x00000002) != 0)) {
           props_ = java.util.Collections.unmodifiableList(props_);
@@ -9555,59 +9555,59 @@ public final class CanalEntry {
       }
     }
 
-    public static final int ROWDATALIST_FIELD_NUMBER = 12;
-    private java.util.List<org.clever.canal.protocol.CanalEntry.RowData> rowDataList_;
+    public static final int ROWDATA_FIELD_NUMBER = 12;
+    private java.util.List<org.clever.canal.protocol.CanalEntry.RowData> rowData_;
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    public java.util.List<org.clever.canal.protocol.CanalEntry.RowData> getRowDataListList() {
-      return rowDataList_;
+    public java.util.List<org.clever.canal.protocol.CanalEntry.RowData> getRowDataList() {
+      return rowData_;
     }
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
     public java.util.List<? extends org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> 
-        getRowDataListOrBuilderList() {
-      return rowDataList_;
+        getRowDataOrBuilderList() {
+      return rowData_;
     }
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    public int getRowDataListCount() {
-      return rowDataList_.size();
+    public int getRowDataCount() {
+      return rowData_.size();
     }
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    public org.clever.canal.protocol.CanalEntry.RowData getRowDataList(int index) {
-      return rowDataList_.get(index);
+    public org.clever.canal.protocol.CanalEntry.RowData getRowData(int index) {
+      return rowData_.get(index);
     }
     /**
      * <pre>
      * 一次数据库变更可能存在多行
      * </pre>
      *
-     * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+     * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
      */
-    public org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataListOrBuilder(
+    public org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataOrBuilder(
         int index) {
-      return rowDataList_.get(index);
+      return rowData_.get(index);
     }
 
     public static final int PROPS_FIELD_NUMBER = 13;
@@ -9736,8 +9736,8 @@ public final class CanalEntry {
       if (!getSqlBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 11, sql_);
       }
-      for (int i = 0; i < rowDataList_.size(); i++) {
-        output.writeMessage(12, rowDataList_.get(i));
+      for (int i = 0; i < rowData_.size(); i++) {
+        output.writeMessage(12, rowData_.get(i));
       }
       for (int i = 0; i < props_.size(); i++) {
         output.writeMessage(13, props_.get(i));
@@ -9770,9 +9770,9 @@ public final class CanalEntry {
       if (!getSqlBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, sql_);
       }
-      for (int i = 0; i < rowDataList_.size(); i++) {
+      for (int i = 0; i < rowData_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(12, rowDataList_.get(i));
+          .computeMessageSize(12, rowData_.get(i));
       }
       for (int i = 0; i < props_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -9800,8 +9800,8 @@ public final class CanalEntry {
           != other.getTableId()) return false;
       if (!getSql()
           .equals(other.getSql())) return false;
-      if (!getRowDataListList()
-          .equals(other.getRowDataListList())) return false;
+      if (!getRowDataList()
+          .equals(other.getRowDataList())) return false;
       if (!getPropsList()
           .equals(other.getPropsList())) return false;
       if (!getDdlSchemaName()
@@ -9840,9 +9840,9 @@ public final class CanalEntry {
           getTableId());
       hash = (37 * hash) + SQL_FIELD_NUMBER;
       hash = (53 * hash) + getSql().hashCode();
-      if (getRowDataListCount() > 0) {
-        hash = (37 * hash) + ROWDATALIST_FIELD_NUMBER;
-        hash = (53 * hash) + getRowDataListList().hashCode();
+      if (getRowDataCount() > 0) {
+        hash = (37 * hash) + ROWDATA_FIELD_NUMBER;
+        hash = (53 * hash) + getRowDataList().hashCode();
       }
       if (getPropsCount() > 0) {
         hash = (37 * hash) + PROPS_FIELD_NUMBER;
@@ -9999,7 +9999,7 @@ public final class CanalEntry {
       private void maybeForceBuilderInitialization() {
         if (com.google.protobuf.GeneratedMessageV3
                 .alwaysUseFieldBuilders) {
-          getRowDataListFieldBuilder();
+          getRowDataFieldBuilder();
           getPropsFieldBuilder();
         }
       }
@@ -10010,11 +10010,11 @@ public final class CanalEntry {
 
         sql_ = "";
 
-        if (rowDataListBuilder_ == null) {
-          rowDataList_ = java.util.Collections.emptyList();
+        if (rowDataBuilder_ == null) {
+          rowData_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
         } else {
-          rowDataListBuilder_.clear();
+          rowDataBuilder_.clear();
         }
         if (propsBuilder_ == null) {
           props_ = java.util.Collections.emptyList();
@@ -10063,14 +10063,14 @@ public final class CanalEntry {
           result.isDdlPresent_ = isDdlPresent_;
         }
         result.sql_ = sql_;
-        if (rowDataListBuilder_ == null) {
+        if (rowDataBuilder_ == null) {
           if (((bitField0_ & 0x00000001) != 0)) {
-            rowDataList_ = java.util.Collections.unmodifiableList(rowDataList_);
+            rowData_ = java.util.Collections.unmodifiableList(rowData_);
             bitField0_ = (bitField0_ & ~0x00000001);
           }
-          result.rowDataList_ = rowDataList_;
+          result.rowData_ = rowData_;
         } else {
-          result.rowDataList_ = rowDataListBuilder_.build();
+          result.rowData_ = rowDataBuilder_.build();
         }
         if (propsBuilder_ == null) {
           if (((bitField0_ & 0x00000002) != 0)) {
@@ -10139,29 +10139,29 @@ public final class CanalEntry {
           sql_ = other.sql_;
           onChanged();
         }
-        if (rowDataListBuilder_ == null) {
-          if (!other.rowDataList_.isEmpty()) {
-            if (rowDataList_.isEmpty()) {
-              rowDataList_ = other.rowDataList_;
+        if (rowDataBuilder_ == null) {
+          if (!other.rowData_.isEmpty()) {
+            if (rowData_.isEmpty()) {
+              rowData_ = other.rowData_;
               bitField0_ = (bitField0_ & ~0x00000001);
             } else {
-              ensureRowDataListIsMutable();
-              rowDataList_.addAll(other.rowDataList_);
+              ensureRowDataIsMutable();
+              rowData_.addAll(other.rowData_);
             }
             onChanged();
           }
         } else {
-          if (!other.rowDataList_.isEmpty()) {
-            if (rowDataListBuilder_.isEmpty()) {
-              rowDataListBuilder_.dispose();
-              rowDataListBuilder_ = null;
-              rowDataList_ = other.rowDataList_;
+          if (!other.rowData_.isEmpty()) {
+            if (rowDataBuilder_.isEmpty()) {
+              rowDataBuilder_.dispose();
+              rowDataBuilder_ = null;
+              rowData_ = other.rowData_;
               bitField0_ = (bitField0_ & ~0x00000001);
-              rowDataListBuilder_ = 
+              rowDataBuilder_ = 
                 com.google.protobuf.GeneratedMessageV3.alwaysUseFieldBuilders ?
-                   getRowDataListFieldBuilder() : null;
+                   getRowDataFieldBuilder() : null;
             } else {
-              rowDataListBuilder_.addAllMessages(other.rowDataList_);
+              rowDataBuilder_.addAllMessages(other.rowData_);
             }
           }
         }
@@ -10506,30 +10506,30 @@ public final class CanalEntry {
         return this;
       }
 
-      private java.util.List<org.clever.canal.protocol.CanalEntry.RowData> rowDataList_ =
+      private java.util.List<org.clever.canal.protocol.CanalEntry.RowData> rowData_ =
         java.util.Collections.emptyList();
-      private void ensureRowDataListIsMutable() {
+      private void ensureRowDataIsMutable() {
         if (!((bitField0_ & 0x00000001) != 0)) {
-          rowDataList_ = new java.util.ArrayList<org.clever.canal.protocol.CanalEntry.RowData>(rowDataList_);
+          rowData_ = new java.util.ArrayList<org.clever.canal.protocol.CanalEntry.RowData>(rowData_);
           bitField0_ |= 0x00000001;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilderV3<
-          org.clever.canal.protocol.CanalEntry.RowData, org.clever.canal.protocol.CanalEntry.RowData.Builder, org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> rowDataListBuilder_;
+          org.clever.canal.protocol.CanalEntry.RowData, org.clever.canal.protocol.CanalEntry.RowData.Builder, org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> rowDataBuilder_;
 
       /**
        * <pre>
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public java.util.List<org.clever.canal.protocol.CanalEntry.RowData> getRowDataListList() {
-        if (rowDataListBuilder_ == null) {
-          return java.util.Collections.unmodifiableList(rowDataList_);
+      public java.util.List<org.clever.canal.protocol.CanalEntry.RowData> getRowDataList() {
+        if (rowDataBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(rowData_);
         } else {
-          return rowDataListBuilder_.getMessageList();
+          return rowDataBuilder_.getMessageList();
         }
       }
       /**
@@ -10537,13 +10537,13 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public int getRowDataListCount() {
-        if (rowDataListBuilder_ == null) {
-          return rowDataList_.size();
+      public int getRowDataCount() {
+        if (rowDataBuilder_ == null) {
+          return rowData_.size();
         } else {
-          return rowDataListBuilder_.getCount();
+          return rowDataBuilder_.getCount();
         }
       }
       /**
@@ -10551,13 +10551,13 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public org.clever.canal.protocol.CanalEntry.RowData getRowDataList(int index) {
-        if (rowDataListBuilder_ == null) {
-          return rowDataList_.get(index);
+      public org.clever.canal.protocol.CanalEntry.RowData getRowData(int index) {
+        if (rowDataBuilder_ == null) {
+          return rowData_.get(index);
         } else {
-          return rowDataListBuilder_.getMessage(index);
+          return rowDataBuilder_.getMessage(index);
         }
       }
       /**
@@ -10565,19 +10565,19 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder setRowDataList(
+      public Builder setRowData(
           int index, org.clever.canal.protocol.CanalEntry.RowData value) {
-        if (rowDataListBuilder_ == null) {
+        if (rowDataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureRowDataListIsMutable();
-          rowDataList_.set(index, value);
+          ensureRowDataIsMutable();
+          rowData_.set(index, value);
           onChanged();
         } else {
-          rowDataListBuilder_.setMessage(index, value);
+          rowDataBuilder_.setMessage(index, value);
         }
         return this;
       }
@@ -10586,16 +10586,16 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder setRowDataList(
+      public Builder setRowData(
           int index, org.clever.canal.protocol.CanalEntry.RowData.Builder builderForValue) {
-        if (rowDataListBuilder_ == null) {
-          ensureRowDataListIsMutable();
-          rowDataList_.set(index, builderForValue.build());
+        if (rowDataBuilder_ == null) {
+          ensureRowDataIsMutable();
+          rowData_.set(index, builderForValue.build());
           onChanged();
         } else {
-          rowDataListBuilder_.setMessage(index, builderForValue.build());
+          rowDataBuilder_.setMessage(index, builderForValue.build());
         }
         return this;
       }
@@ -10604,18 +10604,18 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder addRowDataList(org.clever.canal.protocol.CanalEntry.RowData value) {
-        if (rowDataListBuilder_ == null) {
+      public Builder addRowData(org.clever.canal.protocol.CanalEntry.RowData value) {
+        if (rowDataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureRowDataListIsMutable();
-          rowDataList_.add(value);
+          ensureRowDataIsMutable();
+          rowData_.add(value);
           onChanged();
         } else {
-          rowDataListBuilder_.addMessage(value);
+          rowDataBuilder_.addMessage(value);
         }
         return this;
       }
@@ -10624,19 +10624,19 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder addRowDataList(
+      public Builder addRowData(
           int index, org.clever.canal.protocol.CanalEntry.RowData value) {
-        if (rowDataListBuilder_ == null) {
+        if (rowDataBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
           }
-          ensureRowDataListIsMutable();
-          rowDataList_.add(index, value);
+          ensureRowDataIsMutable();
+          rowData_.add(index, value);
           onChanged();
         } else {
-          rowDataListBuilder_.addMessage(index, value);
+          rowDataBuilder_.addMessage(index, value);
         }
         return this;
       }
@@ -10645,16 +10645,16 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder addRowDataList(
+      public Builder addRowData(
           org.clever.canal.protocol.CanalEntry.RowData.Builder builderForValue) {
-        if (rowDataListBuilder_ == null) {
-          ensureRowDataListIsMutable();
-          rowDataList_.add(builderForValue.build());
+        if (rowDataBuilder_ == null) {
+          ensureRowDataIsMutable();
+          rowData_.add(builderForValue.build());
           onChanged();
         } else {
-          rowDataListBuilder_.addMessage(builderForValue.build());
+          rowDataBuilder_.addMessage(builderForValue.build());
         }
         return this;
       }
@@ -10663,16 +10663,16 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder addRowDataList(
+      public Builder addRowData(
           int index, org.clever.canal.protocol.CanalEntry.RowData.Builder builderForValue) {
-        if (rowDataListBuilder_ == null) {
-          ensureRowDataListIsMutable();
-          rowDataList_.add(index, builderForValue.build());
+        if (rowDataBuilder_ == null) {
+          ensureRowDataIsMutable();
+          rowData_.add(index, builderForValue.build());
           onChanged();
         } else {
-          rowDataListBuilder_.addMessage(index, builderForValue.build());
+          rowDataBuilder_.addMessage(index, builderForValue.build());
         }
         return this;
       }
@@ -10681,17 +10681,17 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder addAllRowDataList(
+      public Builder addAllRowData(
           java.lang.Iterable<? extends org.clever.canal.protocol.CanalEntry.RowData> values) {
-        if (rowDataListBuilder_ == null) {
-          ensureRowDataListIsMutable();
+        if (rowDataBuilder_ == null) {
+          ensureRowDataIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
-              values, rowDataList_);
+              values, rowData_);
           onChanged();
         } else {
-          rowDataListBuilder_.addAllMessages(values);
+          rowDataBuilder_.addAllMessages(values);
         }
         return this;
       }
@@ -10700,15 +10700,15 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder clearRowDataList() {
-        if (rowDataListBuilder_ == null) {
-          rowDataList_ = java.util.Collections.emptyList();
+      public Builder clearRowData() {
+        if (rowDataBuilder_ == null) {
+          rowData_ = java.util.Collections.emptyList();
           bitField0_ = (bitField0_ & ~0x00000001);
           onChanged();
         } else {
-          rowDataListBuilder_.clear();
+          rowDataBuilder_.clear();
         }
         return this;
       }
@@ -10717,15 +10717,15 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public Builder removeRowDataList(int index) {
-        if (rowDataListBuilder_ == null) {
-          ensureRowDataListIsMutable();
-          rowDataList_.remove(index);
+      public Builder removeRowData(int index) {
+        if (rowDataBuilder_ == null) {
+          ensureRowDataIsMutable();
+          rowData_.remove(index);
           onChanged();
         } else {
-          rowDataListBuilder_.remove(index);
+          rowDataBuilder_.remove(index);
         }
         return this;
       }
@@ -10734,24 +10734,24 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public org.clever.canal.protocol.CanalEntry.RowData.Builder getRowDataListBuilder(
+      public org.clever.canal.protocol.CanalEntry.RowData.Builder getRowDataBuilder(
           int index) {
-        return getRowDataListFieldBuilder().getBuilder(index);
+        return getRowDataFieldBuilder().getBuilder(index);
       }
       /**
        * <pre>
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataListOrBuilder(
+      public org.clever.canal.protocol.CanalEntry.RowDataOrBuilder getRowDataOrBuilder(
           int index) {
-        if (rowDataListBuilder_ == null) {
-          return rowDataList_.get(index);  } else {
-          return rowDataListBuilder_.getMessageOrBuilder(index);
+        if (rowDataBuilder_ == null) {
+          return rowData_.get(index);  } else {
+          return rowDataBuilder_.getMessageOrBuilder(index);
         }
       }
       /**
@@ -10759,14 +10759,14 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
       public java.util.List<? extends org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> 
-           getRowDataListOrBuilderList() {
-        if (rowDataListBuilder_ != null) {
-          return rowDataListBuilder_.getMessageOrBuilderList();
+           getRowDataOrBuilderList() {
+        if (rowDataBuilder_ != null) {
+          return rowDataBuilder_.getMessageOrBuilderList();
         } else {
-          return java.util.Collections.unmodifiableList(rowDataList_);
+          return java.util.Collections.unmodifiableList(rowData_);
         }
       }
       /**
@@ -10774,10 +10774,10 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public org.clever.canal.protocol.CanalEntry.RowData.Builder addRowDataListBuilder() {
-        return getRowDataListFieldBuilder().addBuilder(
+      public org.clever.canal.protocol.CanalEntry.RowData.Builder addRowDataBuilder() {
+        return getRowDataFieldBuilder().addBuilder(
             org.clever.canal.protocol.CanalEntry.RowData.getDefaultInstance());
       }
       /**
@@ -10785,11 +10785,11 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
-      public org.clever.canal.protocol.CanalEntry.RowData.Builder addRowDataListBuilder(
+      public org.clever.canal.protocol.CanalEntry.RowData.Builder addRowDataBuilder(
           int index) {
-        return getRowDataListFieldBuilder().addBuilder(
+        return getRowDataFieldBuilder().addBuilder(
             index, org.clever.canal.protocol.CanalEntry.RowData.getDefaultInstance());
       }
       /**
@@ -10797,25 +10797,25 @@ public final class CanalEntry {
        * 一次数据库变更可能存在多行
        * </pre>
        *
-       * <code>repeated .org.clever.canal.protocol.RowData rowDataList = 12;</code>
+       * <code>repeated .org.clever.canal.protocol.RowData rowData = 12;</code>
        */
       public java.util.List<org.clever.canal.protocol.CanalEntry.RowData.Builder> 
-           getRowDataListBuilderList() {
-        return getRowDataListFieldBuilder().getBuilderList();
+           getRowDataBuilderList() {
+        return getRowDataFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilderV3<
           org.clever.canal.protocol.CanalEntry.RowData, org.clever.canal.protocol.CanalEntry.RowData.Builder, org.clever.canal.protocol.CanalEntry.RowDataOrBuilder> 
-          getRowDataListFieldBuilder() {
-        if (rowDataListBuilder_ == null) {
-          rowDataListBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
+          getRowDataFieldBuilder() {
+        if (rowDataBuilder_ == null) {
+          rowDataBuilder_ = new com.google.protobuf.RepeatedFieldBuilderV3<
               org.clever.canal.protocol.CanalEntry.RowData, org.clever.canal.protocol.CanalEntry.RowData.Builder, org.clever.canal.protocol.CanalEntry.RowDataOrBuilder>(
-                  rowDataList_,
+                  rowData_,
                   ((bitField0_ & 0x00000001) != 0),
                   getParentForChildren(),
                   isClean());
-          rowDataList_ = null;
+          rowData_ = null;
         }
-        return rowDataListBuilder_;
+        return rowDataBuilder_;
       }
 
       private java.util.List<org.clever.canal.protocol.CanalEntry.Pair> props_ =
@@ -13804,33 +13804,33 @@ public final class CanalEntry {
       "oreColumns\030\001 \003(\0132!.org.clever.canal.prot" +
       "ocol.Column\0227\n\014afterColumns\030\002 \003(\0132!.org." +
       "clever.canal.protocol.Column\022.\n\005props\030\003 " +
-      "\003(\0132\037.org.clever.canal.protocol.Pair\"\233\002\n" +
+      "\003(\0132\037.org.clever.canal.protocol.Pair\"\227\002\n" +
       "\tRowChange\022\017\n\007tableId\030\001 \001(\003\0229\n\teventType" +
       "\030\002 \001(\0162$.org.clever.canal.protocol.Event" +
-      "TypeH\000\022\017\n\005isDdl\030\n \001(\010H\001\022\013\n\003sql\030\013 \001(\t\0227\n\013" +
-      "rowDataList\030\014 \003(\0132\".org.clever.canal.pro" +
-      "tocol.RowData\022.\n\005props\030\r \003(\0132\037.org.cleve" +
-      "r.canal.protocol.Pair\022\025\n\rddlSchemaName\030\016" +
-      " \001(\tB\023\n\021eventType_presentB\017\n\risDdl_prese" +
-      "nt\"\200\001\n\020TransactionBegin\022\023\n\013executeTime\030\001" +
-      " \001(\003\022\025\n\rtransactionId\030\002 \001(\t\022.\n\005props\030\003 \003" +
-      "(\0132\037.org.clever.canal.protocol.Pair\022\020\n\010t" +
-      "hreadId\030\004 \001(\003\"l\n\016TransactionEnd\022\023\n\013execu" +
-      "teTime\030\001 \001(\003\022\025\n\rtransactionId\030\002 \001(\t\022.\n\005p" +
-      "rops\030\003 \003(\0132\037.org.clever.canal.protocol.P" +
-      "air*\213\001\n\tEntryType\022 \n\034ENTRY_TYPE_COMPATIB" +
-      "LE_PROTO2\020\000\022\025\n\021TRANSACTION_BEGIN\020\001\022\014\n\010RO" +
-      "W_DATA\020\002\022\023\n\017TRANSACTION_END\020\003\022\023\n\017ENTRY_H" +
-      "EARTBEAT\020\004\022\r\n\tGT_ID_LOG\020\005*\356\001\n\tEventType\022" +
-      " \n\034EVENT_TYPE_COMPATIBLE_PROTO2\020\000\022\n\n\006INS" +
-      "ERT\020\001\022\n\n\006UPDATE\020\002\022\n\n\006DELETE\020\003\022\n\n\006CREATE\020" +
-      "\004\022\t\n\005ALTER\020\005\022\t\n\005ERASE\020\006\022\t\n\005QUERY\020\007\022\014\n\010TR" +
-      "UNCATE\020\010\022\n\n\006RENAME\020\t\022\013\n\007C_INDEX\020\n\022\013\n\007D_I" +
-      "NDEX\020\013\022\t\n\005GT_ID\020\014\022\r\n\tXA_COMMIT\020\r\022\017\n\013XA_R" +
-      "OLLBACK\020\016\022\017\n\013M_HEARTBEAT\020\017*D\n\004Type\022\032\n\026TY" +
-      "PE_COMPATIBLE_PROTO2\020\000\022\n\n\006ORACLE\020\001\022\t\n\005MY" +
-      "SQL\020\002\022\t\n\005PgSQL\020\003B+\n\031org.clever.canal.pro" +
-      "tocolB\nCanalEntryH\001P\000b\006proto3"
+      "TypeH\000\022\017\n\005isDdl\030\n \001(\010H\001\022\013\n\003sql\030\013 \001(\t\0223\n\007" +
+      "rowData\030\014 \003(\0132\".org.clever.canal.protoco" +
+      "l.RowData\022.\n\005props\030\r \003(\0132\037.org.clever.ca" +
+      "nal.protocol.Pair\022\025\n\rddlSchemaName\030\016 \001(\t" +
+      "B\023\n\021eventType_presentB\017\n\risDdl_present\"\200" +
+      "\001\n\020TransactionBegin\022\023\n\013executeTime\030\001 \001(\003" +
+      "\022\025\n\rtransactionId\030\002 \001(\t\022.\n\005props\030\003 \003(\0132\037" +
+      ".org.clever.canal.protocol.Pair\022\020\n\010threa" +
+      "dId\030\004 \001(\003\"l\n\016TransactionEnd\022\023\n\013executeTi" +
+      "me\030\001 \001(\003\022\025\n\rtransactionId\030\002 \001(\t\022.\n\005props" +
+      "\030\003 \003(\0132\037.org.clever.canal.protocol.Pair*" +
+      "\213\001\n\tEntryType\022 \n\034ENTRY_TYPE_COMPATIBLE_P" +
+      "ROTO2\020\000\022\025\n\021TRANSACTION_BEGIN\020\001\022\014\n\010ROW_DA" +
+      "TA\020\002\022\023\n\017TRANSACTION_END\020\003\022\023\n\017ENTRY_HEART" +
+      "BEAT\020\004\022\r\n\tGT_ID_LOG\020\005*\356\001\n\tEventType\022 \n\034E" +
+      "VENT_TYPE_COMPATIBLE_PROTO2\020\000\022\n\n\006INSERT\020" +
+      "\001\022\n\n\006UPDATE\020\002\022\n\n\006DELETE\020\003\022\n\n\006CREATE\020\004\022\t\n" +
+      "\005ALTER\020\005\022\t\n\005ERASE\020\006\022\t\n\005QUERY\020\007\022\014\n\010TRUNCA" +
+      "TE\020\010\022\n\n\006RENAME\020\t\022\013\n\007C_INDEX\020\n\022\013\n\007D_INDEX" +
+      "\020\013\022\t\n\005GT_ID\020\014\022\r\n\tXA_COMMIT\020\r\022\017\n\013XA_ROLLB" +
+      "ACK\020\016\022\017\n\013M_HEARTBEAT\020\017*D\n\004Type\022\032\n\026TYPE_C" +
+      "OMPATIBLE_PROTO2\020\000\022\n\n\006ORACLE\020\001\022\t\n\005MYSQL\020" +
+      "\002\022\t\n\005PgSQL\020\003B+\n\031org.clever.canal.protoco" +
+      "lB\nCanalEntryH\001P\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -13871,7 +13871,7 @@ public final class CanalEntry {
     internal_static_org_clever_canal_protocol_RowChange_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_clever_canal_protocol_RowChange_descriptor,
-        new java.lang.String[] { "TableId", "EventType", "IsDdl", "Sql", "RowDataList", "Props", "DdlSchemaName", "EventTypePresent", "IsDdlPresent", });
+        new java.lang.String[] { "TableId", "EventType", "IsDdl", "Sql", "RowData", "Props", "DdlSchemaName", "EventTypePresent", "IsDdlPresent", });
     internal_static_org_clever_canal_protocol_TransactionBegin_descriptor =
       getDescriptor().getMessageTypes().get(6);
     internal_static_org_clever_canal_protocol_TransactionBegin_fieldAccessorTable = new

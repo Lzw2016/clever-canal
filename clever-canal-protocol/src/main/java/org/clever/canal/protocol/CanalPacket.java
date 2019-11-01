@@ -3,7 +3,6 @@
 
 package org.clever.canal.protocol;
 
-@SuppressWarnings("ALL")
 public final class CanalPacket {
   private CanalPacket() {}
   public static void registerAllExtensions(
@@ -16,27 +15,51 @@ public final class CanalPacket {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
+   * <pre>
+   * 使用的压缩算法类型
+   * </pre>
+   *
    * Protobuf enum {@code org.clever.canal.protocol.Compression}
    */
   public enum Compression
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
-     * <code>COMPRESSIONCOMPATIBLEPROTO2 = 0;</code>
+     * <pre>
+     * 为了兼容 proto2
+     * </pre>
+     *
+     * <code>COMPRESSION_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    COMPRESSIONCOMPATIBLEPROTO2(0),
+    COMPRESSION_TYPE_COMPATIBLE_PROTO2(0),
     /**
+     * <pre>
+     * 不压缩
+     * </pre>
+     *
      * <code>NONE = 1;</code>
      */
     NONE(1),
     /**
+     * <pre>
+     * zlib 压缩
+     * </pre>
+     *
      * <code>ZLIB = 2;</code>
      */
     ZLIB(2),
     /**
+     * <pre>
+     * gzip 压缩
+     * </pre>
+     *
      * <code>GZIP = 3;</code>
      */
     GZIP(3),
     /**
+     * <pre>
+     * lzf 压缩
+     * </pre>
+     *
      * <code>LZF = 4;</code>
      */
     LZF(4),
@@ -44,22 +67,42 @@ public final class CanalPacket {
     ;
 
     /**
-     * <code>COMPRESSIONCOMPATIBLEPROTO2 = 0;</code>
+     * <pre>
+     * 为了兼容 proto2
+     * </pre>
+     *
+     * <code>COMPRESSION_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    public static final int COMPRESSIONCOMPATIBLEPROTO2_VALUE = 0;
+    public static final int COMPRESSION_TYPE_COMPATIBLE_PROTO2_VALUE = 0;
     /**
+     * <pre>
+     * 不压缩
+     * </pre>
+     *
      * <code>NONE = 1;</code>
      */
     public static final int NONE_VALUE = 1;
     /**
+     * <pre>
+     * zlib 压缩
+     * </pre>
+     *
      * <code>ZLIB = 2;</code>
      */
     public static final int ZLIB_VALUE = 2;
     /**
+     * <pre>
+     * gzip 压缩
+     * </pre>
+     *
      * <code>GZIP = 3;</code>
      */
     public static final int GZIP_VALUE = 3;
     /**
+     * <pre>
+     * lzf 压缩
+     * </pre>
+     *
      * <code>LZF = 4;</code>
      */
     public static final int LZF_VALUE = 4;
@@ -89,7 +132,7 @@ public final class CanalPacket {
      */
     public static Compression forNumber(int value) {
       switch (value) {
-        case 0: return COMPRESSIONCOMPATIBLEPROTO2;
+        case 0: return COMPRESSION_TYPE_COMPATIBLE_PROTO2;
         case 1: return NONE;
         case 2: return ZLIB;
         case 3: return GZIP;
@@ -147,53 +190,89 @@ public final class CanalPacket {
   }
 
   /**
+   * <pre>
+   * 数据Packet类型
+   * </pre>
+   *
    * Protobuf enum {@code org.clever.canal.protocol.PacketType}
    */
   public enum PacketType
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
      * <pre>
-     *compatible
+     * 为了兼容 proto2
      * </pre>
      *
-     * <code>PACKAGETYPECOMPATIBLEPROTO2 = 0;</code>
+     * <code>PACKET_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    PACKAGETYPECOMPATIBLEPROTO2(0),
+    PACKET_TYPE_COMPATIBLE_PROTO2(0),
     /**
+     * <pre>
+     * 连接握手
+     * </pre>
+     *
      * <code>HANDSHAKE = 1;</code>
      */
     HANDSHAKE(1),
     /**
-     * <code>CLIENTAUTHENTICATION = 2;</code>
+     * <pre>
+     * 客户端授权
+     * </pre>
+     *
+     * <code>CLIENT_AUTHENTICATION = 2;</code>
      */
-    CLIENTAUTHENTICATION(2),
+    CLIENT_AUTHENTICATION(2),
     /**
+     * <pre>
+     * ack
+     * </pre>
+     *
      * <code>ACK = 3;</code>
      */
     ACK(3),
     /**
+     * <pre>
+     * subscription(订阅)
+     * </pre>
+     *
      * <code>SUBSCRIPTION = 4;</code>
      */
     SUBSCRIPTION(4),
     /**
+     * <pre>
+     * unsubscription(取消订阅)
+     * </pre>
+     *
      * <code>UNSUBSCRIPTION = 5;</code>
      */
     UNSUBSCRIPTION(5),
     /**
+     * <pre>
+     * Get(PullRequest)
+     * </pre>
+     *
      * <code>GET = 6;</code>
      */
     GET(6),
     /**
+     * <pre>
+     * messages
+     * </pre>
+     *
      * <code>MESSAGES = 7;</code>
      */
     MESSAGES(7),
     /**
-     * <code>CLIENTACK = 8;</code>
+     * <pre>
+     * client ack
+     * </pre>
+     *
+     * <code>CLIENT_ACK = 8;</code>
      */
-    CLIENTACK(8),
+    CLIENT_ACK(8),
     /**
      * <pre>
-     * management part
+     * shutdown(关闭)
      * </pre>
      *
      * <code>SHUTDOWN = 9;</code>
@@ -201,66 +280,106 @@ public final class CanalPacket {
     SHUTDOWN(9),
     /**
      * <pre>
-     * integration
+     * dump (integration)
      * </pre>
      *
      * <code>DUMP = 10;</code>
      */
     DUMP(10),
     /**
-     * <code>HEARTBEAT = 11;</code>
+     * <pre>
+     * 心跳
+     * </pre>
+     *
+     * <code>PACKET_HEARTBEAT = 11;</code>
      */
-    HEARTBEAT(11),
+    PACKET_HEARTBEAT(11),
     /**
-     * <code>CLIENTROLLBACK = 12;</code>
+     * <pre>
+     * client rollback
+     * </pre>
+     *
+     * <code>CLIENT_ROLLBACK = 12;</code>
      */
-    CLIENTROLLBACK(12),
+    CLIENT_ROLLBACK(12),
     UNRECOGNIZED(-1),
     ;
 
     /**
      * <pre>
-     *compatible
+     * 为了兼容 proto2
      * </pre>
      *
-     * <code>PACKAGETYPECOMPATIBLEPROTO2 = 0;</code>
+     * <code>PACKET_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    public static final int PACKAGETYPECOMPATIBLEPROTO2_VALUE = 0;
+    public static final int PACKET_TYPE_COMPATIBLE_PROTO2_VALUE = 0;
     /**
+     * <pre>
+     * 连接握手
+     * </pre>
+     *
      * <code>HANDSHAKE = 1;</code>
      */
     public static final int HANDSHAKE_VALUE = 1;
     /**
-     * <code>CLIENTAUTHENTICATION = 2;</code>
+     * <pre>
+     * 客户端授权
+     * </pre>
+     *
+     * <code>CLIENT_AUTHENTICATION = 2;</code>
      */
-    public static final int CLIENTAUTHENTICATION_VALUE = 2;
+    public static final int CLIENT_AUTHENTICATION_VALUE = 2;
     /**
+     * <pre>
+     * ack
+     * </pre>
+     *
      * <code>ACK = 3;</code>
      */
     public static final int ACK_VALUE = 3;
     /**
+     * <pre>
+     * subscription(订阅)
+     * </pre>
+     *
      * <code>SUBSCRIPTION = 4;</code>
      */
     public static final int SUBSCRIPTION_VALUE = 4;
     /**
+     * <pre>
+     * unsubscription(取消订阅)
+     * </pre>
+     *
      * <code>UNSUBSCRIPTION = 5;</code>
      */
     public static final int UNSUBSCRIPTION_VALUE = 5;
     /**
+     * <pre>
+     * Get(PullRequest)
+     * </pre>
+     *
      * <code>GET = 6;</code>
      */
     public static final int GET_VALUE = 6;
     /**
+     * <pre>
+     * messages
+     * </pre>
+     *
      * <code>MESSAGES = 7;</code>
      */
     public static final int MESSAGES_VALUE = 7;
     /**
-     * <code>CLIENTACK = 8;</code>
+     * <pre>
+     * client ack
+     * </pre>
+     *
+     * <code>CLIENT_ACK = 8;</code>
      */
-    public static final int CLIENTACK_VALUE = 8;
+    public static final int CLIENT_ACK_VALUE = 8;
     /**
      * <pre>
-     * management part
+     * shutdown(关闭)
      * </pre>
      *
      * <code>SHUTDOWN = 9;</code>
@@ -268,20 +387,28 @@ public final class CanalPacket {
     public static final int SHUTDOWN_VALUE = 9;
     /**
      * <pre>
-     * integration
+     * dump (integration)
      * </pre>
      *
      * <code>DUMP = 10;</code>
      */
     public static final int DUMP_VALUE = 10;
     /**
-     * <code>HEARTBEAT = 11;</code>
+     * <pre>
+     * 心跳
+     * </pre>
+     *
+     * <code>PACKET_HEARTBEAT = 11;</code>
      */
-    public static final int HEARTBEAT_VALUE = 11;
+    public static final int PACKET_HEARTBEAT_VALUE = 11;
     /**
-     * <code>CLIENTROLLBACK = 12;</code>
+     * <pre>
+     * client rollback
+     * </pre>
+     *
+     * <code>CLIENT_ROLLBACK = 12;</code>
      */
-    public static final int CLIENTROLLBACK_VALUE = 12;
+    public static final int CLIENT_ROLLBACK_VALUE = 12;
 
 
     public final int getNumber() {
@@ -308,19 +435,19 @@ public final class CanalPacket {
      */
     public static PacketType forNumber(int value) {
       switch (value) {
-        case 0: return PACKAGETYPECOMPATIBLEPROTO2;
+        case 0: return PACKET_TYPE_COMPATIBLE_PROTO2;
         case 1: return HANDSHAKE;
-        case 2: return CLIENTAUTHENTICATION;
+        case 2: return CLIENT_AUTHENTICATION;
         case 3: return ACK;
         case 4: return SUBSCRIPTION;
         case 5: return UNSUBSCRIPTION;
         case 6: return GET;
         case 7: return MESSAGES;
-        case 8: return CLIENTACK;
+        case 8: return CLIENT_ACK;
         case 9: return SHUTDOWN;
         case 10: return DUMP;
-        case 11: return HEARTBEAT;
-        case 12: return CLIENTROLLBACK;
+        case 11: return PACKET_HEARTBEAT;
+        case 12: return CLIENT_ROLLBACK;
         default: return null;
       }
     }
@@ -390,11 +517,19 @@ public final class CanalPacket {
     int getVersion();
 
     /**
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
      * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
      * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
      * @return The type.
      */
@@ -412,6 +547,10 @@ public final class CanalPacket {
     org.clever.canal.protocol.CanalPacket.Compression getCompression();
 
     /**
+     * <pre>
+     * 数据Body
+     * </pre>
+     *
      * <code>bytes body = 5;</code>
      * @return The body.
      */
@@ -424,6 +563,10 @@ public final class CanalPacket {
     public org.clever.canal.protocol.CanalPacket.Packet.CompressionPresentCase getCompressionPresentCase();
   }
   /**
+   * <pre>
+   * Packet数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.Packet}
    */
   public  static final class Packet extends
@@ -673,6 +816,10 @@ public final class CanalPacket {
     public static final int TYPE_FIELD_NUMBER = 3;
     private int type_;
     /**
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
      * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
      * @return The enum numeric value on the wire for type.
      */
@@ -680,6 +827,10 @@ public final class CanalPacket {
       return type_;
     }
     /**
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
      * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
      * @return The type.
      */
@@ -711,12 +862,16 @@ public final class CanalPacket {
             (java.lang.Integer) compressionPresent_);
         return result == null ? org.clever.canal.protocol.CanalPacket.Compression.UNRECOGNIZED : result;
       }
-      return org.clever.canal.protocol.CanalPacket.Compression.COMPRESSIONCOMPATIBLEPROTO2;
+      return org.clever.canal.protocol.CanalPacket.Compression.COMPRESSION_TYPE_COMPATIBLE_PROTO2;
     }
 
     public static final int BODY_FIELD_NUMBER = 5;
     private com.google.protobuf.ByteString body_;
     /**
+     * <pre>
+     * 数据Body
+     * </pre>
+     *
      * <code>bytes body = 5;</code>
      * @return The body.
      */
@@ -746,7 +901,7 @@ public final class CanalPacket {
         output.writeInt32(
             2, (int)((java.lang.Integer) versionPresent_));
       }
-      if (type_ != org.clever.canal.protocol.CanalPacket.PacketType.PACKAGETYPECOMPATIBLEPROTO2.getNumber()) {
+      if (type_ != org.clever.canal.protocol.CanalPacket.PacketType.PACKET_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         output.writeEnum(3, type_);
       }
       if (compressionPresentCase_ == 4) {
@@ -774,7 +929,7 @@ public final class CanalPacket {
           .computeInt32Size(
               2, (int)((java.lang.Integer) versionPresent_));
       }
-      if (type_ != org.clever.canal.protocol.CanalPacket.PacketType.PACKAGETYPECOMPATIBLEPROTO2.getNumber()) {
+      if (type_ != org.clever.canal.protocol.CanalPacket.PacketType.PACKET_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, type_);
       }
@@ -966,6 +1121,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Packet数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.Packet}
      */
     public static final class Builder extends
@@ -1278,6 +1437,10 @@ public final class CanalPacket {
 
       private int type_ = 0;
       /**
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
        * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
        * @return The enum numeric value on the wire for type.
        */
@@ -1285,6 +1448,10 @@ public final class CanalPacket {
         return type_;
       }
       /**
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
        * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
@@ -1295,6 +1462,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
        * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
        * @return The type.
        */
@@ -1304,6 +1475,10 @@ public final class CanalPacket {
         return result == null ? org.clever.canal.protocol.CanalPacket.PacketType.UNRECOGNIZED : result;
       }
       /**
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
        * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
        * @param value The type to set.
        * @return This builder for chaining.
@@ -1318,6 +1493,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
        * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
        * @return This builder for chaining.
        */
@@ -1360,7 +1539,7 @@ public final class CanalPacket {
               (java.lang.Integer) compressionPresent_);
           return result == null ? org.clever.canal.protocol.CanalPacket.Compression.UNRECOGNIZED : result;
         }
-        return org.clever.canal.protocol.CanalPacket.Compression.COMPRESSIONCOMPATIBLEPROTO2;
+        return org.clever.canal.protocol.CanalPacket.Compression.COMPRESSION_TYPE_COMPATIBLE_PROTO2;
       }
       /**
        * <code>.org.clever.canal.protocol.Compression compression = 4;</code>
@@ -1391,6 +1570,10 @@ public final class CanalPacket {
 
       private com.google.protobuf.ByteString body_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 5;</code>
        * @return The body.
        */
@@ -1398,6 +1581,10 @@ public final class CanalPacket {
         return body_;
       }
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 5;</code>
        * @param value The body to set.
        * @return This builder for chaining.
@@ -1412,6 +1599,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 5;</code>
        * @return This builder for chaining.
        */
@@ -1479,18 +1670,30 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int64 send_timestamp = 1;</code>
+     * <pre>
+     * 发送时间搓
+     * </pre>
+     *
+     * <code>int64 sendTimestamp = 1;</code>
      * @return The sendTimestamp.
      */
     long getSendTimestamp();
 
     /**
-     * <code>int64 start_timestamp = 2;</code>
+     * <pre>
+     * 开始时间搓
+     * </pre>
+     *
+     * <code>int64 startTimestamp = 2;</code>
      * @return The startTimestamp.
      */
     long getStartTimestamp();
   }
   /**
+   * <pre>
+   * 心跳数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.HeartBeat}
    */
   public  static final class HeartBeat extends
@@ -1577,20 +1780,28 @@ public final class CanalPacket {
               org.clever.canal.protocol.CanalPacket.HeartBeat.class, org.clever.canal.protocol.CanalPacket.HeartBeat.Builder.class);
     }
 
-    public static final int SEND_TIMESTAMP_FIELD_NUMBER = 1;
+    public static final int SENDTIMESTAMP_FIELD_NUMBER = 1;
     private long sendTimestamp_;
     /**
-     * <code>int64 send_timestamp = 1;</code>
+     * <pre>
+     * 发送时间搓
+     * </pre>
+     *
+     * <code>int64 sendTimestamp = 1;</code>
      * @return The sendTimestamp.
      */
     public long getSendTimestamp() {
       return sendTimestamp_;
     }
 
-    public static final int START_TIMESTAMP_FIELD_NUMBER = 2;
+    public static final int STARTTIMESTAMP_FIELD_NUMBER = 2;
     private long startTimestamp_;
     /**
-     * <code>int64 start_timestamp = 2;</code>
+     * <pre>
+     * 开始时间搓
+     * </pre>
+     *
+     * <code>int64 startTimestamp = 2;</code>
      * @return The startTimestamp.
      */
     public long getStartTimestamp() {
@@ -1664,10 +1875,10 @@ public final class CanalPacket {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + SEND_TIMESTAMP_FIELD_NUMBER;
+      hash = (37 * hash) + SENDTIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getSendTimestamp());
-      hash = (37 * hash) + START_TIMESTAMP_FIELD_NUMBER;
+      hash = (37 * hash) + STARTTIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getStartTimestamp());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -1766,6 +1977,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * 心跳数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.HeartBeat}
      */
     public static final class Builder extends
@@ -1920,14 +2135,22 @@ public final class CanalPacket {
 
       private long sendTimestamp_ ;
       /**
-       * <code>int64 send_timestamp = 1;</code>
+       * <pre>
+       * 发送时间搓
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 1;</code>
        * @return The sendTimestamp.
        */
       public long getSendTimestamp() {
         return sendTimestamp_;
       }
       /**
-       * <code>int64 send_timestamp = 1;</code>
+       * <pre>
+       * 发送时间搓
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 1;</code>
        * @param value The sendTimestamp to set.
        * @return This builder for chaining.
        */
@@ -1938,7 +2161,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 send_timestamp = 1;</code>
+       * <pre>
+       * 发送时间搓
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearSendTimestamp() {
@@ -1950,14 +2177,22 @@ public final class CanalPacket {
 
       private long startTimestamp_ ;
       /**
-       * <code>int64 start_timestamp = 2;</code>
+       * <pre>
+       * 开始时间搓
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 2;</code>
        * @return The startTimestamp.
        */
       public long getStartTimestamp() {
         return startTimestamp_;
       }
       /**
-       * <code>int64 start_timestamp = 2;</code>
+       * <pre>
+       * 开始时间搓
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 2;</code>
        * @param value The startTimestamp to set.
        * @return This builder for chaining.
        */
@@ -1968,7 +2203,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 start_timestamp = 2;</code>
+       * <pre>
+       * 开始时间搓
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearStartTimestamp() {
@@ -2035,30 +2274,42 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The communicationEncoding.
      */
     java.lang.String getCommunicationEncoding();
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The bytes for communicationEncoding.
      */
     com.google.protobuf.ByteString
         getCommunicationEncodingBytes();
 
     /**
+     * <pre>
+     * 心跳数据
+     * </pre>
+     *
      * <code>bytes seeds = 2;</code>
      * @return The seeds.
      */
     com.google.protobuf.ByteString getSeeds();
 
     /**
-     * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+     * <pre>
+     * 支持(使用)的压缩算法
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
      * @return The enum numeric value on the wire for supportedCompressions.
      */
     int getSupportedCompressionsValue();
     /**
-     * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+     * <pre>
+     * 支持(使用)的压缩算法
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
      * @return The supportedCompressions.
      */
     org.clever.canal.protocol.CanalPacket.Compression getSupportedCompressions();
@@ -2066,6 +2317,10 @@ public final class CanalPacket {
     public org.clever.canal.protocol.CanalPacket.Handshake.CommunicationEncodingPresentCase getCommunicationEncodingPresentCase();
   }
   /**
+   * <pre>
+   * 握手数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.Handshake}
    */
   public  static final class Handshake extends
@@ -2166,7 +2421,7 @@ public final class CanalPacket {
     public enum CommunicationEncodingPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      COMMUNICATION_ENCODING(1),
+      COMMUNICATIONENCODING(1),
       COMMUNICATIONENCODINGPRESENT_NOT_SET(0);
       private final int value;
       private CommunicationEncodingPresentCase(int value) {
@@ -2184,7 +2439,7 @@ public final class CanalPacket {
 
       public static CommunicationEncodingPresentCase forNumber(int value) {
         switch (value) {
-          case 1: return COMMUNICATION_ENCODING;
+          case 1: return COMMUNICATIONENCODING;
           case 0: return COMMUNICATIONENCODINGPRESENT_NOT_SET;
           default: return null;
         }
@@ -2200,9 +2455,9 @@ public final class CanalPacket {
           communicationEncodingPresentCase_);
     }
 
-    public static final int COMMUNICATION_ENCODING_FIELD_NUMBER = 1;
+    public static final int COMMUNICATIONENCODING_FIELD_NUMBER = 1;
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The communicationEncoding.
      */
     public java.lang.String getCommunicationEncoding() {
@@ -2223,7 +2478,7 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The bytes for communicationEncoding.
      */
     public com.google.protobuf.ByteString
@@ -2248,6 +2503,10 @@ public final class CanalPacket {
     public static final int SEEDS_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString seeds_;
     /**
+     * <pre>
+     * 心跳数据
+     * </pre>
+     *
      * <code>bytes seeds = 2;</code>
      * @return The seeds.
      */
@@ -2255,17 +2514,25 @@ public final class CanalPacket {
       return seeds_;
     }
 
-    public static final int SUPPORTED_COMPRESSIONS_FIELD_NUMBER = 3;
+    public static final int SUPPORTEDCOMPRESSIONS_FIELD_NUMBER = 3;
     private int supportedCompressions_;
     /**
-     * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+     * <pre>
+     * 支持(使用)的压缩算法
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
      * @return The enum numeric value on the wire for supportedCompressions.
      */
     public int getSupportedCompressionsValue() {
       return supportedCompressions_;
     }
     /**
-     * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+     * <pre>
+     * 支持(使用)的压缩算法
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
      * @return The supportedCompressions.
      */
     public org.clever.canal.protocol.CanalPacket.Compression getSupportedCompressions() {
@@ -2294,7 +2561,7 @@ public final class CanalPacket {
       if (!seeds_.isEmpty()) {
         output.writeBytes(2, seeds_);
       }
-      if (supportedCompressions_ != org.clever.canal.protocol.CanalPacket.Compression.COMPRESSIONCOMPATIBLEPROTO2.getNumber()) {
+      if (supportedCompressions_ != org.clever.canal.protocol.CanalPacket.Compression.COMPRESSION_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         output.writeEnum(3, supportedCompressions_);
       }
       unknownFields.writeTo(output);
@@ -2313,7 +2580,7 @@ public final class CanalPacket {
         size += com.google.protobuf.CodedOutputStream
           .computeBytesSize(2, seeds_);
       }
-      if (supportedCompressions_ != org.clever.canal.protocol.CanalPacket.Compression.COMPRESSIONCOMPATIBLEPROTO2.getNumber()) {
+      if (supportedCompressions_ != org.clever.canal.protocol.CanalPacket.Compression.COMPRESSION_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, supportedCompressions_);
       }
@@ -2357,11 +2624,11 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + SEEDS_FIELD_NUMBER;
       hash = (53 * hash) + getSeeds().hashCode();
-      hash = (37 * hash) + SUPPORTED_COMPRESSIONS_FIELD_NUMBER;
+      hash = (37 * hash) + SUPPORTEDCOMPRESSIONS_FIELD_NUMBER;
       hash = (53 * hash) + supportedCompressions_;
       switch (communicationEncodingPresentCase_) {
         case 1:
-          hash = (37 * hash) + COMMUNICATION_ENCODING_FIELD_NUMBER;
+          hash = (37 * hash) + COMMUNICATIONENCODING_FIELD_NUMBER;
           hash = (53 * hash) + getCommunicationEncoding().hashCode();
           break;
         case 0:
@@ -2463,6 +2730,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * 握手数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.Handshake}
      */
     public static final class Builder extends
@@ -2593,7 +2864,7 @@ public final class CanalPacket {
           setSupportedCompressionsValue(other.getSupportedCompressionsValue());
         }
         switch (other.getCommunicationEncodingPresentCase()) {
-          case COMMUNICATION_ENCODING: {
+          case COMMUNICATIONENCODING: {
             communicationEncodingPresentCase_ = 1;
             communicationEncodingPresent_ = other.communicationEncodingPresent_;
             onChanged();
@@ -2648,7 +2919,7 @@ public final class CanalPacket {
 
 
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return The communicationEncoding.
        */
       public java.lang.String getCommunicationEncoding() {
@@ -2669,7 +2940,7 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return The bytes for communicationEncoding.
        */
       public com.google.protobuf.ByteString
@@ -2691,7 +2962,7 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @param value The communicationEncoding to set.
        * @return This builder for chaining.
        */
@@ -2706,7 +2977,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearCommunicationEncoding() {
@@ -2718,7 +2989,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @param value The bytes for communicationEncoding to set.
        * @return This builder for chaining.
        */
@@ -2736,6 +3007,10 @@ public final class CanalPacket {
 
       private com.google.protobuf.ByteString seeds_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @return The seeds.
        */
@@ -2743,6 +3018,10 @@ public final class CanalPacket {
         return seeds_;
       }
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @param value The seeds to set.
        * @return This builder for chaining.
@@ -2757,6 +3036,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @return This builder for chaining.
        */
@@ -2769,14 +3052,22 @@ public final class CanalPacket {
 
       private int supportedCompressions_ = 0;
       /**
-       * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+       * <pre>
+       * 支持(使用)的压缩算法
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
        * @return The enum numeric value on the wire for supportedCompressions.
        */
       public int getSupportedCompressionsValue() {
         return supportedCompressions_;
       }
       /**
-       * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+       * <pre>
+       * 支持(使用)的压缩算法
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
        * @param value The enum numeric value on the wire for supportedCompressions to set.
        * @return This builder for chaining.
        */
@@ -2786,7 +3077,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+       * <pre>
+       * 支持(使用)的压缩算法
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
        * @return The supportedCompressions.
        */
       public org.clever.canal.protocol.CanalPacket.Compression getSupportedCompressions() {
@@ -2795,7 +3090,11 @@ public final class CanalPacket {
         return result == null ? org.clever.canal.protocol.CanalPacket.Compression.UNRECOGNIZED : result;
       }
       /**
-       * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+       * <pre>
+       * 支持(使用)的压缩算法
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
        * @param value The supportedCompressions to set.
        * @return This builder for chaining.
        */
@@ -2809,7 +3108,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>.org.clever.canal.protocol.Compression supported_compressions = 3;</code>
+       * <pre>
+       * 支持(使用)的压缩算法
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.Compression supportedCompressions = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearSupportedCompressions() {
@@ -2876,11 +3179,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The username.
      */
     java.lang.String getUsername();
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The bytes for username.
      */
@@ -2889,7 +3200,7 @@ public final class CanalPacket {
 
     /**
      * <pre>
-     * hashed password with seeds from Handshake message
+     * 密码(握手消息种子散列密码)
      * </pre>
      *
      * <code>bytes password = 2;</code>
@@ -2898,31 +3209,31 @@ public final class CanalPacket {
     com.google.protobuf.ByteString getPassword();
 
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_read_timeout = 3;</code>
+     * <code>int32 netReadTimeout = 3;</code>
      * @return The netReadTimeout.
      */
     int getNetReadTimeout();
 
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_write_timeout = 4;</code>
+     * <code>int32 netWriteTimeout = 4;</code>
      * @return The netWriteTimeout.
      */
     int getNetWriteTimeout();
 
     /**
+     * <pre>
+     * 数据源名称
+     * </pre>
+     *
      * <code>string destination = 5;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 数据源名称
+     * </pre>
+     *
      * <code>string destination = 5;</code>
      * @return The bytes for destination.
      */
@@ -2930,23 +3241,39 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 6;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 6;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 6;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 6;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
     java.lang.String getFilter();
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -2954,7 +3281,11 @@ public final class CanalPacket {
         getFilterBytes();
 
     /**
-     * <code>int64 start_timestamp = 8;</code>
+     * <pre>
+     * 开始时间
+     * </pre>
+     *
+     * <code>int64 startTimestamp = 8;</code>
      * @return The startTimestamp.
      */
     long getStartTimestamp();
@@ -2965,7 +3296,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
-   * client authentication
+   * 客户端授权数据
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.ClientAuth}
@@ -3098,7 +3429,7 @@ public final class CanalPacket {
     public enum NetReadTimeoutPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      NET_READ_TIMEOUT(3),
+      NETREADTIMEOUT(3),
       NETREADTIMEOUTPRESENT_NOT_SET(0);
       private final int value;
       private NetReadTimeoutPresentCase(int value) {
@@ -3116,7 +3447,7 @@ public final class CanalPacket {
 
       public static NetReadTimeoutPresentCase forNumber(int value) {
         switch (value) {
-          case 3: return NET_READ_TIMEOUT;
+          case 3: return NETREADTIMEOUT;
           case 0: return NETREADTIMEOUTPRESENT_NOT_SET;
           default: return null;
         }
@@ -3137,7 +3468,7 @@ public final class CanalPacket {
     public enum NetWriteTimeoutPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      NET_WRITE_TIMEOUT(4),
+      NETWRITETIMEOUT(4),
       NETWRITETIMEOUTPRESENT_NOT_SET(0);
       private final int value;
       private NetWriteTimeoutPresentCase(int value) {
@@ -3155,7 +3486,7 @@ public final class CanalPacket {
 
       public static NetWriteTimeoutPresentCase forNumber(int value) {
         switch (value) {
-          case 4: return NET_WRITE_TIMEOUT;
+          case 4: return NETWRITETIMEOUT;
           case 0: return NETWRITETIMEOUTPRESENT_NOT_SET;
           default: return null;
         }
@@ -3174,6 +3505,10 @@ public final class CanalPacket {
     public static final int USERNAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object username_;
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The username.
      */
@@ -3190,6 +3525,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The bytes for username.
      */
@@ -3211,7 +3550,7 @@ public final class CanalPacket {
     private com.google.protobuf.ByteString password_;
     /**
      * <pre>
-     * hashed password with seeds from Handshake message
+     * 密码(握手消息种子散列密码)
      * </pre>
      *
      * <code>bytes password = 2;</code>
@@ -3221,13 +3560,9 @@ public final class CanalPacket {
       return password_;
     }
 
-    public static final int NET_READ_TIMEOUT_FIELD_NUMBER = 3;
+    public static final int NETREADTIMEOUT_FIELD_NUMBER = 3;
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_read_timeout = 3;</code>
+     * <code>int32 netReadTimeout = 3;</code>
      * @return The netReadTimeout.
      */
     public int getNetReadTimeout() {
@@ -3237,13 +3572,9 @@ public final class CanalPacket {
       return 0;
     }
 
-    public static final int NET_WRITE_TIMEOUT_FIELD_NUMBER = 4;
+    public static final int NETWRITETIMEOUT_FIELD_NUMBER = 4;
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_write_timeout = 4;</code>
+     * <code>int32 netWriteTimeout = 4;</code>
      * @return The netWriteTimeout.
      */
     public int getNetWriteTimeout() {
@@ -3256,6 +3587,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 5;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 数据源名称
+     * </pre>
+     *
      * <code>string destination = 5;</code>
      * @return The destination.
      */
@@ -3272,6 +3607,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 数据源名称
+     * </pre>
+     *
      * <code>string destination = 5;</code>
      * @return The bytes for destination.
      */
@@ -3289,10 +3628,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 6;
+    public static final int CLIENTID_FIELD_NUMBER = 6;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 6;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 6;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -3308,7 +3651,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 6;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 6;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -3328,6 +3675,10 @@ public final class CanalPacket {
     public static final int FILTER_FIELD_NUMBER = 7;
     private volatile java.lang.Object filter_;
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
@@ -3344,6 +3695,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -3361,10 +3716,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int START_TIMESTAMP_FIELD_NUMBER = 8;
+    public static final int STARTTIMESTAMP_FIELD_NUMBER = 8;
     private long startTimestamp_;
     /**
-     * <code>int64 start_timestamp = 8;</code>
+     * <pre>
+     * 开始时间
+     * </pre>
+     *
+     * <code>int64 startTimestamp = 8;</code>
      * @return The startTimestamp.
      */
     public long getStartTimestamp() {
@@ -3512,16 +3871,16 @@ public final class CanalPacket {
       hash = (53 * hash) + getPassword().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
       hash = (37 * hash) + FILTER_FIELD_NUMBER;
       hash = (53 * hash) + getFilter().hashCode();
-      hash = (37 * hash) + START_TIMESTAMP_FIELD_NUMBER;
+      hash = (37 * hash) + STARTTIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getStartTimestamp());
       switch (netReadTimeoutPresentCase_) {
         case 3:
-          hash = (37 * hash) + NET_READ_TIMEOUT_FIELD_NUMBER;
+          hash = (37 * hash) + NETREADTIMEOUT_FIELD_NUMBER;
           hash = (53 * hash) + getNetReadTimeout();
           break;
         case 0:
@@ -3529,7 +3888,7 @@ public final class CanalPacket {
       }
       switch (netWriteTimeoutPresentCase_) {
         case 4:
-          hash = (37 * hash) + NET_WRITE_TIMEOUT_FIELD_NUMBER;
+          hash = (37 * hash) + NETWRITETIMEOUT_FIELD_NUMBER;
           hash = (53 * hash) + getNetWriteTimeout();
           break;
         case 0:
@@ -3632,7 +3991,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * client authentication
+     * 客户端授权数据
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.ClientAuth}
@@ -3799,7 +4158,7 @@ public final class CanalPacket {
           setStartTimestamp(other.getStartTimestamp());
         }
         switch (other.getNetReadTimeoutPresentCase()) {
-          case NET_READ_TIMEOUT: {
+          case NETREADTIMEOUT: {
             setNetReadTimeout(other.getNetReadTimeout());
             break;
           }
@@ -3808,7 +4167,7 @@ public final class CanalPacket {
           }
         }
         switch (other.getNetWriteTimeoutPresentCase()) {
-          case NET_WRITE_TIMEOUT: {
+          case NETWRITETIMEOUT: {
             setNetWriteTimeout(other.getNetWriteTimeout());
             break;
           }
@@ -3877,6 +4236,10 @@ public final class CanalPacket {
 
       private java.lang.Object username_ = "";
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return The username.
        */
@@ -3893,6 +4256,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return The bytes for username.
        */
@@ -3910,6 +4277,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @param value The username to set.
        * @return This builder for chaining.
@@ -3925,6 +4296,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return This builder for chaining.
        */
@@ -3935,6 +4310,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @param value The bytes for username to set.
        * @return This builder for chaining.
@@ -3954,7 +4333,7 @@ public final class CanalPacket {
       private com.google.protobuf.ByteString password_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3965,7 +4344,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3983,7 +4362,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3997,11 +4376,7 @@ public final class CanalPacket {
       }
 
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @return The netReadTimeout.
        */
       public int getNetReadTimeout() {
@@ -4011,11 +4386,7 @@ public final class CanalPacket {
         return 0;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @param value The netReadTimeout to set.
        * @return This builder for chaining.
        */
@@ -4026,11 +4397,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearNetReadTimeout() {
@@ -4043,11 +4410,7 @@ public final class CanalPacket {
       }
 
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @return The netWriteTimeout.
        */
       public int getNetWriteTimeout() {
@@ -4057,11 +4420,7 @@ public final class CanalPacket {
         return 0;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @param value The netWriteTimeout to set.
        * @return This builder for chaining.
        */
@@ -4072,11 +4431,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearNetWriteTimeout() {
@@ -4090,6 +4445,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 数据源名称
+       * </pre>
+       *
        * <code>string destination = 5;</code>
        * @return The destination.
        */
@@ -4106,6 +4465,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 数据源名称
+       * </pre>
+       *
        * <code>string destination = 5;</code>
        * @return The bytes for destination.
        */
@@ -4123,6 +4486,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 数据源名称
+       * </pre>
+       *
        * <code>string destination = 5;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -4138,6 +4505,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据源名称
+       * </pre>
+       *
        * <code>string destination = 5;</code>
        * @return This builder for chaining.
        */
@@ -4148,6 +4519,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据源名称
+       * </pre>
+       *
        * <code>string destination = 5;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -4166,7 +4541,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 6;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 6;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -4182,7 +4561,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 6;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 6;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -4199,7 +4582,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 6;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 6;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -4214,7 +4601,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 6;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -4224,7 +4615,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 6;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 6;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -4242,6 +4637,10 @@ public final class CanalPacket {
 
       private java.lang.Object filter_ = "";
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The filter.
        */
@@ -4258,6 +4657,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The bytes for filter.
        */
@@ -4275,6 +4678,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The filter to set.
        * @return This builder for chaining.
@@ -4290,6 +4697,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return This builder for chaining.
        */
@@ -4300,6 +4711,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The bytes for filter to set.
        * @return This builder for chaining.
@@ -4318,14 +4733,22 @@ public final class CanalPacket {
 
       private long startTimestamp_ ;
       /**
-       * <code>int64 start_timestamp = 8;</code>
+       * <pre>
+       * 开始时间
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 8;</code>
        * @return The startTimestamp.
        */
       public long getStartTimestamp() {
         return startTimestamp_;
       }
       /**
-       * <code>int64 start_timestamp = 8;</code>
+       * <pre>
+       * 开始时间
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 8;</code>
        * @param value The startTimestamp to set.
        * @return This builder for chaining.
        */
@@ -4336,7 +4759,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 start_timestamp = 8;</code>
+       * <pre>
+       * 开始时间
+       * </pre>
+       *
+       * <code>int64 startTimestamp = 8;</code>
        * @return This builder for chaining.
        */
       public Builder clearStartTimestamp() {
@@ -4403,26 +4830,26 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 error_code = 1;</code>
+     * <code>int32 errorCode = 1;</code>
      * @return The errorCode.
      */
     int getErrorCode();
 
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
-     * <code>string error_message = 2;</code>
+     * <code>string errorMessage = 2;</code>
      * @return The errorMessage.
      */
     java.lang.String getErrorMessage();
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
-     * <code>string error_message = 2;</code>
+     * <code>string errorMessage = 2;</code>
      * @return The bytes for errorMessage.
      */
     com.google.protobuf.ByteString
@@ -4431,6 +4858,10 @@ public final class CanalPacket {
     public org.clever.canal.protocol.CanalPacket.Ack.ErrorCodePresentCase getErrorCodePresentCase();
   }
   /**
+   * <pre>
+   * Ack数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.Ack}
    */
   public  static final class Ack extends
@@ -4524,7 +4955,7 @@ public final class CanalPacket {
     public enum ErrorCodePresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      ERROR_CODE(1),
+      ERRORCODE(1),
       ERRORCODEPRESENT_NOT_SET(0);
       private final int value;
       private ErrorCodePresentCase(int value) {
@@ -4542,7 +4973,7 @@ public final class CanalPacket {
 
       public static ErrorCodePresentCase forNumber(int value) {
         switch (value) {
-          case 1: return ERROR_CODE;
+          case 1: return ERRORCODE;
           case 0: return ERRORCODEPRESENT_NOT_SET;
           default: return null;
         }
@@ -4558,9 +4989,9 @@ public final class CanalPacket {
           errorCodePresentCase_);
     }
 
-    public static final int ERROR_CODE_FIELD_NUMBER = 1;
+    public static final int ERRORCODE_FIELD_NUMBER = 1;
     /**
-     * <code>int32 error_code = 1;</code>
+     * <code>int32 errorCode = 1;</code>
      * @return The errorCode.
      */
     public int getErrorCode() {
@@ -4570,14 +5001,14 @@ public final class CanalPacket {
       return 0;
     }
 
-    public static final int ERROR_MESSAGE_FIELD_NUMBER = 2;
+    public static final int ERRORMESSAGE_FIELD_NUMBER = 2;
     private volatile java.lang.Object errorMessage_;
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
-     * <code>string error_message = 2;</code>
+     * <code>string errorMessage = 2;</code>
      * @return The errorMessage.
      */
     public java.lang.String getErrorMessage() {
@@ -4594,10 +5025,10 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
-     * <code>string error_message = 2;</code>
+     * <code>string errorMessage = 2;</code>
      * @return The bytes for errorMessage.
      */
     public com.google.protobuf.ByteString
@@ -4689,11 +5120,11 @@ public final class CanalPacket {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + ERROR_MESSAGE_FIELD_NUMBER;
+      hash = (37 * hash) + ERRORMESSAGE_FIELD_NUMBER;
       hash = (53 * hash) + getErrorMessage().hashCode();
       switch (errorCodePresentCase_) {
         case 1:
-          hash = (37 * hash) + ERROR_CODE_FIELD_NUMBER;
+          hash = (37 * hash) + ERRORCODE_FIELD_NUMBER;
           hash = (53 * hash) + getErrorCode();
           break;
         case 0:
@@ -4795,6 +5226,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Ack数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.Ack}
      */
     public static final class Builder extends
@@ -4920,7 +5355,7 @@ public final class CanalPacket {
           onChanged();
         }
         switch (other.getErrorCodePresentCase()) {
-          case ERROR_CODE: {
+          case ERRORCODE: {
             setErrorCode(other.getErrorCode());
             break;
           }
@@ -4973,7 +5408,7 @@ public final class CanalPacket {
 
 
       /**
-       * <code>int32 error_code = 1;</code>
+       * <code>int32 errorCode = 1;</code>
        * @return The errorCode.
        */
       public int getErrorCode() {
@@ -4983,7 +5418,7 @@ public final class CanalPacket {
         return 0;
       }
       /**
-       * <code>int32 error_code = 1;</code>
+       * <code>int32 errorCode = 1;</code>
        * @param value The errorCode to set.
        * @return This builder for chaining.
        */
@@ -4994,7 +5429,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int32 error_code = 1;</code>
+       * <code>int32 errorCode = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearErrorCode() {
@@ -5009,10 +5444,10 @@ public final class CanalPacket {
       private java.lang.Object errorMessage_ = "";
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
-       * <code>string error_message = 2;</code>
+       * <code>string errorMessage = 2;</code>
        * @return The errorMessage.
        */
       public java.lang.String getErrorMessage() {
@@ -5029,10 +5464,10 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
-       * <code>string error_message = 2;</code>
+       * <code>string errorMessage = 2;</code>
        * @return The bytes for errorMessage.
        */
       public com.google.protobuf.ByteString
@@ -5050,10 +5485,10 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
-       * <code>string error_message = 2;</code>
+       * <code>string errorMessage = 2;</code>
        * @param value The errorMessage to set.
        * @return This builder for chaining.
        */
@@ -5069,10 +5504,10 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
-       * <code>string error_message = 2;</code>
+       * <code>string errorMessage = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearErrorMessage() {
@@ -5083,10 +5518,10 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
-       * <code>string error_message = 2;</code>
+       * <code>string errorMessage = 2;</code>
        * @param value The bytes for errorMessage to set.
        * @return This builder for chaining.
        */
@@ -5159,11 +5594,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -5171,24 +5614,40 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
-     * <code>int64 batch_id = 3;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 3;</code>
      * @return The batchId.
      */
     long getBatchId();
   }
   /**
+   * <pre>
+   * Client Ack数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.ClientAck}
    */
   public  static final class ClientAck extends
@@ -5287,6 +5746,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 1;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
@@ -5303,6 +5766,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -5320,10 +5787,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 2;
+    public static final int CLIENTID_FIELD_NUMBER = 2;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -5339,7 +5810,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -5356,10 +5831,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int BATCH_ID_FIELD_NUMBER = 3;
+    public static final int BATCHID_FIELD_NUMBER = 3;
     private long batchId_;
     /**
-     * <code>int64 batch_id = 3;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 3;</code>
      * @return The batchId.
      */
     public long getBatchId() {
@@ -5442,9 +5921,9 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
-      hash = (37 * hash) + BATCH_ID_FIELD_NUMBER;
+      hash = (37 * hash) + BATCHID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getBatchId());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -5543,6 +6022,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Client Ack数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.ClientAck}
      */
     public static final class Builder extends
@@ -5705,6 +6188,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The destination.
        */
@@ -5721,6 +6208,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The bytes for destination.
        */
@@ -5738,6 +6229,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -5753,6 +6248,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return This builder for chaining.
        */
@@ -5763,6 +6262,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -5781,7 +6284,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -5797,7 +6304,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -5814,7 +6325,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -5829,7 +6344,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -5839,7 +6358,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -5857,14 +6380,22 @@ public final class CanalPacket {
 
       private long batchId_ ;
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @return The batchId.
        */
       public long getBatchId() {
         return batchId_;
       }
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @param value The batchId to set.
        * @return This builder for chaining.
        */
@@ -5875,7 +6406,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearBatchId() {
@@ -5942,11 +6477,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -5954,23 +6497,39 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
     java.lang.String getFilter();
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -5979,7 +6538,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
-   * subscription
+   * 订阅数据(subscription)
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Sub}
@@ -6082,6 +6641,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 1;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
@@ -6098,6 +6661,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -6115,10 +6682,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 2;
+    public static final int CLIENTID_FIELD_NUMBER = 2;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -6134,7 +6705,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -6154,6 +6729,10 @@ public final class CanalPacket {
     public static final int FILTER_FIELD_NUMBER = 7;
     private volatile java.lang.Object filter_;
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
@@ -6170,6 +6749,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -6262,7 +6845,7 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
       hash = (37 * hash) + FILTER_FIELD_NUMBER;
       hash = (53 * hash) + getFilter().hashCode();
@@ -6363,7 +6946,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * subscription
+     * 订阅数据(subscription)
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Sub}
@@ -6529,6 +7112,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The destination.
        */
@@ -6545,6 +7132,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The bytes for destination.
        */
@@ -6562,6 +7153,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -6577,6 +7172,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return This builder for chaining.
        */
@@ -6587,6 +7186,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -6605,7 +7208,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -6621,7 +7228,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -6638,7 +7249,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -6653,7 +7268,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -6663,7 +7282,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -6681,6 +7304,10 @@ public final class CanalPacket {
 
       private java.lang.Object filter_ = "";
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The filter.
        */
@@ -6697,6 +7324,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The bytes for filter.
        */
@@ -6714,6 +7345,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The filter to set.
        * @return This builder for chaining.
@@ -6729,6 +7364,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return This builder for chaining.
        */
@@ -6739,6 +7378,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The bytes for filter to set.
        * @return This builder for chaining.
@@ -6812,11 +7455,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -6824,23 +7475,39 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
     java.lang.String getFilter();
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -6849,7 +7516,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
-   * Unsubscription
+   * 取消订阅数据(Unsubscription)
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Unsub}
@@ -6952,6 +7619,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 1;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
@@ -6968,6 +7639,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -6985,10 +7660,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 2;
+    public static final int CLIENTID_FIELD_NUMBER = 2;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -7004,7 +7683,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -7024,6 +7707,10 @@ public final class CanalPacket {
     public static final int FILTER_FIELD_NUMBER = 7;
     private volatile java.lang.Object filter_;
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The filter.
      */
@@ -7040,6 +7727,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 过滤字符串
+     * </pre>
+     *
      * <code>string filter = 7;</code>
      * @return The bytes for filter.
      */
@@ -7132,7 +7823,7 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
       hash = (37 * hash) + FILTER_FIELD_NUMBER;
       hash = (53 * hash) + getFilter().hashCode();
@@ -7233,7 +7924,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * Unsubscription
+     * 取消订阅数据(Unsubscription)
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Unsub}
@@ -7399,6 +8090,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The destination.
        */
@@ -7415,6 +8110,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The bytes for destination.
        */
@@ -7432,6 +8131,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -7447,6 +8150,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return This builder for chaining.
        */
@@ -7457,6 +8164,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -7475,7 +8186,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -7491,7 +8206,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -7508,7 +8227,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -7523,7 +8246,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -7533,7 +8260,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -7551,6 +8282,10 @@ public final class CanalPacket {
 
       private java.lang.Object filter_ = "";
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The filter.
        */
@@ -7567,6 +8302,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return The bytes for filter.
        */
@@ -7584,6 +8323,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The filter to set.
        * @return This builder for chaining.
@@ -7599,6 +8342,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @return This builder for chaining.
        */
@@ -7609,6 +8356,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 过滤字符串
+       * </pre>
+       *
        * <code>string filter = 7;</code>
        * @param value The bytes for filter to set.
        * @return This builder for chaining.
@@ -7682,11 +8433,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -7694,49 +8453,49 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
-     * <code>int32 fetch_size = 3;</code>
+     * <pre>
+     * 读取数据量
+     * </pre>
+     *
+     * <code>int32 fetchSize = 3;</code>
      * @return The fetchSize.
      */
     int getFetchSize();
 
     /**
-     * <pre>
-     * 默认-1时代表不控制
-     * </pre>
-     *
      * <code>int64 timeout = 4;</code>
      * @return The timeout.
      */
     long getTimeout();
 
     /**
-     * <pre>
-     * 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天
-     * </pre>
-     *
      * <code>int32 unit = 5;</code>
      * @return The unit.
      */
     int getUnit();
 
     /**
-     * <pre>
-     * 是否自动ack
-     * </pre>
-     *
-     * <code>bool auto_ack = 6;</code>
+     * <code>bool autoAck = 6;</code>
      * @return The autoAck.
      */
     boolean getAutoAck();
@@ -7749,7 +8508,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
-   *  PullRequest
+   * 拉取数据请求(PullRequest)
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Get}
@@ -7945,7 +8704,7 @@ public final class CanalPacket {
     public enum AutoAckPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      AUTO_ACK(6),
+      AUTOACK(6),
       AUTOACKPRESENT_NOT_SET(0);
       private final int value;
       private AutoAckPresentCase(int value) {
@@ -7963,7 +8722,7 @@ public final class CanalPacket {
 
       public static AutoAckPresentCase forNumber(int value) {
         switch (value) {
-          case 6: return AUTO_ACK;
+          case 6: return AUTOACK;
           case 0: return AUTOACKPRESENT_NOT_SET;
           default: return null;
         }
@@ -7982,6 +8741,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 1;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
@@ -7998,6 +8761,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -8015,10 +8782,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 2;
+    public static final int CLIENTID_FIELD_NUMBER = 2;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -8034,7 +8805,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -8051,10 +8826,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int FETCH_SIZE_FIELD_NUMBER = 3;
+    public static final int FETCHSIZE_FIELD_NUMBER = 3;
     private int fetchSize_;
     /**
-     * <code>int32 fetch_size = 3;</code>
+     * <pre>
+     * 读取数据量
+     * </pre>
+     *
+     * <code>int32 fetchSize = 3;</code>
      * @return The fetchSize.
      */
     public int getFetchSize() {
@@ -8063,10 +8842,6 @@ public final class CanalPacket {
 
     public static final int TIMEOUT_FIELD_NUMBER = 4;
     /**
-     * <pre>
-     * 默认-1时代表不控制
-     * </pre>
-     *
      * <code>int64 timeout = 4;</code>
      * @return The timeout.
      */
@@ -8079,10 +8854,6 @@ public final class CanalPacket {
 
     public static final int UNIT_FIELD_NUMBER = 5;
     /**
-     * <pre>
-     * 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天
-     * </pre>
-     *
      * <code>int32 unit = 5;</code>
      * @return The unit.
      */
@@ -8093,13 +8864,9 @@ public final class CanalPacket {
       return 0;
     }
 
-    public static final int AUTO_ACK_FIELD_NUMBER = 6;
+    public static final int AUTOACK_FIELD_NUMBER = 6;
     /**
-     * <pre>
-     * 是否自动ack
-     * </pre>
-     *
-     * <code>bool auto_ack = 6;</code>
+     * <code>bool autoAck = 6;</code>
      * @return The autoAck.
      */
     public boolean getAutoAck() {
@@ -8239,9 +9006,9 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
-      hash = (37 * hash) + FETCH_SIZE_FIELD_NUMBER;
+      hash = (37 * hash) + FETCHSIZE_FIELD_NUMBER;
       hash = (53 * hash) + getFetchSize();
       switch (timeoutPresentCase_) {
         case 4:
@@ -8262,7 +9029,7 @@ public final class CanalPacket {
       }
       switch (autoAckPresentCase_) {
         case 6:
-          hash = (37 * hash) + AUTO_ACK_FIELD_NUMBER;
+          hash = (37 * hash) + AUTOACK_FIELD_NUMBER;
           hash = (53 * hash) + com.google.protobuf.Internal.hashBoolean(
               getAutoAck());
           break;
@@ -8366,7 +9133,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     *  PullRequest
+     * 拉取数据请求(PullRequest)
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Get}
@@ -8537,7 +9304,7 @@ public final class CanalPacket {
           }
         }
         switch (other.getAutoAckPresentCase()) {
-          case AUTO_ACK: {
+          case AUTOACK: {
             setAutoAck(other.getAutoAck());
             break;
           }
@@ -8621,6 +9388,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The destination.
        */
@@ -8637,6 +9408,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The bytes for destination.
        */
@@ -8654,6 +9429,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -8669,6 +9448,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return This builder for chaining.
        */
@@ -8679,6 +9462,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -8697,7 +9484,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -8713,7 +9504,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -8730,7 +9525,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -8745,7 +9544,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -8755,7 +9558,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -8773,14 +9580,22 @@ public final class CanalPacket {
 
       private int fetchSize_ ;
       /**
-       * <code>int32 fetch_size = 3;</code>
+       * <pre>
+       * 读取数据量
+       * </pre>
+       *
+       * <code>int32 fetchSize = 3;</code>
        * @return The fetchSize.
        */
       public int getFetchSize() {
         return fetchSize_;
       }
       /**
-       * <code>int32 fetch_size = 3;</code>
+       * <pre>
+       * 读取数据量
+       * </pre>
+       *
+       * <code>int32 fetchSize = 3;</code>
        * @param value The fetchSize to set.
        * @return This builder for chaining.
        */
@@ -8791,7 +9606,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int32 fetch_size = 3;</code>
+       * <pre>
+       * 读取数据量
+       * </pre>
+       *
+       * <code>int32 fetchSize = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearFetchSize() {
@@ -8802,10 +9621,6 @@ public final class CanalPacket {
       }
 
       /**
-       * <pre>
-       * 默认-1时代表不控制
-       * </pre>
-       *
        * <code>int64 timeout = 4;</code>
        * @return The timeout.
        */
@@ -8816,10 +9631,6 @@ public final class CanalPacket {
         return 0L;
       }
       /**
-       * <pre>
-       * 默认-1时代表不控制
-       * </pre>
-       *
        * <code>int64 timeout = 4;</code>
        * @param value The timeout to set.
        * @return This builder for chaining.
@@ -8831,10 +9642,6 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <pre>
-       * 默认-1时代表不控制
-       * </pre>
-       *
        * <code>int64 timeout = 4;</code>
        * @return This builder for chaining.
        */
@@ -8848,10 +9655,6 @@ public final class CanalPacket {
       }
 
       /**
-       * <pre>
-       * 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天
-       * </pre>
-       *
        * <code>int32 unit = 5;</code>
        * @return The unit.
        */
@@ -8862,10 +9665,6 @@ public final class CanalPacket {
         return 0;
       }
       /**
-       * <pre>
-       * 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天
-       * </pre>
-       *
        * <code>int32 unit = 5;</code>
        * @param value The unit to set.
        * @return This builder for chaining.
@@ -8877,10 +9676,6 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <pre>
-       * 数字类型，0:纳秒,1:毫秒,2:微秒,3:秒,4:分钟,5:小时,6:天
-       * </pre>
-       *
        * <code>int32 unit = 5;</code>
        * @return This builder for chaining.
        */
@@ -8894,11 +9689,7 @@ public final class CanalPacket {
       }
 
       /**
-       * <pre>
-       * 是否自动ack
-       * </pre>
-       *
-       * <code>bool auto_ack = 6;</code>
+       * <code>bool autoAck = 6;</code>
        * @return The autoAck.
        */
       public boolean getAutoAck() {
@@ -8908,11 +9699,7 @@ public final class CanalPacket {
         return false;
       }
       /**
-       * <pre>
-       * 是否自动ack
-       * </pre>
-       *
-       * <code>bool auto_ack = 6;</code>
+       * <code>bool autoAck = 6;</code>
        * @param value The autoAck to set.
        * @return This builder for chaining.
        */
@@ -8923,11 +9710,7 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <pre>
-       * 是否自动ack
-       * </pre>
-       *
-       * <code>bool auto_ack = 6;</code>
+       * <code>bool autoAck = 6;</code>
        * @return This builder for chaining.
        */
       public Builder clearAutoAck() {
@@ -8996,22 +9779,38 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int64 batch_id = 1;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 1;</code>
      * @return The batchId.
      */
     long getBatchId();
 
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @return A list containing the messages.
      */
     java.util.List<com.google.protobuf.ByteString> getMessagesList();
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @return The count of messages.
      */
     int getMessagesCount();
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @param index The index of the element to return.
      * @return The messages at the given index.
@@ -9020,6 +9819,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
+   * 消息数据
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Messages}
@@ -9116,10 +9916,14 @@ public final class CanalPacket {
               org.clever.canal.protocol.CanalPacket.Messages.class, org.clever.canal.protocol.CanalPacket.Messages.Builder.class);
     }
 
-    public static final int BATCH_ID_FIELD_NUMBER = 1;
+    public static final int BATCHID_FIELD_NUMBER = 1;
     private long batchId_;
     /**
-     * <code>int64 batch_id = 1;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 1;</code>
      * @return The batchId.
      */
     public long getBatchId() {
@@ -9129,6 +9933,10 @@ public final class CanalPacket {
     public static final int MESSAGES_FIELD_NUMBER = 2;
     private java.util.List<com.google.protobuf.ByteString> messages_;
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @return A list containing the messages.
      */
@@ -9137,6 +9945,10 @@ public final class CanalPacket {
       return messages_;
     }
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @return The count of messages.
      */
@@ -9144,6 +9956,10 @@ public final class CanalPacket {
       return messages_.size();
     }
     /**
+     * <pre>
+     * messages内容
+     * </pre>
+     *
      * <code>repeated bytes messages = 2;</code>
      * @param index The index of the element to return.
      * @return The messages at the given index.
@@ -9224,7 +10040,7 @@ public final class CanalPacket {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + BATCH_ID_FIELD_NUMBER;
+      hash = (37 * hash) + BATCHID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getBatchId());
       if (getMessagesCount() > 0) {
@@ -9328,6 +10144,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
+     * 消息数据
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Messages}
@@ -9497,14 +10314,22 @@ public final class CanalPacket {
 
       private long batchId_ ;
       /**
-       * <code>int64 batch_id = 1;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 1;</code>
        * @return The batchId.
        */
       public long getBatchId() {
         return batchId_;
       }
       /**
-       * <code>int64 batch_id = 1;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 1;</code>
        * @param value The batchId to set.
        * @return This builder for chaining.
        */
@@ -9515,7 +10340,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 batch_id = 1;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearBatchId() {
@@ -9533,6 +10362,10 @@ public final class CanalPacket {
          }
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @return A list containing the messages.
        */
@@ -9542,6 +10375,10 @@ public final class CanalPacket {
                  java.util.Collections.unmodifiableList(messages_) : messages_;
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @return The count of messages.
        */
@@ -9549,6 +10386,10 @@ public final class CanalPacket {
         return messages_.size();
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @param index The index of the element to return.
        * @return The messages at the given index.
@@ -9557,6 +10398,10 @@ public final class CanalPacket {
         return messages_.get(index);
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @param index The index to set the value at.
        * @param value The messages to set.
@@ -9573,6 +10418,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @param value The messages to add.
        * @return This builder for chaining.
@@ -9587,6 +10436,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @param values The messages to add.
        * @return This builder for chaining.
@@ -9600,6 +10453,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * messages内容
+       * </pre>
+       *
        * <code>repeated bytes messages = 2;</code>
        * @return This builder for chaining.
        */
@@ -9667,11 +10524,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * binlog文件名称
+     * </pre>
+     *
      * <code>string journal = 1;</code>
      * @return The journal.
      */
     java.lang.String getJournal();
     /**
+     * <pre>
+     * binlog文件名称
+     * </pre>
+     *
      * <code>string journal = 1;</code>
      * @return The bytes for journal.
      */
@@ -9679,6 +10544,10 @@ public final class CanalPacket {
         getJournalBytes();
 
     /**
+     * <pre>
+     * binlog位置
+     * </pre>
+     *
      * <code>int64 position = 2;</code>
      * @return The position.
      */
@@ -9694,7 +10563,7 @@ public final class CanalPacket {
   }
   /**
    * <pre>
-   * TBD when new packets are required
+   * Dump数据(TBD when new packets are required)
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Dump}
@@ -9832,6 +10701,10 @@ public final class CanalPacket {
     public static final int JOURNAL_FIELD_NUMBER = 1;
     private volatile java.lang.Object journal_;
     /**
+     * <pre>
+     * binlog文件名称
+     * </pre>
+     *
      * <code>string journal = 1;</code>
      * @return The journal.
      */
@@ -9848,6 +10721,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * binlog文件名称
+     * </pre>
+     *
      * <code>string journal = 1;</code>
      * @return The bytes for journal.
      */
@@ -9868,6 +10745,10 @@ public final class CanalPacket {
     public static final int POSITION_FIELD_NUMBER = 2;
     private long position_;
     /**
+     * <pre>
+     * binlog位置
+     * </pre>
+     *
      * <code>int64 position = 2;</code>
      * @return The position.
      */
@@ -10082,7 +10963,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * TBD when new packets are required
+     * Dump数据(TBD when new packets are required)
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Dump}
@@ -10270,6 +11151,10 @@ public final class CanalPacket {
 
       private java.lang.Object journal_ = "";
       /**
+       * <pre>
+       * binlog文件名称
+       * </pre>
+       *
        * <code>string journal = 1;</code>
        * @return The journal.
        */
@@ -10286,6 +11171,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * binlog文件名称
+       * </pre>
+       *
        * <code>string journal = 1;</code>
        * @return The bytes for journal.
        */
@@ -10303,6 +11192,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * binlog文件名称
+       * </pre>
+       *
        * <code>string journal = 1;</code>
        * @param value The journal to set.
        * @return This builder for chaining.
@@ -10318,6 +11211,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * binlog文件名称
+       * </pre>
+       *
        * <code>string journal = 1;</code>
        * @return This builder for chaining.
        */
@@ -10328,6 +11225,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * binlog文件名称
+       * </pre>
+       *
        * <code>string journal = 1;</code>
        * @param value The bytes for journal to set.
        * @return This builder for chaining.
@@ -10346,6 +11247,10 @@ public final class CanalPacket {
 
       private long position_ ;
       /**
+       * <pre>
+       * binlog位置
+       * </pre>
+       *
        * <code>int64 position = 2;</code>
        * @return The position.
        */
@@ -10353,6 +11258,10 @@ public final class CanalPacket {
         return position_;
       }
       /**
+       * <pre>
+       * binlog位置
+       * </pre>
+       *
        * <code>int64 position = 2;</code>
        * @param value The position to set.
        * @return This builder for chaining.
@@ -10364,6 +11273,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * binlog位置
+       * </pre>
+       *
        * <code>int64 position = 2;</code>
        * @return This builder for chaining.
        */
@@ -10465,11 +11378,19 @@ public final class CanalPacket {
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
     java.lang.String getDestination();
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -10477,24 +11398,40 @@ public final class CanalPacket {
         getDestinationBytes();
 
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     java.lang.String getClientId();
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     com.google.protobuf.ByteString
         getClientIdBytes();
 
     /**
-     * <code>int64 batch_id = 3;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 3;</code>
      * @return The batchId.
      */
     long getBatchId();
   }
   /**
+   * <pre>
+   * Client Rollback数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.ClientRollback}
    */
   public  static final class ClientRollback extends
@@ -10593,6 +11530,10 @@ public final class CanalPacket {
     public static final int DESTINATION_FIELD_NUMBER = 1;
     private volatile java.lang.Object destination_;
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The destination.
      */
@@ -10609,6 +11550,10 @@ public final class CanalPacket {
       }
     }
     /**
+     * <pre>
+     * 据源名称
+     * </pre>
+     *
      * <code>string destination = 1;</code>
      * @return The bytes for destination.
      */
@@ -10626,10 +11571,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int CLIENT_ID_FIELD_NUMBER = 2;
+    public static final int CLIENTID_FIELD_NUMBER = 2;
     private volatile java.lang.Object clientId_;
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The clientId.
      */
     public java.lang.String getClientId() {
@@ -10645,7 +11594,11 @@ public final class CanalPacket {
       }
     }
     /**
-     * <code>string client_id = 2;</code>
+     * <pre>
+     * 客户端ID
+     * </pre>
+     *
+     * <code>string clientId = 2;</code>
      * @return The bytes for clientId.
      */
     public com.google.protobuf.ByteString
@@ -10662,10 +11615,14 @@ public final class CanalPacket {
       }
     }
 
-    public static final int BATCH_ID_FIELD_NUMBER = 3;
+    public static final int BATCHID_FIELD_NUMBER = 3;
     private long batchId_;
     /**
-     * <code>int64 batch_id = 3;</code>
+     * <pre>
+     * batch Id
+     * </pre>
+     *
+     * <code>int64 batchId = 3;</code>
      * @return The batchId.
      */
     public long getBatchId() {
@@ -10748,9 +11705,9 @@ public final class CanalPacket {
       hash = (19 * hash) + getDescriptor().hashCode();
       hash = (37 * hash) + DESTINATION_FIELD_NUMBER;
       hash = (53 * hash) + getDestination().hashCode();
-      hash = (37 * hash) + CLIENT_ID_FIELD_NUMBER;
+      hash = (37 * hash) + CLIENTID_FIELD_NUMBER;
       hash = (53 * hash) + getClientId().hashCode();
-      hash = (37 * hash) + BATCH_ID_FIELD_NUMBER;
+      hash = (37 * hash) + BATCHID_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getBatchId());
       hash = (29 * hash) + unknownFields.hashCode();
@@ -10849,6 +11806,10 @@ public final class CanalPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Client Rollback数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.ClientRollback}
      */
     public static final class Builder extends
@@ -11011,6 +11972,10 @@ public final class CanalPacket {
 
       private java.lang.Object destination_ = "";
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The destination.
        */
@@ -11027,6 +11992,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return The bytes for destination.
        */
@@ -11044,6 +12013,10 @@ public final class CanalPacket {
         }
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The destination to set.
        * @return This builder for chaining.
@@ -11059,6 +12032,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @return This builder for chaining.
        */
@@ -11069,6 +12046,10 @@ public final class CanalPacket {
         return this;
       }
       /**
+       * <pre>
+       * 据源名称
+       * </pre>
+       *
        * <code>string destination = 1;</code>
        * @param value The bytes for destination to set.
        * @return This builder for chaining.
@@ -11087,7 +12068,11 @@ public final class CanalPacket {
 
       private java.lang.Object clientId_ = "";
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The clientId.
        */
       public java.lang.String getClientId() {
@@ -11103,7 +12088,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return The bytes for clientId.
        */
       public com.google.protobuf.ByteString
@@ -11120,7 +12109,11 @@ public final class CanalPacket {
         }
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The clientId to set.
        * @return This builder for chaining.
        */
@@ -11135,7 +12128,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @return This builder for chaining.
        */
       public Builder clearClientId() {
@@ -11145,7 +12142,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>string client_id = 2;</code>
+       * <pre>
+       * 客户端ID
+       * </pre>
+       *
+       * <code>string clientId = 2;</code>
        * @param value The bytes for clientId to set.
        * @return This builder for chaining.
        */
@@ -11163,14 +12164,22 @@ public final class CanalPacket {
 
       private long batchId_ ;
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @return The batchId.
        */
       public long getBatchId() {
         return batchId_;
       }
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @param value The batchId to set.
        * @return This builder for chaining.
        */
@@ -11181,7 +12190,11 @@ public final class CanalPacket {
         return this;
       }
       /**
-       * <code>int64 batch_id = 3;</code>
+       * <pre>
+       * batch Id
+       * </pre>
+       *
+       * <code>int64 batchId = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearBatchId() {
@@ -11319,45 +12332,44 @@ public final class CanalPacket {
       "ompression\030\004 \001(\0162&.org.clever.canal.prot" +
       "ocol.CompressionH\002\022\014\n\004body\030\005 \001(\014B\026\n\024magi" +
       "c_number_presentB\021\n\017version_presentB\025\n\023c" +
-      "ompression_present\"<\n\tHeartBeat\022\026\n\016send_" +
-      "timestamp\030\001 \001(\003\022\027\n\017start_timestamp\030\002 \001(\003" +
-      "\"\246\001\n\tHandshake\022 \n\026communication_encoding" +
-      "\030\001 \001(\tH\000\022\r\n\005seeds\030\002 \001(\014\022F\n\026supported_com" +
-      "pressions\030\003 \001(\0162&.org.clever.canal.proto" +
-      "col.CompressionB \n\036communication_encodin" +
-      "g_present\"\363\001\n\nClientAuth\022\020\n\010username\030\001 \001" +
-      "(\t\022\020\n\010password\030\002 \001(\014\022\032\n\020net_read_timeout" +
-      "\030\003 \001(\005H\000\022\033\n\021net_write_timeout\030\004 \001(\005H\001\022\023\n" +
-      "\013destination\030\005 \001(\t\022\021\n\tclient_id\030\006 \001(\t\022\016\n" +
-      "\006filter\030\007 \001(\t\022\027\n\017start_timestamp\030\010 \001(\003B\032" +
-      "\n\030net_read_timeout_presentB\033\n\031net_write_" +
-      "timeout_present\"H\n\003Ack\022\024\n\nerror_code\030\001 \001" +
-      "(\005H\000\022\025\n\rerror_message\030\002 \001(\tB\024\n\022error_cod" +
-      "e_present\"E\n\tClientAck\022\023\n\013destination\030\001 " +
-      "\001(\t\022\021\n\tclient_id\030\002 \001(\t\022\020\n\010batch_id\030\003 \001(\003" +
-      "\"=\n\003Sub\022\023\n\013destination\030\001 \001(\t\022\021\n\tclient_i" +
-      "d\030\002 \001(\t\022\016\n\006filter\030\007 \001(\t\"?\n\005Unsub\022\023\n\013dest" +
-      "ination\030\001 \001(\t\022\021\n\tclient_id\030\002 \001(\t\022\016\n\006filt" +
-      "er\030\007 \001(\t\"\257\001\n\003Get\022\023\n\013destination\030\001 \001(\t\022\021\n" +
-      "\tclient_id\030\002 \001(\t\022\022\n\nfetch_size\030\003 \001(\005\022\021\n\007" +
-      "timeout\030\004 \001(\003H\000\022\016\n\004unit\030\005 \001(\005H\001\022\022\n\010auto_" +
-      "ack\030\006 \001(\010H\002B\021\n\017timeout_presentB\016\n\014unit_p" +
-      "resentB\022\n\020auto_ack_present\".\n\010Messages\022\020" +
-      "\n\010batch_id\030\001 \001(\003\022\020\n\010messages\030\002 \003(\014\"S\n\004Du" +
-      "mp\022\017\n\007journal\030\001 \001(\t\022\020\n\010position\030\002 \001(\003\022\023\n" +
-      "\ttimestamp\030\003 \001(\003H\000B\023\n\021timestamp_present\"" +
-      "J\n\016ClientRollback\022\023\n\013destination\030\001 \001(\t\022\021" +
-      "\n\tclient_id\030\002 \001(\t\022\020\n\010batch_id\030\003 \001(\003*U\n\013C" +
-      "ompression\022\037\n\033COMPRESSIONCOMPATIBLEPROTO" +
-      "2\020\000\022\010\n\004NONE\020\001\022\010\n\004ZLIB\020\002\022\010\n\004GZIP\020\003\022\007\n\003LZF" +
-      "\020\004*\346\001\n\nPacketType\022\037\n\033PACKAGETYPECOMPATIB" +
-      "LEPROTO2\020\000\022\r\n\tHANDSHAKE\020\001\022\030\n\024CLIENTAUTHE" +
-      "NTICATION\020\002\022\007\n\003ACK\020\003\022\020\n\014SUBSCRIPTION\020\004\022\022" +
-      "\n\016UNSUBSCRIPTION\020\005\022\007\n\003GET\020\006\022\014\n\010MESSAGES\020" +
-      "\007\022\r\n\tCLIENTACK\020\010\022\014\n\010SHUTDOWN\020\t\022\010\n\004DUMP\020\n" +
-      "\022\r\n\tHEARTBEAT\020\013\022\022\n\016CLIENTROLLBACK\020\014B*\n\031o" +
-      "rg.clever.canal.protocolB\013CanalPacketH\001b" +
-      "\006proto3"
+      "ompression_present\":\n\tHeartBeat\022\025\n\rsendT" +
+      "imestamp\030\001 \001(\003\022\026\n\016startTimestamp\030\002 \001(\003\"\243" +
+      "\001\n\tHandshake\022\037\n\025communicationEncoding\030\001 " +
+      "\001(\tH\000\022\r\n\005seeds\030\002 \001(\014\022E\n\025supportedCompres" +
+      "sions\030\003 \001(\0162&.org.clever.canal.protocol." +
+      "CompressionB\037\n\035communicationEncoding_pre" +
+      "sent\"\351\001\n\nClientAuth\022\020\n\010username\030\001 \001(\t\022\020\n" +
+      "\010password\030\002 \001(\014\022\030\n\016netReadTimeout\030\003 \001(\005H" +
+      "\000\022\031\n\017netWriteTimeout\030\004 \001(\005H\001\022\023\n\013destinat" +
+      "ion\030\005 \001(\t\022\020\n\010clientId\030\006 \001(\t\022\016\n\006filter\030\007 " +
+      "\001(\t\022\026\n\016startTimestamp\030\010 \001(\003B\030\n\026netReadTi" +
+      "meout_presentB\031\n\027netWriteTimeout_present" +
+      "\"E\n\003Ack\022\023\n\terrorCode\030\001 \001(\005H\000\022\024\n\014errorMes" +
+      "sage\030\002 \001(\tB\023\n\021errorCode_present\"C\n\tClien" +
+      "tAck\022\023\n\013destination\030\001 \001(\t\022\020\n\010clientId\030\002 " +
+      "\001(\t\022\017\n\007batchId\030\003 \001(\003\"<\n\003Sub\022\023\n\013destinati" +
+      "on\030\001 \001(\t\022\020\n\010clientId\030\002 \001(\t\022\016\n\006filter\030\007 \001" +
+      "(\t\">\n\005Unsub\022\023\n\013destination\030\001 \001(\t\022\020\n\010clie" +
+      "ntId\030\002 \001(\t\022\016\n\006filter\030\007 \001(\t\"\253\001\n\003Get\022\023\n\013de" +
+      "stination\030\001 \001(\t\022\020\n\010clientId\030\002 \001(\t\022\021\n\tfet" +
+      "chSize\030\003 \001(\005\022\021\n\007timeout\030\004 \001(\003H\000\022\016\n\004unit\030" +
+      "\005 \001(\005H\001\022\021\n\007autoAck\030\006 \001(\010H\002B\021\n\017timeout_pr" +
+      "esentB\016\n\014unit_presentB\021\n\017autoAck_present" +
+      "\"-\n\010Messages\022\017\n\007batchId\030\001 \001(\003\022\020\n\010message" +
+      "s\030\002 \003(\014\"S\n\004Dump\022\017\n\007journal\030\001 \001(\t\022\020\n\010posi" +
+      "tion\030\002 \001(\003\022\023\n\ttimestamp\030\003 \001(\003H\000B\023\n\021times" +
+      "tamp_present\"H\n\016ClientRollback\022\023\n\013destin" +
+      "ation\030\001 \001(\t\022\020\n\010clientId\030\002 \001(\t\022\017\n\007batchId" +
+      "\030\003 \001(\003*\\\n\013Compression\022&\n\"COMPRESSION_TYP" +
+      "E_COMPATIBLE_PROTO2\020\000\022\010\n\004NONE\020\001\022\010\n\004ZLIB\020" +
+      "\002\022\010\n\004GZIP\020\003\022\007\n\003LZF\020\004*\362\001\n\nPacketType\022!\n\035P" +
+      "ACKET_TYPE_COMPATIBLE_PROTO2\020\000\022\r\n\tHANDSH" +
+      "AKE\020\001\022\031\n\025CLIENT_AUTHENTICATION\020\002\022\007\n\003ACK\020" +
+      "\003\022\020\n\014SUBSCRIPTION\020\004\022\022\n\016UNSUBSCRIPTION\020\005\022" +
+      "\007\n\003GET\020\006\022\014\n\010MESSAGES\020\007\022\016\n\nCLIENT_ACK\020\010\022\014" +
+      "\n\010SHUTDOWN\020\t\022\010\n\004DUMP\020\n\022\024\n\020PACKET_HEARTBE" +
+      "AT\020\013\022\023\n\017CLIENT_ROLLBACK\020\014B,\n\031org.clever." +
+      "canal.protocolB\013CanalPacketH\001P\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

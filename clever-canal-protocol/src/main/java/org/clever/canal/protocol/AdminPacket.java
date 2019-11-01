@@ -3,7 +3,6 @@
 
 package org.clever.canal.protocol;
 
-@SuppressWarnings("ALL")
 public final class AdminPacket {
   private AdminPacket() {}
   public static void registerAllExtensions(
@@ -16,77 +15,129 @@ public final class AdminPacket {
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
   /**
-   * Protobuf enum {@code org.clever.canal.protocol.PacketType}
+   * <pre>
+   * 数据Packet类型
+   * </pre>
+   *
+   * Protobuf enum {@code org.clever.canal.protocol.PacketTypeAdmin}
    */
-  public enum PacketType
+  public enum PacketTypeAdmin
       implements com.google.protobuf.ProtocolMessageEnum {
     /**
      * <pre>
-     *compatible
+     * 为了兼容 proto2
      * </pre>
      *
-     * <code>PACKAGETYPECOMPATIBLEPROTO2 = 0;</code>
+     * <code>ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    PACKAGETYPECOMPATIBLEPROTO2(0),
+    ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2(0),
     /**
-     * <code>HANDSHAKE = 1;</code>
+     * <pre>
+     * 连接握手
+     * </pre>
+     *
+     * <code>ADMIN_HANDSHAKE = 1;</code>
      */
-    HANDSHAKE(1),
+    ADMIN_HANDSHAKE(1),
     /**
-     * <code>CLIENTAUTHENTICATION = 2;</code>
+     * <pre>
+     * 客户端授权
+     * </pre>
+     *
+     * <code>ADMIN_CLIENT_AUTHENTICATION = 2;</code>
      */
-    CLIENTAUTHENTICATION(2),
+    ADMIN_CLIENT_AUTHENTICATION(2),
     /**
-     * <code>ACK = 3;</code>
+     * <pre>
+     * ack
+     * </pre>
+     *
+     * <code>ADMIN_ACK = 3;</code>
      */
-    ACK(3),
+    ADMIN_ACK(3),
     /**
-     * <code>SERVER = 4;</code>
+     * <pre>
+     * server
+     * </pre>
+     *
+     * <code>ADMIN_SERVER = 4;</code>
      */
-    SERVER(4),
+    ADMIN_SERVER(4),
     /**
-     * <code>INSTANCE = 5;</code>
+     * <pre>
+     * instance
+     * </pre>
+     *
+     * <code>ADMIN_INSTANCE = 5;</code>
      */
-    INSTANCE(5),
+    ADMIN_INSTANCE(5),
     /**
-     * <code>LOG = 6;</code>
+     * <pre>
+     * log
+     * </pre>
+     *
+     * <code>ADMIN_LOG = 6;</code>
      */
-    LOG(6),
+    ADMIN_LOG(6),
     UNRECOGNIZED(-1),
     ;
 
     /**
      * <pre>
-     *compatible
+     * 为了兼容 proto2
      * </pre>
      *
-     * <code>PACKAGETYPECOMPATIBLEPROTO2 = 0;</code>
+     * <code>ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2 = 0;</code>
      */
-    public static final int PACKAGETYPECOMPATIBLEPROTO2_VALUE = 0;
+    public static final int ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2_VALUE = 0;
     /**
-     * <code>HANDSHAKE = 1;</code>
+     * <pre>
+     * 连接握手
+     * </pre>
+     *
+     * <code>ADMIN_HANDSHAKE = 1;</code>
      */
-    public static final int HANDSHAKE_VALUE = 1;
+    public static final int ADMIN_HANDSHAKE_VALUE = 1;
     /**
-     * <code>CLIENTAUTHENTICATION = 2;</code>
+     * <pre>
+     * 客户端授权
+     * </pre>
+     *
+     * <code>ADMIN_CLIENT_AUTHENTICATION = 2;</code>
      */
-    public static final int CLIENTAUTHENTICATION_VALUE = 2;
+    public static final int ADMIN_CLIENT_AUTHENTICATION_VALUE = 2;
     /**
-     * <code>ACK = 3;</code>
+     * <pre>
+     * ack
+     * </pre>
+     *
+     * <code>ADMIN_ACK = 3;</code>
      */
-    public static final int ACK_VALUE = 3;
+    public static final int ADMIN_ACK_VALUE = 3;
     /**
-     * <code>SERVER = 4;</code>
+     * <pre>
+     * server
+     * </pre>
+     *
+     * <code>ADMIN_SERVER = 4;</code>
      */
-    public static final int SERVER_VALUE = 4;
+    public static final int ADMIN_SERVER_VALUE = 4;
     /**
-     * <code>INSTANCE = 5;</code>
+     * <pre>
+     * instance
+     * </pre>
+     *
+     * <code>ADMIN_INSTANCE = 5;</code>
      */
-    public static final int INSTANCE_VALUE = 5;
+    public static final int ADMIN_INSTANCE_VALUE = 5;
     /**
-     * <code>LOG = 6;</code>
+     * <pre>
+     * log
+     * </pre>
+     *
+     * <code>ADMIN_LOG = 6;</code>
      */
-    public static final int LOG_VALUE = 6;
+    public static final int ADMIN_LOG_VALUE = 6;
 
 
     public final int getNumber() {
@@ -103,7 +154,7 @@ public final class AdminPacket {
      * @deprecated Use {@link #forNumber(int)} instead.
      */
     @java.lang.Deprecated
-    public static PacketType valueOf(int value) {
+    public static PacketTypeAdmin valueOf(int value) {
       return forNumber(value);
     }
 
@@ -111,28 +162,28 @@ public final class AdminPacket {
      * @param value The numeric wire value of the corresponding enum entry.
      * @return The enum associated with the given numeric wire value.
      */
-    public static PacketType forNumber(int value) {
+    public static PacketTypeAdmin forNumber(int value) {
       switch (value) {
-        case 0: return PACKAGETYPECOMPATIBLEPROTO2;
-        case 1: return HANDSHAKE;
-        case 2: return CLIENTAUTHENTICATION;
-        case 3: return ACK;
-        case 4: return SERVER;
-        case 5: return INSTANCE;
-        case 6: return LOG;
+        case 0: return ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2;
+        case 1: return ADMIN_HANDSHAKE;
+        case 2: return ADMIN_CLIENT_AUTHENTICATION;
+        case 3: return ADMIN_ACK;
+        case 4: return ADMIN_SERVER;
+        case 5: return ADMIN_INSTANCE;
+        case 6: return ADMIN_LOG;
         default: return null;
       }
     }
 
-    public static com.google.protobuf.Internal.EnumLiteMap<PacketType>
+    public static com.google.protobuf.Internal.EnumLiteMap<PacketTypeAdmin>
         internalGetValueMap() {
       return internalValueMap;
     }
     private static final com.google.protobuf.Internal.EnumLiteMap<
-        PacketType> internalValueMap =
-          new com.google.protobuf.Internal.EnumLiteMap<PacketType>() {
-            public PacketType findValueByNumber(int number) {
-              return PacketType.forNumber(number);
+        PacketTypeAdmin> internalValueMap =
+          new com.google.protobuf.Internal.EnumLiteMap<PacketTypeAdmin>() {
+            public PacketTypeAdmin findValueByNumber(int number) {
+              return PacketTypeAdmin.forNumber(number);
             }
           };
 
@@ -149,9 +200,9 @@ public final class AdminPacket {
       return org.clever.canal.protocol.AdminPacket.getDescriptor().getEnumTypes().get(0);
     }
 
-    private static final PacketType[] VALUES = values();
+    private static final PacketTypeAdmin[] VALUES = values();
 
-    public static PacketType valueOf(
+    public static PacketTypeAdmin valueOf(
         com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
       if (desc.getType() != getDescriptor()) {
         throw new java.lang.IllegalArgumentException(
@@ -165,15 +216,15 @@ public final class AdminPacket {
 
     private final int value;
 
-    private PacketType(int value) {
+    private PacketTypeAdmin(int value) {
       this.value = value;
     }
 
-    // @@protoc_insertion_point(enum_scope:org.clever.canal.protocol.PacketType)
+    // @@protoc_insertion_point(enum_scope:org.clever.canal.protocol.PacketTypeAdmin)
   }
 
-  public interface PacketOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.Packet)
+  public interface PacketAdminOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.PacketAdmin)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -189,39 +240,55 @@ public final class AdminPacket {
     int getVersion();
 
     /**
-     * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
      * @return The enum numeric value on the wire for type.
      */
     int getTypeValue();
     /**
-     * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
      * @return The type.
      */
-    org.clever.canal.protocol.AdminPacket.PacketType getType();
+    org.clever.canal.protocol.AdminPacket.PacketTypeAdmin getType();
 
     /**
+     * <pre>
+     * 数据Body
+     * </pre>
+     *
      * <code>bytes body = 4;</code>
      * @return The body.
      */
     com.google.protobuf.ByteString getBody();
 
-    public org.clever.canal.protocol.AdminPacket.Packet.MagicNumberPresentCase getMagicNumberPresentCase();
+    public org.clever.canal.protocol.AdminPacket.PacketAdmin.MagicNumberPresentCase getMagicNumberPresentCase();
 
-    public org.clever.canal.protocol.AdminPacket.Packet.VersionPresentCase getVersionPresentCase();
+    public org.clever.canal.protocol.AdminPacket.PacketAdmin.VersionPresentCase getVersionPresentCase();
   }
   /**
-   * Protobuf type {@code org.clever.canal.protocol.Packet}
+   * <pre>
+   * Packet数据
+   * </pre>
+   *
+   * Protobuf type {@code org.clever.canal.protocol.PacketAdmin}
    */
-  public  static final class Packet extends
+  public  static final class PacketAdmin extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.Packet)
-      PacketOrBuilder {
+      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.PacketAdmin)
+      PacketAdminOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use Packet.newBuilder() to construct.
-    private Packet(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use PacketAdmin.newBuilder() to construct.
+    private PacketAdmin(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Packet() {
+    private PacketAdmin() {
       type_ = 0;
       body_ = com.google.protobuf.ByteString.EMPTY;
     }
@@ -230,7 +297,7 @@ public final class AdminPacket {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new Packet();
+      return new PacketAdmin();
     }
 
     @java.lang.Override
@@ -238,7 +305,7 @@ public final class AdminPacket {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Packet(
+    private PacketAdmin(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -298,15 +365,15 @@ public final class AdminPacket {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Packet_descriptor;
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_PacketAdmin_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Packet_fieldAccessorTable
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_PacketAdmin_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.clever.canal.protocol.AdminPacket.Packet.class, org.clever.canal.protocol.AdminPacket.Packet.Builder.class);
+              org.clever.canal.protocol.AdminPacket.PacketAdmin.class, org.clever.canal.protocol.AdminPacket.PacketAdmin.Builder.class);
     }
 
     private int magicNumberPresentCase_ = 0;
@@ -414,25 +481,37 @@ public final class AdminPacket {
     public static final int TYPE_FIELD_NUMBER = 3;
     private int type_;
     /**
-     * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
      * @return The enum numeric value on the wire for type.
      */
     public int getTypeValue() {
       return type_;
     }
     /**
-     * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+     * <pre>
+     * 数据Packet类型
+     * </pre>
+     *
+     * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
      * @return The type.
      */
-    public org.clever.canal.protocol.AdminPacket.PacketType getType() {
+    public org.clever.canal.protocol.AdminPacket.PacketTypeAdmin getType() {
       @SuppressWarnings("deprecation")
-      org.clever.canal.protocol.AdminPacket.PacketType result = org.clever.canal.protocol.AdminPacket.PacketType.valueOf(type_);
-      return result == null ? org.clever.canal.protocol.AdminPacket.PacketType.UNRECOGNIZED : result;
+      org.clever.canal.protocol.AdminPacket.PacketTypeAdmin result = org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.valueOf(type_);
+      return result == null ? org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.UNRECOGNIZED : result;
     }
 
     public static final int BODY_FIELD_NUMBER = 4;
     private com.google.protobuf.ByteString body_;
     /**
+     * <pre>
+     * 数据Body
+     * </pre>
+     *
      * <code>bytes body = 4;</code>
      * @return The body.
      */
@@ -462,7 +541,7 @@ public final class AdminPacket {
         output.writeInt32(
             2, (int)((java.lang.Integer) versionPresent_));
       }
-      if (type_ != org.clever.canal.protocol.AdminPacket.PacketType.PACKAGETYPECOMPATIBLEPROTO2.getNumber()) {
+      if (type_ != org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         output.writeEnum(3, type_);
       }
       if (!body_.isEmpty()) {
@@ -487,7 +566,7 @@ public final class AdminPacket {
           .computeInt32Size(
               2, (int)((java.lang.Integer) versionPresent_));
       }
-      if (type_ != org.clever.canal.protocol.AdminPacket.PacketType.PACKAGETYPECOMPATIBLEPROTO2.getNumber()) {
+      if (type_ != org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.ADMIN_PACKET_TYPE_COMPATIBLE_PROTO2.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(3, type_);
       }
@@ -505,10 +584,10 @@ public final class AdminPacket {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.Packet)) {
+      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.PacketAdmin)) {
         return super.equals(obj);
       }
-      org.clever.canal.protocol.AdminPacket.Packet other = (org.clever.canal.protocol.AdminPacket.Packet) obj;
+      org.clever.canal.protocol.AdminPacket.PacketAdmin other = (org.clever.canal.protocol.AdminPacket.PacketAdmin) obj;
 
       if (type_ != other.type_) return false;
       if (!getBody()
@@ -567,69 +646,69 @@ public final class AdminPacket {
       return hash;
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(byte[] data)
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseDelimitedFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseDelimitedFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Packet parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -642,7 +721,7 @@ public final class AdminPacket {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.Packet prototype) {
+    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.PacketAdmin prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -658,26 +737,30 @@ public final class AdminPacket {
       return builder;
     }
     /**
-     * Protobuf type {@code org.clever.canal.protocol.Packet}
+     * <pre>
+     * Packet数据
+     * </pre>
+     *
+     * Protobuf type {@code org.clever.canal.protocol.PacketAdmin}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.Packet)
-        org.clever.canal.protocol.AdminPacket.PacketOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.PacketAdmin)
+        org.clever.canal.protocol.AdminPacket.PacketAdminOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Packet_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_PacketAdmin_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Packet_fieldAccessorTable
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_PacketAdmin_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.clever.canal.protocol.AdminPacket.Packet.class, org.clever.canal.protocol.AdminPacket.Packet.Builder.class);
+                org.clever.canal.protocol.AdminPacket.PacketAdmin.class, org.clever.canal.protocol.AdminPacket.PacketAdmin.Builder.class);
       }
 
-      // Construct using org.clever.canal.protocol.AdminPacket.Packet.newBuilder()
+      // Construct using org.clever.canal.protocol.AdminPacket.PacketAdmin.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -709,17 +792,17 @@ public final class AdminPacket {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Packet_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_PacketAdmin_descriptor;
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Packet getDefaultInstanceForType() {
-        return org.clever.canal.protocol.AdminPacket.Packet.getDefaultInstance();
+      public org.clever.canal.protocol.AdminPacket.PacketAdmin getDefaultInstanceForType() {
+        return org.clever.canal.protocol.AdminPacket.PacketAdmin.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Packet build() {
-        org.clever.canal.protocol.AdminPacket.Packet result = buildPartial();
+      public org.clever.canal.protocol.AdminPacket.PacketAdmin build() {
+        org.clever.canal.protocol.AdminPacket.PacketAdmin result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -727,8 +810,8 @@ public final class AdminPacket {
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Packet buildPartial() {
-        org.clever.canal.protocol.AdminPacket.Packet result = new org.clever.canal.protocol.AdminPacket.Packet(this);
+      public org.clever.canal.protocol.AdminPacket.PacketAdmin buildPartial() {
+        org.clever.canal.protocol.AdminPacket.PacketAdmin result = new org.clever.canal.protocol.AdminPacket.PacketAdmin(this);
         if (magicNumberPresentCase_ == 1) {
           result.magicNumberPresent_ = magicNumberPresent_;
         }
@@ -777,16 +860,16 @@ public final class AdminPacket {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.clever.canal.protocol.AdminPacket.Packet) {
-          return mergeFrom((org.clever.canal.protocol.AdminPacket.Packet)other);
+        if (other instanceof org.clever.canal.protocol.AdminPacket.PacketAdmin) {
+          return mergeFrom((org.clever.canal.protocol.AdminPacket.PacketAdmin)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.Packet other) {
-        if (other == org.clever.canal.protocol.AdminPacket.Packet.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.PacketAdmin other) {
+        if (other == org.clever.canal.protocol.AdminPacket.PacketAdmin.getDefaultInstance()) return this;
         if (other.type_ != 0) {
           setTypeValue(other.getTypeValue());
         }
@@ -826,11 +909,11 @@ public final class AdminPacket {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.clever.canal.protocol.AdminPacket.Packet parsedMessage = null;
+        org.clever.canal.protocol.AdminPacket.PacketAdmin parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.clever.canal.protocol.AdminPacket.Packet) e.getUnfinishedMessage();
+          parsedMessage = (org.clever.canal.protocol.AdminPacket.PacketAdmin) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -940,14 +1023,22 @@ public final class AdminPacket {
 
       private int type_ = 0;
       /**
-       * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
        * @return The enum numeric value on the wire for type.
        */
       public int getTypeValue() {
         return type_;
       }
       /**
-       * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
        * @param value The enum numeric value on the wire for type to set.
        * @return This builder for chaining.
        */
@@ -957,20 +1048,28 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
        * @return The type.
        */
-      public org.clever.canal.protocol.AdminPacket.PacketType getType() {
+      public org.clever.canal.protocol.AdminPacket.PacketTypeAdmin getType() {
         @SuppressWarnings("deprecation")
-        org.clever.canal.protocol.AdminPacket.PacketType result = org.clever.canal.protocol.AdminPacket.PacketType.valueOf(type_);
-        return result == null ? org.clever.canal.protocol.AdminPacket.PacketType.UNRECOGNIZED : result;
+        org.clever.canal.protocol.AdminPacket.PacketTypeAdmin result = org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.valueOf(type_);
+        return result == null ? org.clever.canal.protocol.AdminPacket.PacketTypeAdmin.UNRECOGNIZED : result;
       }
       /**
-       * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
        * @param value The type to set.
        * @return This builder for chaining.
        */
-      public Builder setType(org.clever.canal.protocol.AdminPacket.PacketType value) {
+      public Builder setType(org.clever.canal.protocol.AdminPacket.PacketTypeAdmin value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -980,7 +1079,11 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <code>.org.clever.canal.protocol.PacketType type = 3;</code>
+       * <pre>
+       * 数据Packet类型
+       * </pre>
+       *
+       * <code>.org.clever.canal.protocol.PacketTypeAdmin type = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearType() {
@@ -992,6 +1095,10 @@ public final class AdminPacket {
 
       private com.google.protobuf.ByteString body_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 4;</code>
        * @return The body.
        */
@@ -999,6 +1106,10 @@ public final class AdminPacket {
         return body_;
       }
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 4;</code>
        * @param value The body to set.
        * @return This builder for chaining.
@@ -1013,6 +1124,10 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * 数据Body
+       * </pre>
+       *
        * <code>bytes body = 4;</code>
        * @return This builder for chaining.
        */
@@ -1035,59 +1150,59 @@ public final class AdminPacket {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.Packet)
+      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.PacketAdmin)
     }
 
-    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.Packet)
-    private static final org.clever.canal.protocol.AdminPacket.Packet DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.PacketAdmin)
+    private static final org.clever.canal.protocol.AdminPacket.PacketAdmin DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.Packet();
+      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.PacketAdmin();
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Packet getDefaultInstance() {
+    public static org.clever.canal.protocol.AdminPacket.PacketAdmin getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<Packet>
-        PARSER = new com.google.protobuf.AbstractParser<Packet>() {
+    private static final com.google.protobuf.Parser<PacketAdmin>
+        PARSER = new com.google.protobuf.AbstractParser<PacketAdmin>() {
       @java.lang.Override
-      public Packet parsePartialFrom(
+      public PacketAdmin parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Packet(input, extensionRegistry);
+        return new PacketAdmin(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Packet> parser() {
+    public static com.google.protobuf.Parser<PacketAdmin> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Packet> getParserForType() {
+    public com.google.protobuf.Parser<PacketAdmin> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public org.clever.canal.protocol.AdminPacket.Packet getDefaultInstanceForType() {
+    public org.clever.canal.protocol.AdminPacket.PacketAdmin getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface AckOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.Ack)
+  public interface AckAdminOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.AckAdmin)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>int32 code = 1;</code>
-     * @return The code.
+     * <code>int32 errorCode = 1;</code>
+     * @return The errorCode.
      */
-    int getCode();
+    int getErrorCode();
 
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
      * <code>string message = 2;</code>
@@ -1096,7 +1211,7 @@ public final class AdminPacket {
     java.lang.String getMessage();
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
      * <code>string message = 2;</code>
@@ -1105,21 +1220,25 @@ public final class AdminPacket {
     com.google.protobuf.ByteString
         getMessageBytes();
 
-    public org.clever.canal.protocol.AdminPacket.Ack.ErrorCodePresentCase getErrorCodePresentCase();
+    public org.clever.canal.protocol.AdminPacket.AckAdmin.ErrorCodePresentCase getErrorCodePresentCase();
   }
   /**
-   * Protobuf type {@code org.clever.canal.protocol.Ack}
+   * <pre>
+   * Ack数据
+   * </pre>
+   *
+   * Protobuf type {@code org.clever.canal.protocol.AckAdmin}
    */
-  public  static final class Ack extends
+  public  static final class AckAdmin extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.Ack)
-      AckOrBuilder {
+      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.AckAdmin)
+      AckAdminOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use Ack.newBuilder() to construct.
-    private Ack(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use AckAdmin.newBuilder() to construct.
+    private AckAdmin(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Ack() {
+    private AckAdmin() {
       message_ = "";
     }
 
@@ -1127,7 +1246,7 @@ public final class AdminPacket {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new Ack();
+      return new AckAdmin();
     }
 
     @java.lang.Override
@@ -1135,7 +1254,7 @@ public final class AdminPacket {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Ack(
+    private AckAdmin(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1185,15 +1304,15 @@ public final class AdminPacket {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Ack_descriptor;
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_AckAdmin_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Ack_fieldAccessorTable
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_AckAdmin_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.clever.canal.protocol.AdminPacket.Ack.class, org.clever.canal.protocol.AdminPacket.Ack.Builder.class);
+              org.clever.canal.protocol.AdminPacket.AckAdmin.class, org.clever.canal.protocol.AdminPacket.AckAdmin.Builder.class);
     }
 
     private int errorCodePresentCase_ = 0;
@@ -1201,7 +1320,7 @@ public final class AdminPacket {
     public enum ErrorCodePresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      CODE(1),
+      ERRORCODE(1),
       ERRORCODEPRESENT_NOT_SET(0);
       private final int value;
       private ErrorCodePresentCase(int value) {
@@ -1219,7 +1338,7 @@ public final class AdminPacket {
 
       public static ErrorCodePresentCase forNumber(int value) {
         switch (value) {
-          case 1: return CODE;
+          case 1: return ERRORCODE;
           case 0: return ERRORCODEPRESENT_NOT_SET;
           default: return null;
         }
@@ -1235,12 +1354,12 @@ public final class AdminPacket {
           errorCodePresentCase_);
     }
 
-    public static final int CODE_FIELD_NUMBER = 1;
+    public static final int ERRORCODE_FIELD_NUMBER = 1;
     /**
-     * <code>int32 code = 1;</code>
-     * @return The code.
+     * <code>int32 errorCode = 1;</code>
+     * @return The errorCode.
      */
-    public int getCode() {
+    public int getErrorCode() {
       if (errorCodePresentCase_ == 1) {
         return (java.lang.Integer) errorCodePresent_;
       }
@@ -1251,7 +1370,7 @@ public final class AdminPacket {
     private volatile java.lang.Object message_;
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
      * <code>string message = 2;</code>
@@ -1271,7 +1390,7 @@ public final class AdminPacket {
     }
     /**
      * <pre>
-     * if something like compression is not supported, erorr_message will tell about it.
+     * 错误消息
      * </pre>
      *
      * <code>string message = 2;</code>
@@ -1339,18 +1458,18 @@ public final class AdminPacket {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.Ack)) {
+      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.AckAdmin)) {
         return super.equals(obj);
       }
-      org.clever.canal.protocol.AdminPacket.Ack other = (org.clever.canal.protocol.AdminPacket.Ack) obj;
+      org.clever.canal.protocol.AdminPacket.AckAdmin other = (org.clever.canal.protocol.AdminPacket.AckAdmin) obj;
 
       if (!getMessage()
           .equals(other.getMessage())) return false;
       if (!getErrorCodePresentCase().equals(other.getErrorCodePresentCase())) return false;
       switch (errorCodePresentCase_) {
         case 1:
-          if (getCode()
-              != other.getCode()) return false;
+          if (getErrorCode()
+              != other.getErrorCode()) return false;
           break;
         case 0:
         default:
@@ -1370,8 +1489,8 @@ public final class AdminPacket {
       hash = (53 * hash) + getMessage().hashCode();
       switch (errorCodePresentCase_) {
         case 1:
-          hash = (37 * hash) + CODE_FIELD_NUMBER;
-          hash = (53 * hash) + getCode();
+          hash = (37 * hash) + ERRORCODE_FIELD_NUMBER;
+          hash = (53 * hash) + getErrorCode();
           break;
         case 0:
         default:
@@ -1381,69 +1500,69 @@ public final class AdminPacket {
       return hash;
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(byte[] data)
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseDelimitedFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseDelimitedFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Ack parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1456,7 +1575,7 @@ public final class AdminPacket {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.Ack prototype) {
+    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.AckAdmin prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1472,26 +1591,30 @@ public final class AdminPacket {
       return builder;
     }
     /**
-     * Protobuf type {@code org.clever.canal.protocol.Ack}
+     * <pre>
+     * Ack数据
+     * </pre>
+     *
+     * Protobuf type {@code org.clever.canal.protocol.AckAdmin}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.Ack)
-        org.clever.canal.protocol.AdminPacket.AckOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.AckAdmin)
+        org.clever.canal.protocol.AdminPacket.AckAdminOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Ack_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_AckAdmin_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Ack_fieldAccessorTable
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_AckAdmin_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.clever.canal.protocol.AdminPacket.Ack.class, org.clever.canal.protocol.AdminPacket.Ack.Builder.class);
+                org.clever.canal.protocol.AdminPacket.AckAdmin.class, org.clever.canal.protocol.AdminPacket.AckAdmin.Builder.class);
       }
 
-      // Construct using org.clever.canal.protocol.AdminPacket.Ack.newBuilder()
+      // Construct using org.clever.canal.protocol.AdminPacket.AckAdmin.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1519,17 +1642,17 @@ public final class AdminPacket {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Ack_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_AckAdmin_descriptor;
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Ack getDefaultInstanceForType() {
-        return org.clever.canal.protocol.AdminPacket.Ack.getDefaultInstance();
+      public org.clever.canal.protocol.AdminPacket.AckAdmin getDefaultInstanceForType() {
+        return org.clever.canal.protocol.AdminPacket.AckAdmin.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Ack build() {
-        org.clever.canal.protocol.AdminPacket.Ack result = buildPartial();
+      public org.clever.canal.protocol.AdminPacket.AckAdmin build() {
+        org.clever.canal.protocol.AdminPacket.AckAdmin result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1537,8 +1660,8 @@ public final class AdminPacket {
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Ack buildPartial() {
-        org.clever.canal.protocol.AdminPacket.Ack result = new org.clever.canal.protocol.AdminPacket.Ack(this);
+      public org.clever.canal.protocol.AdminPacket.AckAdmin buildPartial() {
+        org.clever.canal.protocol.AdminPacket.AckAdmin result = new org.clever.canal.protocol.AdminPacket.AckAdmin(this);
         if (errorCodePresentCase_ == 1) {
           result.errorCodePresent_ = errorCodePresent_;
         }
@@ -1582,23 +1705,23 @@ public final class AdminPacket {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.clever.canal.protocol.AdminPacket.Ack) {
-          return mergeFrom((org.clever.canal.protocol.AdminPacket.Ack)other);
+        if (other instanceof org.clever.canal.protocol.AdminPacket.AckAdmin) {
+          return mergeFrom((org.clever.canal.protocol.AdminPacket.AckAdmin)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.Ack other) {
-        if (other == org.clever.canal.protocol.AdminPacket.Ack.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.AckAdmin other) {
+        if (other == org.clever.canal.protocol.AdminPacket.AckAdmin.getDefaultInstance()) return this;
         if (!other.getMessage().isEmpty()) {
           message_ = other.message_;
           onChanged();
         }
         switch (other.getErrorCodePresentCase()) {
-          case CODE: {
-            setCode(other.getCode());
+          case ERRORCODE: {
+            setErrorCode(other.getErrorCode());
             break;
           }
           case ERRORCODEPRESENT_NOT_SET: {
@@ -1620,11 +1743,11 @@ public final class AdminPacket {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.clever.canal.protocol.AdminPacket.Ack parsedMessage = null;
+        org.clever.canal.protocol.AdminPacket.AckAdmin parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.clever.canal.protocol.AdminPacket.Ack) e.getUnfinishedMessage();
+          parsedMessage = (org.clever.canal.protocol.AdminPacket.AckAdmin) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1650,31 +1773,31 @@ public final class AdminPacket {
 
 
       /**
-       * <code>int32 code = 1;</code>
-       * @return The code.
+       * <code>int32 errorCode = 1;</code>
+       * @return The errorCode.
        */
-      public int getCode() {
+      public int getErrorCode() {
         if (errorCodePresentCase_ == 1) {
           return (java.lang.Integer) errorCodePresent_;
         }
         return 0;
       }
       /**
-       * <code>int32 code = 1;</code>
-       * @param value The code to set.
+       * <code>int32 errorCode = 1;</code>
+       * @param value The errorCode to set.
        * @return This builder for chaining.
        */
-      public Builder setCode(int value) {
+      public Builder setErrorCode(int value) {
         errorCodePresentCase_ = 1;
         errorCodePresent_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 code = 1;</code>
+       * <code>int32 errorCode = 1;</code>
        * @return This builder for chaining.
        */
-      public Builder clearCode() {
+      public Builder clearErrorCode() {
         if (errorCodePresentCase_ == 1) {
           errorCodePresentCase_ = 0;
           errorCodePresent_ = null;
@@ -1686,7 +1809,7 @@ public final class AdminPacket {
       private java.lang.Object message_ = "";
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
        * <code>string message = 2;</code>
@@ -1706,7 +1829,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
        * <code>string message = 2;</code>
@@ -1727,7 +1850,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
        * <code>string message = 2;</code>
@@ -1746,7 +1869,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
        * <code>string message = 2;</code>
@@ -1760,7 +1883,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * if something like compression is not supported, erorr_message will tell about it.
+       * 错误消息
        * </pre>
        *
        * <code>string message = 2;</code>
@@ -1791,83 +1914,91 @@ public final class AdminPacket {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.Ack)
+      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.AckAdmin)
     }
 
-    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.Ack)
-    private static final org.clever.canal.protocol.AdminPacket.Ack DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.AckAdmin)
+    private static final org.clever.canal.protocol.AdminPacket.AckAdmin DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.Ack();
+      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.AckAdmin();
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Ack getDefaultInstance() {
+    public static org.clever.canal.protocol.AdminPacket.AckAdmin getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<Ack>
-        PARSER = new com.google.protobuf.AbstractParser<Ack>() {
+    private static final com.google.protobuf.Parser<AckAdmin>
+        PARSER = new com.google.protobuf.AbstractParser<AckAdmin>() {
       @java.lang.Override
-      public Ack parsePartialFrom(
+      public AckAdmin parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Ack(input, extensionRegistry);
+        return new AckAdmin(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Ack> parser() {
+    public static com.google.protobuf.Parser<AckAdmin> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Ack> getParserForType() {
+    public com.google.protobuf.Parser<AckAdmin> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public org.clever.canal.protocol.AdminPacket.Ack getDefaultInstanceForType() {
+    public org.clever.canal.protocol.AdminPacket.AckAdmin getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface HandshakeOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.Handshake)
+  public interface HandshakeAdminOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.HandshakeAdmin)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The communicationEncoding.
      */
     java.lang.String getCommunicationEncoding();
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The bytes for communicationEncoding.
      */
     com.google.protobuf.ByteString
         getCommunicationEncodingBytes();
 
     /**
+     * <pre>
+     * 心跳数据
+     * </pre>
+     *
      * <code>bytes seeds = 2;</code>
      * @return The seeds.
      */
     com.google.protobuf.ByteString getSeeds();
 
-    public org.clever.canal.protocol.AdminPacket.Handshake.CommunicationEncodingPresentCase getCommunicationEncodingPresentCase();
+    public org.clever.canal.protocol.AdminPacket.HandshakeAdmin.CommunicationEncodingPresentCase getCommunicationEncodingPresentCase();
   }
   /**
-   * Protobuf type {@code org.clever.canal.protocol.Handshake}
+   * <pre>
+   * 握手数据
+   * </pre>
+   *
+   * Protobuf type {@code org.clever.canal.protocol.HandshakeAdmin}
    */
-  public  static final class Handshake extends
+  public  static final class HandshakeAdmin extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.Handshake)
-      HandshakeOrBuilder {
+      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.HandshakeAdmin)
+      HandshakeAdminOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use Handshake.newBuilder() to construct.
-    private Handshake(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use HandshakeAdmin.newBuilder() to construct.
+    private HandshakeAdmin(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private Handshake() {
+    private HandshakeAdmin() {
       seeds_ = com.google.protobuf.ByteString.EMPTY;
     }
 
@@ -1875,7 +2006,7 @@ public final class AdminPacket {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new Handshake();
+      return new HandshakeAdmin();
     }
 
     @java.lang.Override
@@ -1883,7 +2014,7 @@ public final class AdminPacket {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private Handshake(
+    private HandshakeAdmin(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1933,15 +2064,15 @@ public final class AdminPacket {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Handshake_descriptor;
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Handshake_fieldAccessorTable
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_HandshakeAdmin_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.clever.canal.protocol.AdminPacket.Handshake.class, org.clever.canal.protocol.AdminPacket.Handshake.Builder.class);
+              org.clever.canal.protocol.AdminPacket.HandshakeAdmin.class, org.clever.canal.protocol.AdminPacket.HandshakeAdmin.Builder.class);
     }
 
     private int communicationEncodingPresentCase_ = 0;
@@ -1949,7 +2080,7 @@ public final class AdminPacket {
     public enum CommunicationEncodingPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      COMMUNICATION_ENCODING(1),
+      COMMUNICATIONENCODING(1),
       COMMUNICATIONENCODINGPRESENT_NOT_SET(0);
       private final int value;
       private CommunicationEncodingPresentCase(int value) {
@@ -1967,7 +2098,7 @@ public final class AdminPacket {
 
       public static CommunicationEncodingPresentCase forNumber(int value) {
         switch (value) {
-          case 1: return COMMUNICATION_ENCODING;
+          case 1: return COMMUNICATIONENCODING;
           case 0: return COMMUNICATIONENCODINGPRESENT_NOT_SET;
           default: return null;
         }
@@ -1983,9 +2114,9 @@ public final class AdminPacket {
           communicationEncodingPresentCase_);
     }
 
-    public static final int COMMUNICATION_ENCODING_FIELD_NUMBER = 1;
+    public static final int COMMUNICATIONENCODING_FIELD_NUMBER = 1;
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The communicationEncoding.
      */
     public java.lang.String getCommunicationEncoding() {
@@ -2006,7 +2137,7 @@ public final class AdminPacket {
       }
     }
     /**
-     * <code>string communication_encoding = 1;</code>
+     * <code>string communicationEncoding = 1;</code>
      * @return The bytes for communicationEncoding.
      */
     public com.google.protobuf.ByteString
@@ -2031,6 +2162,10 @@ public final class AdminPacket {
     public static final int SEEDS_FIELD_NUMBER = 2;
     private com.google.protobuf.ByteString seeds_;
     /**
+     * <pre>
+     * 心跳数据
+     * </pre>
+     *
      * <code>bytes seeds = 2;</code>
      * @return The seeds.
      */
@@ -2084,10 +2219,10 @@ public final class AdminPacket {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.Handshake)) {
+      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.HandshakeAdmin)) {
         return super.equals(obj);
       }
-      org.clever.canal.protocol.AdminPacket.Handshake other = (org.clever.canal.protocol.AdminPacket.Handshake) obj;
+      org.clever.canal.protocol.AdminPacket.HandshakeAdmin other = (org.clever.canal.protocol.AdminPacket.HandshakeAdmin) obj;
 
       if (!getSeeds()
           .equals(other.getSeeds())) return false;
@@ -2115,7 +2250,7 @@ public final class AdminPacket {
       hash = (53 * hash) + getSeeds().hashCode();
       switch (communicationEncodingPresentCase_) {
         case 1:
-          hash = (37 * hash) + COMMUNICATION_ENCODING_FIELD_NUMBER;
+          hash = (37 * hash) + COMMUNICATIONENCODING_FIELD_NUMBER;
           hash = (53 * hash) + getCommunicationEncoding().hashCode();
           break;
         case 0:
@@ -2126,69 +2261,69 @@ public final class AdminPacket {
       return hash;
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(byte[] data)
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseDelimitedFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseDelimitedFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.Handshake parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -2201,7 +2336,7 @@ public final class AdminPacket {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.Handshake prototype) {
+    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.HandshakeAdmin prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -2217,26 +2352,30 @@ public final class AdminPacket {
       return builder;
     }
     /**
-     * Protobuf type {@code org.clever.canal.protocol.Handshake}
+     * <pre>
+     * 握手数据
+     * </pre>
+     *
+     * Protobuf type {@code org.clever.canal.protocol.HandshakeAdmin}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.Handshake)
-        org.clever.canal.protocol.AdminPacket.HandshakeOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.HandshakeAdmin)
+        org.clever.canal.protocol.AdminPacket.HandshakeAdminOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Handshake_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Handshake_fieldAccessorTable
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_HandshakeAdmin_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.clever.canal.protocol.AdminPacket.Handshake.class, org.clever.canal.protocol.AdminPacket.Handshake.Builder.class);
+                org.clever.canal.protocol.AdminPacket.HandshakeAdmin.class, org.clever.canal.protocol.AdminPacket.HandshakeAdmin.Builder.class);
       }
 
-      // Construct using org.clever.canal.protocol.AdminPacket.Handshake.newBuilder()
+      // Construct using org.clever.canal.protocol.AdminPacket.HandshakeAdmin.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2264,17 +2403,17 @@ public final class AdminPacket {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_Handshake_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor;
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Handshake getDefaultInstanceForType() {
-        return org.clever.canal.protocol.AdminPacket.Handshake.getDefaultInstance();
+      public org.clever.canal.protocol.AdminPacket.HandshakeAdmin getDefaultInstanceForType() {
+        return org.clever.canal.protocol.AdminPacket.HandshakeAdmin.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Handshake build() {
-        org.clever.canal.protocol.AdminPacket.Handshake result = buildPartial();
+      public org.clever.canal.protocol.AdminPacket.HandshakeAdmin build() {
+        org.clever.canal.protocol.AdminPacket.HandshakeAdmin result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -2282,8 +2421,8 @@ public final class AdminPacket {
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.Handshake buildPartial() {
-        org.clever.canal.protocol.AdminPacket.Handshake result = new org.clever.canal.protocol.AdminPacket.Handshake(this);
+      public org.clever.canal.protocol.AdminPacket.HandshakeAdmin buildPartial() {
+        org.clever.canal.protocol.AdminPacket.HandshakeAdmin result = new org.clever.canal.protocol.AdminPacket.HandshakeAdmin(this);
         if (communicationEncodingPresentCase_ == 1) {
           result.communicationEncodingPresent_ = communicationEncodingPresent_;
         }
@@ -2327,21 +2466,21 @@ public final class AdminPacket {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.clever.canal.protocol.AdminPacket.Handshake) {
-          return mergeFrom((org.clever.canal.protocol.AdminPacket.Handshake)other);
+        if (other instanceof org.clever.canal.protocol.AdminPacket.HandshakeAdmin) {
+          return mergeFrom((org.clever.canal.protocol.AdminPacket.HandshakeAdmin)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.Handshake other) {
-        if (other == org.clever.canal.protocol.AdminPacket.Handshake.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.HandshakeAdmin other) {
+        if (other == org.clever.canal.protocol.AdminPacket.HandshakeAdmin.getDefaultInstance()) return this;
         if (other.getSeeds() != com.google.protobuf.ByteString.EMPTY) {
           setSeeds(other.getSeeds());
         }
         switch (other.getCommunicationEncodingPresentCase()) {
-          case COMMUNICATION_ENCODING: {
+          case COMMUNICATIONENCODING: {
             communicationEncodingPresentCase_ = 1;
             communicationEncodingPresent_ = other.communicationEncodingPresent_;
             onChanged();
@@ -2366,11 +2505,11 @@ public final class AdminPacket {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.clever.canal.protocol.AdminPacket.Handshake parsedMessage = null;
+        org.clever.canal.protocol.AdminPacket.HandshakeAdmin parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.clever.canal.protocol.AdminPacket.Handshake) e.getUnfinishedMessage();
+          parsedMessage = (org.clever.canal.protocol.AdminPacket.HandshakeAdmin) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2396,7 +2535,7 @@ public final class AdminPacket {
 
 
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return The communicationEncoding.
        */
       public java.lang.String getCommunicationEncoding() {
@@ -2417,7 +2556,7 @@ public final class AdminPacket {
         }
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return The bytes for communicationEncoding.
        */
       public com.google.protobuf.ByteString
@@ -2439,7 +2578,7 @@ public final class AdminPacket {
         }
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @param value The communicationEncoding to set.
        * @return This builder for chaining.
        */
@@ -2454,7 +2593,7 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @return This builder for chaining.
        */
       public Builder clearCommunicationEncoding() {
@@ -2466,7 +2605,7 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <code>string communication_encoding = 1;</code>
+       * <code>string communicationEncoding = 1;</code>
        * @param value The bytes for communicationEncoding to set.
        * @return This builder for chaining.
        */
@@ -2484,6 +2623,10 @@ public final class AdminPacket {
 
       private com.google.protobuf.ByteString seeds_ = com.google.protobuf.ByteString.EMPTY;
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @return The seeds.
        */
@@ -2491,6 +2634,10 @@ public final class AdminPacket {
         return seeds_;
       }
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @param value The seeds to set.
        * @return This builder for chaining.
@@ -2505,6 +2652,10 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * 心跳数据
+       * </pre>
+       *
        * <code>bytes seeds = 2;</code>
        * @return This builder for chaining.
        */
@@ -2527,56 +2678,64 @@ public final class AdminPacket {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.Handshake)
+      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.HandshakeAdmin)
     }
 
-    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.Handshake)
-    private static final org.clever.canal.protocol.AdminPacket.Handshake DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.HandshakeAdmin)
+    private static final org.clever.canal.protocol.AdminPacket.HandshakeAdmin DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.Handshake();
+      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.HandshakeAdmin();
     }
 
-    public static org.clever.canal.protocol.AdminPacket.Handshake getDefaultInstance() {
+    public static org.clever.canal.protocol.AdminPacket.HandshakeAdmin getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<Handshake>
-        PARSER = new com.google.protobuf.AbstractParser<Handshake>() {
+    private static final com.google.protobuf.Parser<HandshakeAdmin>
+        PARSER = new com.google.protobuf.AbstractParser<HandshakeAdmin>() {
       @java.lang.Override
-      public Handshake parsePartialFrom(
+      public HandshakeAdmin parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new Handshake(input, extensionRegistry);
+        return new HandshakeAdmin(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<Handshake> parser() {
+    public static com.google.protobuf.Parser<HandshakeAdmin> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<Handshake> getParserForType() {
+    public com.google.protobuf.Parser<HandshakeAdmin> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public org.clever.canal.protocol.AdminPacket.Handshake getDefaultInstanceForType() {
+    public org.clever.canal.protocol.AdminPacket.HandshakeAdmin getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
-  public interface ClientAuthOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.ClientAuth)
+  public interface ClientAuthAdminOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:org.clever.canal.protocol.ClientAuthAdmin)
       com.google.protobuf.MessageOrBuilder {
 
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The username.
      */
     java.lang.String getUsername();
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The bytes for username.
      */
@@ -2585,7 +2744,7 @@ public final class AdminPacket {
 
     /**
      * <pre>
-     * hashed password with seeds from Handshake message
+     * 密码(握手消息种子散列密码)
      * </pre>
      *
      * <code>bytes password = 2;</code>
@@ -2594,46 +2753,38 @@ public final class AdminPacket {
     com.google.protobuf.ByteString getPassword();
 
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_read_timeout = 3;</code>
+     * <code>int32 netReadTimeout = 3;</code>
      * @return The netReadTimeout.
      */
     int getNetReadTimeout();
 
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_write_timeout = 4;</code>
+     * <code>int32 netWriteTimeout = 4;</code>
      * @return The netWriteTimeout.
      */
     int getNetWriteTimeout();
 
-    public org.clever.canal.protocol.AdminPacket.ClientAuth.NetReadTimeoutPresentCase getNetReadTimeoutPresentCase();
+    public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.NetReadTimeoutPresentCase getNetReadTimeoutPresentCase();
 
-    public org.clever.canal.protocol.AdminPacket.ClientAuth.NetWriteTimeoutPresentCase getNetWriteTimeoutPresentCase();
+    public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.NetWriteTimeoutPresentCase getNetWriteTimeoutPresentCase();
   }
   /**
    * <pre>
-   * client authentication
+   * 客户端授权数据
    * </pre>
    *
-   * Protobuf type {@code org.clever.canal.protocol.ClientAuth}
+   * Protobuf type {@code org.clever.canal.protocol.ClientAuthAdmin}
    */
-  public  static final class ClientAuth extends
+  public  static final class ClientAuthAdmin extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.ClientAuth)
-      ClientAuthOrBuilder {
+      // @@protoc_insertion_point(message_implements:org.clever.canal.protocol.ClientAuthAdmin)
+      ClientAuthAdminOrBuilder {
   private static final long serialVersionUID = 0L;
-    // Use ClientAuth.newBuilder() to construct.
-    private ClientAuth(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+    // Use ClientAuthAdmin.newBuilder() to construct.
+    private ClientAuthAdmin(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private ClientAuth() {
+    private ClientAuthAdmin() {
       username_ = "";
       password_ = com.google.protobuf.ByteString.EMPTY;
     }
@@ -2642,7 +2793,7 @@ public final class AdminPacket {
     @SuppressWarnings({"unused"})
     protected java.lang.Object newInstance(
         UnusedPrivateParameter unused) {
-      return new ClientAuth();
+      return new ClientAuthAdmin();
     }
 
     @java.lang.Override
@@ -2650,7 +2801,7 @@ public final class AdminPacket {
     getUnknownFields() {
       return this.unknownFields;
     }
-    private ClientAuth(
+    private ClientAuthAdmin(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -2710,15 +2861,15 @@ public final class AdminPacket {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuth_descriptor;
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuth_fieldAccessorTable
+      return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuthAdmin_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.clever.canal.protocol.AdminPacket.ClientAuth.class, org.clever.canal.protocol.AdminPacket.ClientAuth.Builder.class);
+              org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.class, org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.Builder.class);
     }
 
     private int netReadTimeoutPresentCase_ = 0;
@@ -2726,7 +2877,7 @@ public final class AdminPacket {
     public enum NetReadTimeoutPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      NET_READ_TIMEOUT(3),
+      NETREADTIMEOUT(3),
       NETREADTIMEOUTPRESENT_NOT_SET(0);
       private final int value;
       private NetReadTimeoutPresentCase(int value) {
@@ -2744,7 +2895,7 @@ public final class AdminPacket {
 
       public static NetReadTimeoutPresentCase forNumber(int value) {
         switch (value) {
-          case 3: return NET_READ_TIMEOUT;
+          case 3: return NETREADTIMEOUT;
           case 0: return NETREADTIMEOUTPRESENT_NOT_SET;
           default: return null;
         }
@@ -2765,7 +2916,7 @@ public final class AdminPacket {
     public enum NetWriteTimeoutPresentCase
         implements com.google.protobuf.Internal.EnumLite,
             com.google.protobuf.AbstractMessage.InternalOneOfEnum {
-      NET_WRITE_TIMEOUT(4),
+      NETWRITETIMEOUT(4),
       NETWRITETIMEOUTPRESENT_NOT_SET(0);
       private final int value;
       private NetWriteTimeoutPresentCase(int value) {
@@ -2783,7 +2934,7 @@ public final class AdminPacket {
 
       public static NetWriteTimeoutPresentCase forNumber(int value) {
         switch (value) {
-          case 4: return NET_WRITE_TIMEOUT;
+          case 4: return NETWRITETIMEOUT;
           case 0: return NETWRITETIMEOUTPRESENT_NOT_SET;
           default: return null;
         }
@@ -2802,6 +2953,10 @@ public final class AdminPacket {
     public static final int USERNAME_FIELD_NUMBER = 1;
     private volatile java.lang.Object username_;
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The username.
      */
@@ -2818,6 +2973,10 @@ public final class AdminPacket {
       }
     }
     /**
+     * <pre>
+     * 用户名
+     * </pre>
+     *
      * <code>string username = 1;</code>
      * @return The bytes for username.
      */
@@ -2839,7 +2998,7 @@ public final class AdminPacket {
     private com.google.protobuf.ByteString password_;
     /**
      * <pre>
-     * hashed password with seeds from Handshake message
+     * 密码(握手消息种子散列密码)
      * </pre>
      *
      * <code>bytes password = 2;</code>
@@ -2849,13 +3008,9 @@ public final class AdminPacket {
       return password_;
     }
 
-    public static final int NET_READ_TIMEOUT_FIELD_NUMBER = 3;
+    public static final int NETREADTIMEOUT_FIELD_NUMBER = 3;
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_read_timeout = 3;</code>
+     * <code>int32 netReadTimeout = 3;</code>
      * @return The netReadTimeout.
      */
     public int getNetReadTimeout() {
@@ -2865,13 +3020,9 @@ public final class AdminPacket {
       return 0;
     }
 
-    public static final int NET_WRITE_TIMEOUT_FIELD_NUMBER = 4;
+    public static final int NETWRITETIMEOUT_FIELD_NUMBER = 4;
     /**
-     * <pre>
-     * in seconds
-     * </pre>
-     *
-     * <code>int32 net_write_timeout = 4;</code>
+     * <code>int32 netWriteTimeout = 4;</code>
      * @return The netWriteTimeout.
      */
     public int getNetWriteTimeout() {
@@ -2945,10 +3096,10 @@ public final class AdminPacket {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.ClientAuth)) {
+      if (!(obj instanceof org.clever.canal.protocol.AdminPacket.ClientAuthAdmin)) {
         return super.equals(obj);
       }
-      org.clever.canal.protocol.AdminPacket.ClientAuth other = (org.clever.canal.protocol.AdminPacket.ClientAuth) obj;
+      org.clever.canal.protocol.AdminPacket.ClientAuthAdmin other = (org.clever.canal.protocol.AdminPacket.ClientAuthAdmin) obj;
 
       if (!getUsername()
           .equals(other.getUsername())) return false;
@@ -2989,7 +3140,7 @@ public final class AdminPacket {
       hash = (53 * hash) + getPassword().hashCode();
       switch (netReadTimeoutPresentCase_) {
         case 3:
-          hash = (37 * hash) + NET_READ_TIMEOUT_FIELD_NUMBER;
+          hash = (37 * hash) + NETREADTIMEOUT_FIELD_NUMBER;
           hash = (53 * hash) + getNetReadTimeout();
           break;
         case 0:
@@ -2997,7 +3148,7 @@ public final class AdminPacket {
       }
       switch (netWriteTimeoutPresentCase_) {
         case 4:
-          hash = (37 * hash) + NET_WRITE_TIMEOUT_FIELD_NUMBER;
+          hash = (37 * hash) + NETWRITETIMEOUT_FIELD_NUMBER;
           hash = (53 * hash) + getNetWriteTimeout();
           break;
         case 0:
@@ -3008,69 +3159,69 @@ public final class AdminPacket {
       return hash;
     }
 
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(byte[] data)
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseDelimitedFrom(java.io.InputStream input)
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseDelimitedFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth parseFrom(
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -3083,7 +3234,7 @@ public final class AdminPacket {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.ClientAuth prototype) {
+    public static Builder newBuilder(org.clever.canal.protocol.AdminPacket.ClientAuthAdmin prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -3100,29 +3251,29 @@ public final class AdminPacket {
     }
     /**
      * <pre>
-     * client authentication
+     * 客户端授权数据
      * </pre>
      *
-     * Protobuf type {@code org.clever.canal.protocol.ClientAuth}
+     * Protobuf type {@code org.clever.canal.protocol.ClientAuthAdmin}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.ClientAuth)
-        org.clever.canal.protocol.AdminPacket.ClientAuthOrBuilder {
+        // @@protoc_insertion_point(builder_implements:org.clever.canal.protocol.ClientAuthAdmin)
+        org.clever.canal.protocol.AdminPacket.ClientAuthAdminOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuth_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuth_fieldAccessorTable
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuthAdmin_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.clever.canal.protocol.AdminPacket.ClientAuth.class, org.clever.canal.protocol.AdminPacket.ClientAuth.Builder.class);
+                org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.class, org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.Builder.class);
       }
 
-      // Construct using org.clever.canal.protocol.AdminPacket.ClientAuth.newBuilder()
+      // Construct using org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -3154,17 +3305,17 @@ public final class AdminPacket {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuth_descriptor;
+        return org.clever.canal.protocol.AdminPacket.internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor;
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.ClientAuth getDefaultInstanceForType() {
-        return org.clever.canal.protocol.AdminPacket.ClientAuth.getDefaultInstance();
+      public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin getDefaultInstanceForType() {
+        return org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.getDefaultInstance();
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.ClientAuth build() {
-        org.clever.canal.protocol.AdminPacket.ClientAuth result = buildPartial();
+      public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin build() {
+        org.clever.canal.protocol.AdminPacket.ClientAuthAdmin result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -3172,8 +3323,8 @@ public final class AdminPacket {
       }
 
       @java.lang.Override
-      public org.clever.canal.protocol.AdminPacket.ClientAuth buildPartial() {
-        org.clever.canal.protocol.AdminPacket.ClientAuth result = new org.clever.canal.protocol.AdminPacket.ClientAuth(this);
+      public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin buildPartial() {
+        org.clever.canal.protocol.AdminPacket.ClientAuthAdmin result = new org.clever.canal.protocol.AdminPacket.ClientAuthAdmin(this);
         result.username_ = username_;
         result.password_ = password_;
         if (netReadTimeoutPresentCase_ == 3) {
@@ -3222,16 +3373,16 @@ public final class AdminPacket {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.clever.canal.protocol.AdminPacket.ClientAuth) {
-          return mergeFrom((org.clever.canal.protocol.AdminPacket.ClientAuth)other);
+        if (other instanceof org.clever.canal.protocol.AdminPacket.ClientAuthAdmin) {
+          return mergeFrom((org.clever.canal.protocol.AdminPacket.ClientAuthAdmin)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.ClientAuth other) {
-        if (other == org.clever.canal.protocol.AdminPacket.ClientAuth.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.clever.canal.protocol.AdminPacket.ClientAuthAdmin other) {
+        if (other == org.clever.canal.protocol.AdminPacket.ClientAuthAdmin.getDefaultInstance()) return this;
         if (!other.getUsername().isEmpty()) {
           username_ = other.username_;
           onChanged();
@@ -3240,7 +3391,7 @@ public final class AdminPacket {
           setPassword(other.getPassword());
         }
         switch (other.getNetReadTimeoutPresentCase()) {
-          case NET_READ_TIMEOUT: {
+          case NETREADTIMEOUT: {
             setNetReadTimeout(other.getNetReadTimeout());
             break;
           }
@@ -3249,7 +3400,7 @@ public final class AdminPacket {
           }
         }
         switch (other.getNetWriteTimeoutPresentCase()) {
-          case NET_WRITE_TIMEOUT: {
+          case NETWRITETIMEOUT: {
             setNetWriteTimeout(other.getNetWriteTimeout());
             break;
           }
@@ -3272,11 +3423,11 @@ public final class AdminPacket {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.clever.canal.protocol.AdminPacket.ClientAuth parsedMessage = null;
+        org.clever.canal.protocol.AdminPacket.ClientAuthAdmin parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.clever.canal.protocol.AdminPacket.ClientAuth) e.getUnfinishedMessage();
+          parsedMessage = (org.clever.canal.protocol.AdminPacket.ClientAuthAdmin) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -3318,6 +3469,10 @@ public final class AdminPacket {
 
       private java.lang.Object username_ = "";
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return The username.
        */
@@ -3334,6 +3489,10 @@ public final class AdminPacket {
         }
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return The bytes for username.
        */
@@ -3351,6 +3510,10 @@ public final class AdminPacket {
         }
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @param value The username to set.
        * @return This builder for chaining.
@@ -3366,6 +3529,10 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @return This builder for chaining.
        */
@@ -3376,6 +3543,10 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * 用户名
+       * </pre>
+       *
        * <code>string username = 1;</code>
        * @param value The bytes for username to set.
        * @return This builder for chaining.
@@ -3395,7 +3566,7 @@ public final class AdminPacket {
       private com.google.protobuf.ByteString password_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3406,7 +3577,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3424,7 +3595,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * hashed password with seeds from Handshake message
+       * 密码(握手消息种子散列密码)
        * </pre>
        *
        * <code>bytes password = 2;</code>
@@ -3438,11 +3609,7 @@ public final class AdminPacket {
       }
 
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @return The netReadTimeout.
        */
       public int getNetReadTimeout() {
@@ -3452,11 +3619,7 @@ public final class AdminPacket {
         return 0;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @param value The netReadTimeout to set.
        * @return This builder for chaining.
        */
@@ -3467,11 +3630,7 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_read_timeout = 3;</code>
+       * <code>int32 netReadTimeout = 3;</code>
        * @return This builder for chaining.
        */
       public Builder clearNetReadTimeout() {
@@ -3484,11 +3643,7 @@ public final class AdminPacket {
       }
 
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @return The netWriteTimeout.
        */
       public int getNetWriteTimeout() {
@@ -3498,11 +3653,7 @@ public final class AdminPacket {
         return 0;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @param value The netWriteTimeout to set.
        * @return This builder for chaining.
        */
@@ -3513,11 +3664,7 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <pre>
-       * in seconds
-       * </pre>
-       *
-       * <code>int32 net_write_timeout = 4;</code>
+       * <code>int32 netWriteTimeout = 4;</code>
        * @return This builder for chaining.
        */
       public Builder clearNetWriteTimeout() {
@@ -3541,41 +3688,41 @@ public final class AdminPacket {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.ClientAuth)
+      // @@protoc_insertion_point(builder_scope:org.clever.canal.protocol.ClientAuthAdmin)
     }
 
-    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.ClientAuth)
-    private static final org.clever.canal.protocol.AdminPacket.ClientAuth DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:org.clever.canal.protocol.ClientAuthAdmin)
+    private static final org.clever.canal.protocol.AdminPacket.ClientAuthAdmin DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.ClientAuth();
+      DEFAULT_INSTANCE = new org.clever.canal.protocol.AdminPacket.ClientAuthAdmin();
     }
 
-    public static org.clever.canal.protocol.AdminPacket.ClientAuth getDefaultInstance() {
+    public static org.clever.canal.protocol.AdminPacket.ClientAuthAdmin getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<ClientAuth>
-        PARSER = new com.google.protobuf.AbstractParser<ClientAuth>() {
+    private static final com.google.protobuf.Parser<ClientAuthAdmin>
+        PARSER = new com.google.protobuf.AbstractParser<ClientAuthAdmin>() {
       @java.lang.Override
-      public ClientAuth parsePartialFrom(
+      public ClientAuthAdmin parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-        return new ClientAuth(input, extensionRegistry);
+        return new ClientAuthAdmin(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<ClientAuth> parser() {
+    public static com.google.protobuf.Parser<ClientAuthAdmin> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<ClientAuth> getParserForType() {
+    public com.google.protobuf.Parser<ClientAuthAdmin> getParserForType() {
       return PARSER;
     }
 
     @java.lang.Override
-    public org.clever.canal.protocol.AdminPacket.ClientAuth getDefaultInstanceForType() {
+    public org.clever.canal.protocol.AdminPacket.ClientAuthAdmin getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3587,7 +3734,7 @@ public final class AdminPacket {
 
     /**
      * <pre>
-     * check/start/stop/restart/list
+     * 操作类型 check/start/stop/restart/list
      * </pre>
      *
      * <code>string action = 1;</code>
@@ -3596,7 +3743,7 @@ public final class AdminPacket {
     java.lang.String getAction();
     /**
      * <pre>
-     * check/start/stop/restart/list
+     * 操作类型 check/start/stop/restart/list
      * </pre>
      *
      * <code>string action = 1;</code>
@@ -3606,6 +3753,10 @@ public final class AdminPacket {
         getActionBytes();
   }
   /**
+   * <pre>
+   * Admin控制台操作数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.ServerAdmin}
    */
   public  static final class ServerAdmin extends
@@ -3693,7 +3844,7 @@ public final class AdminPacket {
     private volatile java.lang.Object action_;
     /**
      * <pre>
-     * check/start/stop/restart/list
+     * 操作类型 check/start/stop/restart/list
      * </pre>
      *
      * <code>string action = 1;</code>
@@ -3713,7 +3864,7 @@ public final class AdminPacket {
     }
     /**
      * <pre>
-     * check/start/stop/restart/list
+     * 操作类型 check/start/stop/restart/list
      * </pre>
      *
      * <code>string action = 1;</code>
@@ -3888,6 +4039,10 @@ public final class AdminPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Admin控制台操作数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.ServerAdmin}
      */
     public static final class Builder extends
@@ -4038,7 +4193,7 @@ public final class AdminPacket {
       private java.lang.Object action_ = "";
       /**
        * <pre>
-       * check/start/stop/restart/list
+       * 操作类型 check/start/stop/restart/list
        * </pre>
        *
        * <code>string action = 1;</code>
@@ -4058,7 +4213,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/restart/list
+       * 操作类型 check/start/stop/restart/list
        * </pre>
        *
        * <code>string action = 1;</code>
@@ -4079,7 +4234,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/restart/list
+       * 操作类型 check/start/stop/restart/list
        * </pre>
        *
        * <code>string action = 1;</code>
@@ -4098,7 +4253,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/restart/list
+       * 操作类型 check/start/stop/restart/list
        * </pre>
        *
        * <code>string action = 1;</code>
@@ -4112,7 +4267,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/restart/list
+       * 操作类型 check/start/stop/restart/list
        * </pre>
        *
        * <code>string action = 1;</code>
@@ -4201,7 +4356,7 @@ public final class AdminPacket {
 
     /**
      * <pre>
-     * check/start/stop/reload
+     * 操作类型 check/start/stop/reload
      * </pre>
      *
      * <code>string action = 2;</code>
@@ -4210,7 +4365,7 @@ public final class AdminPacket {
     java.lang.String getAction();
     /**
      * <pre>
-     * check/start/stop/reload
+     * 操作类型 check/start/stop/reload
      * </pre>
      *
      * <code>string action = 2;</code>
@@ -4220,6 +4375,10 @@ public final class AdminPacket {
         getActionBytes();
   }
   /**
+   * <pre>
+   * Instance Admin 数据
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.InstanceAdmin}
    */
   public  static final class InstanceAdmin extends
@@ -4350,7 +4509,7 @@ public final class AdminPacket {
     private volatile java.lang.Object action_;
     /**
      * <pre>
-     * check/start/stop/reload
+     * 操作类型 check/start/stop/reload
      * </pre>
      *
      * <code>string action = 2;</code>
@@ -4370,7 +4529,7 @@ public final class AdminPacket {
     }
     /**
      * <pre>
-     * check/start/stop/reload
+     * 操作类型 check/start/stop/reload
      * </pre>
      *
      * <code>string action = 2;</code>
@@ -4555,6 +4714,10 @@ public final class AdminPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Instance Admin 数据
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.InstanceAdmin}
      */
     public static final class Builder extends
@@ -4788,7 +4951,7 @@ public final class AdminPacket {
       private java.lang.Object action_ = "";
       /**
        * <pre>
-       * check/start/stop/reload
+       * 操作类型 check/start/stop/reload
        * </pre>
        *
        * <code>string action = 2;</code>
@@ -4808,7 +4971,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/reload
+       * 操作类型 check/start/stop/reload
        * </pre>
        *
        * <code>string action = 2;</code>
@@ -4829,7 +4992,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/reload
+       * 操作类型 check/start/stop/reload
        * </pre>
        *
        * <code>string action = 2;</code>
@@ -4848,7 +5011,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/reload
+       * 操作类型 check/start/stop/reload
        * </pre>
        *
        * <code>string action = 2;</code>
@@ -4862,7 +5025,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * check/start/stop/reload
+       * 操作类型 check/start/stop/reload
        * </pre>
        *
        * <code>string action = 2;</code>
@@ -4939,7 +5102,7 @@ public final class AdminPacket {
 
     /**
      * <pre>
-     * canal/instance
+     * 日志类型 canal/instance
      * </pre>
      *
      * <code>string type = 1;</code>
@@ -4948,7 +5111,7 @@ public final class AdminPacket {
     java.lang.String getType();
     /**
      * <pre>
-     * canal/instance
+     * 日志类型 canal/instance
      * </pre>
      *
      * <code>string type = 1;</code>
@@ -4958,11 +5121,17 @@ public final class AdminPacket {
         getTypeBytes();
 
     /**
+     * <pre>
+     * </pre>
+     *
      * <code>string action = 2;</code>
      * @return The action.
      */
     java.lang.String getAction();
     /**
+     * <pre>
+     * </pre>
+     *
      * <code>string action = 2;</code>
      * @return The bytes for action.
      */
@@ -4994,10 +5163,6 @@ public final class AdminPacket {
         getFileBytes();
 
     /**
-     * <pre>
-     * 默认tail 100行，最大不超过4MB
-     * </pre>
-     *
      * <code>int32 count = 5;</code>
      * @return The count.
      */
@@ -5010,6 +5175,10 @@ public final class AdminPacket {
     public org.clever.canal.protocol.AdminPacket.LogAdmin.CountPresentCase getCountPresentCase();
   }
   /**
+   * <pre>
+   * Admin控制台日志
+   * </pre>
+   *
    * Protobuf type {@code org.clever.canal.protocol.LogAdmin}
    */
   public  static final class LogAdmin extends
@@ -5238,7 +5407,7 @@ public final class AdminPacket {
     private volatile java.lang.Object type_;
     /**
      * <pre>
-     * canal/instance
+     * 日志类型 canal/instance
      * </pre>
      *
      * <code>string type = 1;</code>
@@ -5258,7 +5427,7 @@ public final class AdminPacket {
     }
     /**
      * <pre>
-     * canal/instance
+     * 日志类型 canal/instance
      * </pre>
      *
      * <code>string type = 1;</code>
@@ -5281,6 +5450,9 @@ public final class AdminPacket {
     public static final int ACTION_FIELD_NUMBER = 2;
     private volatile java.lang.Object action_;
     /**
+     * <pre>
+     * </pre>
+     *
      * <code>string action = 2;</code>
      * @return The action.
      */
@@ -5297,6 +5469,9 @@ public final class AdminPacket {
       }
     }
     /**
+     * <pre>
+     * </pre>
+     *
      * <code>string action = 2;</code>
      * @return The bytes for action.
      */
@@ -5406,10 +5581,6 @@ public final class AdminPacket {
 
     public static final int COUNT_FIELD_NUMBER = 5;
     /**
-     * <pre>
-     * 默认tail 100行，最大不超过4MB
-     * </pre>
-     *
      * <code>int32 count = 5;</code>
      * @return The count.
      */
@@ -5657,6 +5828,10 @@ public final class AdminPacket {
       return builder;
     }
     /**
+     * <pre>
+     * Admin控制台日志
+     * </pre>
+     *
      * Protobuf type {@code org.clever.canal.protocol.LogAdmin}
      */
     public static final class Builder extends
@@ -5908,7 +6083,7 @@ public final class AdminPacket {
       private java.lang.Object type_ = "";
       /**
        * <pre>
-       * canal/instance
+       * 日志类型 canal/instance
        * </pre>
        *
        * <code>string type = 1;</code>
@@ -5928,7 +6103,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * canal/instance
+       * 日志类型 canal/instance
        * </pre>
        *
        * <code>string type = 1;</code>
@@ -5949,7 +6124,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * canal/instance
+       * 日志类型 canal/instance
        * </pre>
        *
        * <code>string type = 1;</code>
@@ -5968,7 +6143,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * canal/instance
+       * 日志类型 canal/instance
        * </pre>
        *
        * <code>string type = 1;</code>
@@ -5982,7 +6157,7 @@ public final class AdminPacket {
       }
       /**
        * <pre>
-       * canal/instance
+       * 日志类型 canal/instance
        * </pre>
        *
        * <code>string type = 1;</code>
@@ -6003,6 +6178,9 @@ public final class AdminPacket {
 
       private java.lang.Object action_ = "";
       /**
+       * <pre>
+       * </pre>
+       *
        * <code>string action = 2;</code>
        * @return The action.
        */
@@ -6019,6 +6197,9 @@ public final class AdminPacket {
         }
       }
       /**
+       * <pre>
+       * </pre>
+       *
        * <code>string action = 2;</code>
        * @return The bytes for action.
        */
@@ -6036,6 +6217,9 @@ public final class AdminPacket {
         }
       }
       /**
+       * <pre>
+       * </pre>
+       *
        * <code>string action = 2;</code>
        * @param value The action to set.
        * @return This builder for chaining.
@@ -6051,6 +6235,9 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * </pre>
+       *
        * <code>string action = 2;</code>
        * @return This builder for chaining.
        */
@@ -6061,6 +6248,9 @@ public final class AdminPacket {
         return this;
       }
       /**
+       * <pre>
+       * </pre>
+       *
        * <code>string action = 2;</code>
        * @param value The bytes for action to set.
        * @return This builder for chaining.
@@ -6252,10 +6442,6 @@ public final class AdminPacket {
       }
 
       /**
-       * <pre>
-       * 默认tail 100行，最大不超过4MB
-       * </pre>
-       *
        * <code>int32 count = 5;</code>
        * @return The count.
        */
@@ -6266,10 +6452,6 @@ public final class AdminPacket {
         return 0;
       }
       /**
-       * <pre>
-       * 默认tail 100行，最大不超过4MB
-       * </pre>
-       *
        * <code>int32 count = 5;</code>
        * @param value The count to set.
        * @return This builder for chaining.
@@ -6281,10 +6463,6 @@ public final class AdminPacket {
         return this;
       }
       /**
-       * <pre>
-       * 默认tail 100行，最大不超过4MB
-       * </pre>
-       *
        * <code>int32 count = 5;</code>
        * @return This builder for chaining.
        */
@@ -6350,25 +6528,25 @@ public final class AdminPacket {
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_clever_canal_protocol_Packet_descriptor;
+    internal_static_org_clever_canal_protocol_PacketAdmin_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_clever_canal_protocol_Packet_fieldAccessorTable;
+      internal_static_org_clever_canal_protocol_PacketAdmin_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_clever_canal_protocol_Ack_descriptor;
+    internal_static_org_clever_canal_protocol_AckAdmin_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_clever_canal_protocol_Ack_fieldAccessorTable;
+      internal_static_org_clever_canal_protocol_AckAdmin_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_clever_canal_protocol_Handshake_descriptor;
+    internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_clever_canal_protocol_Handshake_fieldAccessorTable;
+      internal_static_org_clever_canal_protocol_HandshakeAdmin_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_org_clever_canal_protocol_ClientAuth_descriptor;
+    internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_org_clever_canal_protocol_ClientAuth_fieldAccessorTable;
+      internal_static_org_clever_canal_protocol_ClientAuthAdmin_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_org_clever_canal_protocol_ServerAdmin_descriptor;
   private static final 
@@ -6394,57 +6572,59 @@ public final class AdminPacket {
   static {
     java.lang.String[] descriptorData = {
       "\n\023AdminProtocol.proto\022\031org.clever.canal." +
-      "protocol\"\241\001\n\006Packet\022\026\n\014magic_number\030\001 \001(" +
-      "\005H\000\022\021\n\007version\030\002 \001(\005H\001\0223\n\004type\030\003 \001(\0162%.o" +
-      "rg.clever.canal.protocol.PacketType\022\014\n\004b" +
-      "ody\030\004 \001(\014B\026\n\024magic_number_presentB\021\n\017ver" +
-      "sion_present\"<\n\003Ack\022\016\n\004code\030\001 \001(\005H\000\022\017\n\007m" +
-      "essage\030\002 \001(\tB\024\n\022error_code_present\"^\n\tHa" +
-      "ndshake\022 \n\026communication_encoding\030\001 \001(\tH" +
-      "\000\022\r\n\005seeds\030\002 \001(\014B \n\036communication_encodi" +
-      "ng_present\"\242\001\n\nClientAuth\022\020\n\010username\030\001 " +
-      "\001(\t\022\020\n\010password\030\002 \001(\014\022\032\n\020net_read_timeou" +
-      "t\030\003 \001(\005H\000\022\033\n\021net_write_timeout\030\004 \001(\005H\001B\032" +
-      "\n\030net_read_timeout_presentB\033\n\031net_write_" +
-      "timeout_present\"\035\n\013ServerAdmin\022\016\n\006action" +
-      "\030\001 \001(\t\"4\n\rInstanceAdmin\022\023\n\013destination\030\001" +
-      " \001(\t\022\016\n\006action\030\002 \001(\t\"\230\001\n\010LogAdmin\022\014\n\004typ" +
-      "e\030\001 \001(\t\022\016\n\006action\030\002 \001(\t\022\025\n\013destination\030\003" +
-      " \001(\tH\000\022\016\n\004file\030\004 \001(\tH\001\022\017\n\005count\030\005 \001(\005H\002B" +
-      "\025\n\023destination_presentB\016\n\014file_presentB\017" +
-      "\n\rcount_present*\202\001\n\nPacketType\022\037\n\033PACKAG" +
-      "ETYPECOMPATIBLEPROTO2\020\000\022\r\n\tHANDSHAKE\020\001\022\030" +
-      "\n\024CLIENTAUTHENTICATION\020\002\022\007\n\003ACK\020\003\022\n\n\006SER" +
-      "VER\020\004\022\014\n\010INSTANCE\020\005\022\007\n\003LOG\020\006B*\n\031org.clev" +
-      "er.canal.protocolB\013AdminPacketH\001b\006proto3"
+      "protocol\"\253\001\n\013PacketAdmin\022\026\n\014magic_number" +
+      "\030\001 \001(\005H\000\022\021\n\007version\030\002 \001(\005H\001\0228\n\004type\030\003 \001(" +
+      "\0162*.org.clever.canal.protocol.PacketType" +
+      "Admin\022\014\n\004body\030\004 \001(\014B\026\n\024magic_number_pres" +
+      "entB\021\n\017version_present\"E\n\010AckAdmin\022\023\n\ter" +
+      "rorCode\030\001 \001(\005H\000\022\017\n\007message\030\002 \001(\tB\023\n\021erro" +
+      "rCode_present\"a\n\016HandshakeAdmin\022\037\n\025commu" +
+      "nicationEncoding\030\001 \001(\tH\000\022\r\n\005seeds\030\002 \001(\014B" +
+      "\037\n\035communicationEncoding_present\"\241\001\n\017Cli" +
+      "entAuthAdmin\022\020\n\010username\030\001 \001(\t\022\020\n\010passwo" +
+      "rd\030\002 \001(\014\022\030\n\016netReadTimeout\030\003 \001(\005H\000\022\031\n\017ne" +
+      "tWriteTimeout\030\004 \001(\005H\001B\032\n\030net_read_timeou" +
+      "t_presentB\031\n\027netWriteTimeout_present\"\035\n\013" +
+      "ServerAdmin\022\016\n\006action\030\001 \001(\t\"4\n\rInstanceA" +
+      "dmin\022\023\n\013destination\030\001 \001(\t\022\016\n\006action\030\002 \001(" +
+      "\t\"\230\001\n\010LogAdmin\022\014\n\004type\030\001 \001(\t\022\016\n\006action\030\002" +
+      " \001(\t\022\025\n\013destination\030\003 \001(\tH\000\022\016\n\004file\030\004 \001(" +
+      "\tH\001\022\017\n\005count\030\005 \001(\005H\002B\025\n\023destination_pres" +
+      "entB\016\n\014file_presentB\017\n\rcount_present*\264\001\n" +
+      "\017PacketTypeAdmin\022\'\n#ADMIN_PACKET_TYPE_CO" +
+      "MPATIBLE_PROTO2\020\000\022\023\n\017ADMIN_HANDSHAKE\020\001\022\037" +
+      "\n\033ADMIN_CLIENT_AUTHENTICATION\020\002\022\r\n\tADMIN" +
+      "_ACK\020\003\022\020\n\014ADMIN_SERVER\020\004\022\022\n\016ADMIN_INSTAN" +
+      "CE\020\005\022\r\n\tADMIN_LOG\020\006B,\n\031org.clever.canal." +
+      "protocolB\013AdminPacketH\001P\000b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         });
-    internal_static_org_clever_canal_protocol_Packet_descriptor =
+    internal_static_org_clever_canal_protocol_PacketAdmin_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_org_clever_canal_protocol_Packet_fieldAccessorTable = new
+    internal_static_org_clever_canal_protocol_PacketAdmin_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_clever_canal_protocol_Packet_descriptor,
+        internal_static_org_clever_canal_protocol_PacketAdmin_descriptor,
         new java.lang.String[] { "MagicNumber", "Version", "Type", "Body", "MagicNumberPresent", "VersionPresent", });
-    internal_static_org_clever_canal_protocol_Ack_descriptor =
+    internal_static_org_clever_canal_protocol_AckAdmin_descriptor =
       getDescriptor().getMessageTypes().get(1);
-    internal_static_org_clever_canal_protocol_Ack_fieldAccessorTable = new
+    internal_static_org_clever_canal_protocol_AckAdmin_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_clever_canal_protocol_Ack_descriptor,
-        new java.lang.String[] { "Code", "Message", "ErrorCodePresent", });
-    internal_static_org_clever_canal_protocol_Handshake_descriptor =
+        internal_static_org_clever_canal_protocol_AckAdmin_descriptor,
+        new java.lang.String[] { "ErrorCode", "Message", "ErrorCodePresent", });
+    internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_org_clever_canal_protocol_Handshake_fieldAccessorTable = new
+    internal_static_org_clever_canal_protocol_HandshakeAdmin_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_clever_canal_protocol_Handshake_descriptor,
+        internal_static_org_clever_canal_protocol_HandshakeAdmin_descriptor,
         new java.lang.String[] { "CommunicationEncoding", "Seeds", "CommunicationEncodingPresent", });
-    internal_static_org_clever_canal_protocol_ClientAuth_descriptor =
+    internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor =
       getDescriptor().getMessageTypes().get(3);
-    internal_static_org_clever_canal_protocol_ClientAuth_fieldAccessorTable = new
+    internal_static_org_clever_canal_protocol_ClientAuthAdmin_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_org_clever_canal_protocol_ClientAuth_descriptor,
+        internal_static_org_clever_canal_protocol_ClientAuthAdmin_descriptor,
         new java.lang.String[] { "Username", "Password", "NetReadTimeout", "NetWriteTimeout", "NetReadTimeoutPresent", "NetWriteTimeoutPresent", });
     internal_static_org_clever_canal_protocol_ServerAdmin_descriptor =
       getDescriptor().getMessageTypes().get(4);

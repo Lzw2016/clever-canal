@@ -175,7 +175,7 @@ message RowChange {
     // ddl/query 的sql语句
     string sql = 11;
     // 一次数据库变更可能存在多行
-    repeated RowData rowDataList = 12;
+    repeated RowData rowData = 12;
     // 预留扩展
     repeated Pair props = 13;
     // ddl/query 的schemaName，会存在跨库ddl，需要保留执行ddl的当前 schemaName

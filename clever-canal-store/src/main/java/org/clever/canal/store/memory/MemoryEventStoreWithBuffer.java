@@ -338,8 +338,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         for (int i = entrys.size() - 1; i >= 0; i--) {
             Event event = entrys.get(i);
             // GTID模式,ack的位点必须是事务结尾,因为下一次订阅的时候mysql会发送这个gtid之后的next,如果在事务头就记录了会丢这最后一个事务
-            if ((CanalEntry.EntryType.TRANSACTIONBEGIN == event.getEntryType() && StringUtils.isEmpty(event.getGtid()))
-                    || CanalEntry.EntryType.TRANSACTIONEND == event.getEntryType() || isDdl(event.getEventType())) {
+            if ((CanalEntry.EntryType.TRANSACTION_BEGIN == event.getEntryType() && StringUtils.isEmpty(event.getGtid()))
+                    || CanalEntry.EntryType.TRANSACTION_END == event.getEntryType() || isDdl(event.getEventType())) {
                 // 将事务头/尾设置可被为ack的点
                 range.setAck(CanalEventUtils.createPosition(event));
                 break;
@@ -568,8 +568,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
 
     private boolean isDdl(EventType type) {
         return type == EventType.ALTER || type == EventType.CREATE || type == EventType.ERASE
-                || type == EventType.RENAME || type == EventType.TRUNCATE || type == EventType.CINDEX
-                || type == EventType.DINDEX;
+                || type == EventType.RENAME || type == EventType.TRUNCATE || type == EventType.C_INDEX
+                || type == EventType.D_INDEX;
     }
 
     private void profiling(List<Event> events, OP op) {

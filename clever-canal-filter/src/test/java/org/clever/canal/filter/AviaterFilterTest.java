@@ -102,7 +102,7 @@ public class AviaterFilterTest {
         AviaterELFilter filter = new AviaterELFilter("str(entry.entryType) == 'ROWDATA'");
 
         CanalEntry.Entry.Builder entry = CanalEntry.Entry.newBuilder();
-        entry.setEntryType(CanalEntry.EntryType.ROWDATA);
+        entry.setEntryType(CanalEntry.EntryType.ROW_DATA);
 
         boolean result = filter.filter(entry.build());
         Assert.assertEquals(true, result);

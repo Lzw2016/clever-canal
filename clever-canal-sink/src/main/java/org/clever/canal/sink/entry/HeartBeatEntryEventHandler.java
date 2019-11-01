@@ -15,7 +15,7 @@ public class HeartBeatEntryEventHandler extends AbstractCanalEventDownStreamHand
     public List<Event> before(List<Event> events) {
         boolean existHeartBeat = false;
         for (Event event : events) {
-            if (event.getEntryType() == EntryType.HEARTBEAT) {
+            if (event.getEntryType() == EntryType.ENTRY_HEARTBEAT) {
                 existHeartBeat = true;
                 break;
             }
@@ -26,7 +26,7 @@ public class HeartBeatEntryEventHandler extends AbstractCanalEventDownStreamHand
             // 目前heartbeat和其他事件是分离的，保险一点还是做一下检查处理
             List<Event> result = new ArrayList<>();
             for (Event event : events) {
-                if (event.getEntryType() != EntryType.HEARTBEAT) {
+                if (event.getEntryType() != EntryType.ENTRY_HEARTBEAT) {
                     result.add(event);
                 }
             }
