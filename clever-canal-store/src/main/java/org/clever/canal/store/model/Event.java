@@ -1,6 +1,7 @@
 package org.clever.canal.store.model;
 
 import com.google.protobuf.ByteString;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 import org.clever.canal.protocol.CanalEntry;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * store存储数据对象
  */
-@SuppressWarnings({"unused"})
+@Getter
 public class Event implements Serializable {
     private static final long serialVersionUID = 1333330351758762739L;
 
@@ -75,6 +76,11 @@ public class Event implements Serializable {
         this(logIdentity, entry, true);
     }
 
+    /**
+     * @param logIdentity log数据产生的来源
+     * @param entry       解析binlog数据对应的实体
+     * @param raw         是否以原始数据的方式保存(保存原始数据为了方便网络传输)
+     */
     public Event(LogIdentity logIdentity, CanalEntry.Entry entry, boolean raw) {
         this.logIdentity = logIdentity;
         this.entryType = entry.getEntryType();
@@ -106,100 +112,9 @@ public class Event implements Serializable {
         }
     }
 
-    public LogIdentity getLogIdentity() {
-        return logIdentity;
-    }
-
-    public void setLogIdentity(LogIdentity logIdentity) {
-        this.logIdentity = logIdentity;
-    }
-
-    public ByteString getRawEntry() {
-        return rawEntry;
-    }
-
-    public void setRawEntry(ByteString rawEntry) {
-        this.rawEntry = rawEntry;
-    }
-
-    public long getExecuteTime() {
-        return executeTime;
-    }
-
-    public void setExecuteTime(long executeTime) {
-        this.executeTime = executeTime;
-    }
-
-    public EntryType getEntryType() {
-        return entryType;
-    }
-
-    public void setEntryType(EntryType entryType) {
-        this.entryType = entryType;
-    }
-
-    public String getJournalName() {
-        return journalName;
-    }
-
-    public void setJournalName(String journalName) {
-        this.journalName = journalName;
-    }
-
-    public long getPosition() {
-        return position;
-    }
-
-    public void setPosition(long position) {
-        this.position = position;
-    }
-
-    public long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(long serverId) {
-        this.serverId = serverId;
-    }
-
-    public String getGtId() {
-        return gtId;
-    }
-
-    public void setGtId(String gtId) {
-        this.gtId = gtId;
-    }
-
-    public long getRawLength() {
-        return rawLength;
-    }
-
-    public void setRawLength(long rawLength) {
-        this.rawLength = rawLength;
-    }
-
-    public EventType getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
-
-    public int getRowsCount() {
-        return rowsCount;
-    }
-
-    public void setRowsCount(int rowsCount) {
-        this.rowsCount = rowsCount;
-    }
-
-    public CanalEntry.Entry getEntry() {
-        return entry;
-    }
-
-    public void setEntry(CanalEntry.Entry entry) {
-        this.entry = entry;
+    public void clearData() {
+        this.entry = null;
+        this.rawEntry = null;
     }
 
     public String toString() {

@@ -22,7 +22,7 @@ public class CanalEventUtils {
             } else if (position1.getPosition().getJournalName().compareTo(position2.getPosition().getJournalName()) < 0) {
                 return position1;
             } else {
-                // 根据offest进行比较
+                // 根据offset进行比较
                 if (position1.getPosition().getPosition() > position2.getPosition().getPosition()) {
                     return position2;
                 } else {
@@ -49,7 +49,7 @@ public class CanalEventUtils {
         position.setTimestamp(event.getExecuteTime());
         // add serverId at 2016-06-28
         position.setServerId(event.getServerId());
-        // add gtid
+        // add gtId
         position.setGtId(event.getGtId());
 
         LogPosition logPosition = new LogPosition();
@@ -69,7 +69,7 @@ public class CanalEventUtils {
         position.setIncluded(included);
         // add serverId at 2016-06-28
         position.setServerId(event.getServerId());
-        // add gtid
+        // add gtId
         position.setGtId(event.getGtId());
 
         LogPosition logPosition = new LogPosition();
@@ -84,8 +84,9 @@ public class CanalEventUtils {
     public static boolean checkPosition(Event event, LogPosition logPosition) {
         EntryPosition position = logPosition.getPosition();
         boolean result = position.getTimestamp().equals(event.getExecuteTime());
-        boolean exactely = (StringUtils.isBlank(position.getJournalName()) && position.getPosition() == null);
-        if (!exactely) {// 精确匹配
+        boolean exactly = (StringUtils.isBlank(position.getJournalName()) && position.getPosition() == null);
+        // 精确匹配
+        if (!exactly) {
             result &= position.getPosition().equals(event.getPosition());
             if (result) {
                 // short path

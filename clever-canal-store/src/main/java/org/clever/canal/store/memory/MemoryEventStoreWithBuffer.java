@@ -552,8 +552,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                         // 考虑getFirstPosition/getLastPosition会获取最后一次ack的position信息
                         // ack清理的时候只处理entry=null，释放内存
                         Event lastEvent = entries[getIndex(next)];
-                        lastEvent.setEntry(null);
-                        lastEvent.setRawEntry(null);
+                        lastEvent.clearData();
                     }
 
                     if (ackSequence.compareAndSet(sequence, next)) {// 避免并发ack
