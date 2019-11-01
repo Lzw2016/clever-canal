@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <pre>
  * 变更记录：
  * 1. 新增BatchMode类型，支持按内存大小获取批次数据，内存大小更加可控.
- *   a. put操作，会首先根据bufferSize进行控制，然后再进行bufferSize * bufferMemUnit进行控制. 因存储的内容是以Event，如果纯依赖于memsize进行控制，会导致RingBuffer出现动态伸缩
+ *   a. put操作，会首先根据bufferSize进行控制，然后再进行bufferSize * bufferMemUnit进行控制. 因存储的内容是以Event，如果纯依赖于memSize进行控制，会导致RingBuffer出现动态伸缩
  * </pre>
  */
 public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge implements CanalEventStore<Event>, CanalStoreScavenge {
@@ -275,7 +275,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     private void doPut(List<Event> data) {
         long current = putSequence.get();
         long end = current + data.size();
-        // 先写数据，再更新对应的cursor,并发度高的情况，putSequence会被get请求可见，拿出了ringbuffer中的老的Entry值
+        // 先写数据，再更新对应的cursor,并发度高的情况，putSequence会被get请求可见，拿出了ringBuffer中的老的Entry值
         for (long next = current + 1; next <= end; next++) {
             entries[getIndex(next)] = data.get((int) (next - current - 1));
         }
@@ -367,7 +367,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
         Events<Event> result = new Events<>();
         List<Event> entryList = result.getEvents();
-        long memsize = 0;
+        long memSize = 0;
         if (batchMode.isItemSize()) {
             end = Math.min((next + batchSize - 1), maxAbleSequence);
             // 提取数据并返回
@@ -389,7 +389,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             }
         } else {
             long maxMemSize = batchSize * bufferMemUnit;
-            for (; memsize <= maxMemSize && next <= maxAbleSequence; next++) {
+            for (; memSize <= maxMemSize && next <= maxAbleSequence; next++) {
                 // 永远保证可以取出第一条的记录，避免死锁
                 Event event = entries[getIndex(next)];
                 if (ddlIsolation && isDdl(event.getEventType())) {
@@ -404,7 +404,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                     break;
                 } else {
                     entryList.add(event);
-                    memsize += calculateSize(event);
+                    memSize += calculateSize(event);
                     end = next;// 记录end位点
                 }
             }
@@ -425,7 +425,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             }
         }
         if (getSequence.compareAndSet(current, end)) {
-            getMemSize.addAndGet(memsize);
+            getMemSize.addAndGet(memSize);
             notFull.signal();
             profiling(result.getEvents(), OP.GET);
             return result;
@@ -510,7 +510,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             long sequence = ackSequence.get();
             long maxSequence = getSequence.get();
             boolean hasMatch = false;
-            long memsize = 0;
+            long memSize = 0;
             // ack没有list，但有已存在的foreach，还是节省一下list的开销
             long localExecTime = 0L;
             int deltaRows = 0;
@@ -523,12 +523,12 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                     localExecTime = event.getExecuteTime();
                 }
                 deltaRows += event.getRowsCount();
-                memsize += calculateSize(event);
+                memSize += calculateSize(event);
                 if ((seqId < 0 || next == seqId) && CanalEventUtils.checkPosition(event, (LogPosition) position)) {
                     // 找到对应的position，更新ack seq
                     hasMatch = true;
                     if (batchMode.isMemSize()) {
-                        ackMemSize.addAndGet(memsize);
+                        ackMemSize.addAndGet(memSize);
                         // 尝试清空buffer中的内存，将ack之前的内存全部释放掉
                         for (long index = sequence + 1; index < next; index++) {
                             entries[getIndex(index)] = null;// 设置为null
