@@ -33,7 +33,7 @@ public class CanalParameter implements Serializable {
     // storage存储
     private Integer transactionSize = 1024;                                         // 支持处理的transaction事务大小
     private StorageMode storageMode = StorageMode.MEMORY;                           // 存储机制
-    private BatchMode storageBatchMode = BatchMode.MEMSIZE;                         // 基于大小返回结果
+    private BatchMode storageBatchMode = BatchMode.MEM_SIZE;                         // 基于大小返回结果
     private Integer memoryStorageBufferSize = 16 * 1024;                            // 内存存储的buffer大小
     private Integer memoryStorageBufferMemUnit = 1024;                              // 内存存储的buffer内存占用单位，默认为1kb
     private Boolean memoryStorageRawEntry = Boolean.TRUE;                           // 内存存储的对象是否启用raw的ByteString模式
@@ -122,8 +122,7 @@ public class CanalParameter implements Serializable {
     //自定义alarmHandler插件文件夹路径
     private String alarmHandlerPluginDir = null;
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum RunMode {
+    public enum RunMode {
         /**
          * 嵌入式
          */
@@ -142,8 +141,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum ClusterMode {
+    public enum ClusterMode {
         /**
          * 嵌入式
          */
@@ -170,8 +168,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum HAMode {
+    public enum HAMode {
         /**
          * 心跳检测
          */
@@ -190,8 +187,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum StorageMode {
+    public enum StorageMode {
         /**
          * 内存存储模式
          */
@@ -218,8 +214,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum StorageScavengeMode {
+    public enum StorageScavengeMode {
         /**
          * 在存储满的时候触发
          */
@@ -254,8 +249,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum SourcingType {
+    public enum SourcingType {
         /**
          * mysql DB
          */
@@ -263,7 +257,7 @@ public class CanalParameter implements Serializable {
         /**
          * localBinLog
          */
-        LOCALBINLOG,
+        LOCAL_BINLOG,
         /**
          * oracle DB
          */
@@ -278,7 +272,7 @@ public class CanalParameter implements Serializable {
         }
 
         public boolean isLocalBinlog() {
-            return this.equals(SourcingType.LOCALBINLOG);
+            return this.equals(SourcingType.LOCAL_BINLOG);
         }
 
         public boolean isOracle() {
@@ -290,8 +284,7 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum MetaMode {
+    public enum MetaMode {
         /**
          * 内存存储模式
          */
@@ -326,14 +319,13 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum IndexMode {
+    public enum IndexMode {
         /**
          * 内存存储模式
          */
         MEMORY,
         /**
-         * 文件存储模式
+         * 文件存储模式 zookeeper
          */
         ZOOKEEPER,
         /**
@@ -345,9 +337,9 @@ public class CanalParameter implements Serializable {
          */
         META,
         /**
-         * 基于内存+meta的failback实现
+         * 基于内存+meta的failBack实现
          */
-        MEMORY_META_FAILBACK;
+        MEMORY_META_FAIL_BACK;
 
         public boolean isMemory() {
             return this.equals(IndexMode.MEMORY);
@@ -366,28 +358,27 @@ public class CanalParameter implements Serializable {
         }
 
         public boolean isMemoryMetaFailback() {
-            return this.equals(IndexMode.MEMORY_META_FAILBACK);
+            return this.equals(IndexMode.MEMORY_META_FAIL_BACK);
         }
     }
 
-    @SuppressWarnings("UnnecessaryEnumModifier")
-    public static enum BatchMode {
+    public enum BatchMode {
         /**
          * 对象数量
          */
-        ITEMSIZE,
+        ITEM_SIZE,
 
         /**
          * 内存大小
          */
-        MEMSIZE;
+        MEM_SIZE;
 
         public boolean isItemSize() {
-            return this == BatchMode.ITEMSIZE;
+            return this == BatchMode.ITEM_SIZE;
         }
 
         public boolean isMemSize() {
-            return this == BatchMode.MEMSIZE;
+            return this == BatchMode.MEM_SIZE;
         }
     }
 
@@ -897,7 +888,7 @@ public class CanalParameter implements Serializable {
     }
 
     public BatchMode getStorageBatchMode() {
-        return storageBatchMode == null ? BatchMode.MEMSIZE : storageBatchMode;
+        return storageBatchMode == null ? BatchMode.MEM_SIZE : storageBatchMode;
     }
 
     public void setStorageBatchMode(BatchMode storageBatchMode) {

@@ -31,11 +31,11 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
      * 找出该destination中可被清理掉的position位置
      */
     private Position getLatestAckPosition(String destination) {
-        List<ClientIdentity> clientIdentitys = canalMetaManager.listAllSubscribeInfo(destination);
+        List<ClientIdentity> clientIdentities = canalMetaManager.listAllSubscribeInfo(destination);
         LogPosition result = null;
-        if (!CollectionUtils.isEmpty(clientIdentitys)) {
+        if (!CollectionUtils.isEmpty(clientIdentities)) {
             // 尝试找到一个最小的logPosition
-            for (ClientIdentity clientIdentity : clientIdentitys) {
+            for (ClientIdentity clientIdentity : clientIdentities) {
                 LogPosition position = (LogPosition) canalMetaManager.getCursor(clientIdentity);
                 if (position == null) {
                     continue;
@@ -62,7 +62,7 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
             } else if (position1.getPosition().getJournalName().compareTo(position2.getPosition().getJournalName()) > 0) {
                 return position1;
             } else {
-                // 根据offest进行比较
+                // 根据offset进行比较
                 if (position1.getPosition().getPosition() < position2.getPosition().getPosition()) {
                     return position2;
                 } else {

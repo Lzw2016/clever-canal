@@ -50,7 +50,7 @@ public class CanalEventUtils {
         // add serverId at 2016-06-28
         position.setServerId(event.getServerId());
         // add gtid
-        position.setGtId(event.getGtid());
+        position.setGtId(event.getGtId());
 
         LogPosition logPosition = new LogPosition();
         logPosition.setPosition(position);
@@ -70,7 +70,7 @@ public class CanalEventUtils {
         // add serverId at 2016-06-28
         position.setServerId(event.getServerId());
         // add gtid
-        position.setGtId(event.getGtid());
+        position.setGtId(event.getGtId());
 
         LogPosition logPosition = new LogPosition();
         logPosition.setPosition(position);

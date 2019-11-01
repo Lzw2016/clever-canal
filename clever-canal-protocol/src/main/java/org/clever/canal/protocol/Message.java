@@ -1,81 +1,87 @@
 package org.clever.canal.protocol;
 
 import com.google.protobuf.ByteString;
+import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
-import org.clever.canal.protocol.CanalEntry.Entry;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings({"unused", "unchecked"})
+@Getter
 public class Message implements Serializable {
-
     private static final long serialVersionUID = 1234034768477580009L;
-    private long id;
-    private List<CanalEntry.Entry> entries = new ArrayList<>();
-    // row data for performance, see: https://github.com/alibaba/canal/issues/726
-    private boolean raw = true;
-    private List<ByteString> rawEntries = new ArrayList<>();
+    /**
+     * 消息ID
+     */
+    private final long id;
+    /**
+     * 已经解析了的消息数据
+     */
+    private List<CanalEntry.Entry> entries = Collections.emptyList();
+    /**
+     * 原始消息数据,未解析的消息数据 <br />
+     * row data for performance, see: https://github.com/alibaba/canal/issues/726
+     */
+    private List<ByteString> rawEntries = Collections.emptyList();
+    /**
+     * 消息数据是否是原始数据
+     */
+    private final boolean raw;
 
-    public Message(long id, List<Entry> entries) {
+    /**
+     * 空数据
+     *
+     * @param id  消息ID
+     * @param raw 消息数据是否是原始数据
+     */
+    public Message(long id, boolean raw) {
         this.id = id;
-        this.entries = entries == null ? new ArrayList<>() : entries;
-        this.raw = false;
-    }
-
-    public Message(long id, boolean raw, List entries) {
-        this.id = id;
-        if (raw) {
-            this.rawEntries = entries == null ? new ArrayList<>() : entries;
-        } else {
-            this.entries = entries == null ? new ArrayList<>() : entries;
-        }
         this.raw = raw;
     }
 
-    public Message(long id) {
+    /**
+     * raw = false
+     *
+     * @param id      消息ID
+     * @param entries 已经解析了的消息数据
+     */
+    public Message(long id, List<CanalEntry.Entry> entries) {
+        if (entries == null) {
+            entries = Collections.emptyList();
+        }
         this.id = id;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public List<Entry> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(List<CanalEntry.Entry> entries) {
         this.entries = entries;
+        this.raw = false;
     }
 
-    public void addEntry(CanalEntry.Entry entry) {
-        this.entries.add(entry);
-    }
-
-    public void setRawEntries(List<ByteString> rawEntries) {
+    /**
+     * raw = true
+     *
+     * @param entries    已经解析了的消息数据
+     * @param rawEntries 原始消息数据
+     * @param id         消息ID
+     */
+    public Message(long id, List<CanalEntry.Entry> entries, List<ByteString> rawEntries) {
+        boolean raw = true;
+        if (entries != null && !entries.isEmpty()) {
+            // entries 有内容就不是原始数据
+            raw = false;
+        }
+        if (raw && rawEntries == null && entries != null) {
+            // rawEntries是null, entries不是null --> 就不是原始数据
+            raw = false;
+        }
+        if (entries == null) {
+            entries = Collections.emptyList();
+        }
+        if (rawEntries == null) {
+            rawEntries = Collections.emptyList();
+        }
+        this.id = id;
+        this.entries = entries;
         this.rawEntries = rawEntries;
-    }
-
-    public void addRawEntry(ByteString rawEntry) {
-        this.rawEntries.add(rawEntry);
-    }
-
-    public List<ByteString> getRawEntries() {
-        return rawEntries;
-    }
-
-    public boolean isRaw() {
-        return raw;
-    }
-
-    public void setRaw(boolean raw) {
         this.raw = raw;
     }
 

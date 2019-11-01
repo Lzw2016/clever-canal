@@ -1,6 +1,5 @@
 package org.clever.canal.server;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -63,7 +62,9 @@ public class Test01 {
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
                 canalParameter.setSlaveId(123L);
-                canalParameter.setIndexMode(CanalParameter.IndexMode.MEMORY);
+//                canalParameter.setMetaMode(CanalParameter.MetaMode.MIXED);
+//                canalParameter.setStorageBatchMode(CanalParameter.BatchMode.MEM_SIZE);
+                canalParameter.setMemoryStorageRawEntry(false);
                 return canal;
             }
 
@@ -94,32 +95,16 @@ public class Test01 {
                 } catch (InterruptedException ignored) {
                 }
                 Message message = canalServerWithEmbedded.get(clientIdentity, 1);
-                if (message.getRawEntries() == null || message.getRawEntries().size() <= 0) {
-                    continue;
-                }
-                for (ByteString rawEntry : message.getRawEntries()) {
-                    if (rawEntry == null) {
-                        log.info("rawEntry = {}", rawEntry);
-                        continue;
-                    }
-                    try {
-                        CanalEntry.Entry entry = CanalEntry.Entry.parseFrom(rawEntry);
-                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
-                        CanalEntry.EventType eventType = rowChange.getEventType();
-                        log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
-                        for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
-                            for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
-                                log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
-                            }
-                            log.info("### -----------------------------------------------------------------------------------------");
-                            for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
-                                log.info("### AfterColumn | {}={}", column.getName(), column.getValue());
-                            }
+                if (message.isRaw()) {
+                    message.getRawEntries().forEach(rawEntry -> {
+                        try {
+                            printf(CanalEntry.Entry.parseFrom(rawEntry));
+                        } catch (InvalidProtocolBufferException e) {
+                            log.error("", e);
                         }
-                        log.info("### =============================================================================================");
-                    } catch (InvalidProtocolBufferException e) {
-                        log.error("", e);
-                    }
+                    });
+                } else {
+                    message.getEntries().forEach(this::printf);
                 }
             }
         });
@@ -128,6 +113,31 @@ public class Test01 {
         Thread.sleep(1000 * 1000);
         log.info("### end");
         canalServerWithEmbedded.stop();
+    }
+
+
+    private void printf(CanalEntry.Entry entry) {
+        if (entry == null) {
+            log.info("### entry = null");
+            return;
+        }
+        try {
+            CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
+            CanalEntry.EventType eventType = rowChange.getEventType();
+            log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
+            for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
+                for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
+                    log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
+                }
+                log.info("### -----------------------------------------------------------------------------------------");
+                for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
+                    log.info("### AfterColumn | {}={}", column.getName(), column.getValue());
+                }
+            }
+            log.info("### =============================================================================================");
+        } catch (InvalidProtocolBufferException e) {
+            log.error("", e);
+        }
     }
 
     @Test

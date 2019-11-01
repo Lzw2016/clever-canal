@@ -6,7 +6,7 @@ import org.clever.canal.common.utils.CanalToStringStyle;
 import java.net.InetSocketAddress;
 
 /**
- *
+ * log数据产生的来源
  */
 @SuppressWarnings("unused")
 public class LogIdentity extends Position {

@@ -3,7 +3,7 @@ clever-canal-protocol
 
 clever-canal-meta
     源码分析 - 增加注释                     ### OK
-    需要支持etcd
+    需要支持 etcd
 
 clever-canal-filter
     源码分析 - 增加注释                     ### OK

@@ -74,24 +74,22 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         return false;
     }
 
-    public boolean sink(List<CanalEntry.Entry> entrys, InetSocketAddress remoteAddress, String destination) throws CanalSinkException {
-        return sinkData(entrys, remoteAddress);
+    public boolean sink(List<CanalEntry.Entry> entryList, InetSocketAddress remoteAddress, String destination) throws CanalSinkException {
+        return sinkData(entryList, remoteAddress);
     }
 
-    private boolean sinkData(List<CanalEntry.Entry> entrys, InetSocketAddress remoteAddress) {
+    private boolean sinkData(List<CanalEntry.Entry> entryList, InetSocketAddress remoteAddress) {
         boolean hasRowData = false;
         boolean hasHeartBeat = false;
         List<Event> events = new ArrayList<>();
-        for (CanalEntry.Entry entry : entrys) {
+        for (CanalEntry.Entry entry : entryList) {
             if (!doFilter(entry)) {
                 continue;
             }
-            if (filterTransactionEntry
-                    && (entry.getEntryType() == EntryType.TRANSACTION_BEGIN || entry.getEntryType() == EntryType.TRANSACTION_END)) {
+            if (filterTransactionEntry && (entry.getEntryType() == EntryType.TRANSACTION_BEGIN || entry.getEntryType() == EntryType.TRANSACTION_END)) {
                 long currentTimestamp = entry.getHeader().getExecuteTime();
                 // 基于一定的策略控制，放过空的事务头和尾，便于及时更新数据库位点，表明工作正常
-                if (lastTransactionCount.incrementAndGet() <= emptyTransctionThresold
-                        && Math.abs(currentTimestamp - lastTransactionTimestamp) <= emptyTransactionInterval) {
+                if (lastTransactionCount.incrementAndGet() <= emptyTransctionThresold && Math.abs(currentTimestamp - lastTransactionTimestamp) <= emptyTransactionInterval) {
                     continue;
                 } else {
                     lastTransactionCount.set(0L);
@@ -111,8 +109,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
             if (filterEmtryTransactionEntry && !CollectionUtils.isEmpty(events)) {
                 long currentTimestamp = events.get(0).getExecuteTime();
                 // 基于一定的策略控制，放过空的事务头和尾，便于及时更新数据库位点，表明工作正常
-                if (Math.abs(currentTimestamp - lastEmptyTransactionTimestamp) > emptyTransactionInterval
-                        || lastEmptyTransactionCount.incrementAndGet() > emptyTransctionThresold) {
+                if (Math.abs(currentTimestamp - lastEmptyTransactionTimestamp) > emptyTransactionInterval || lastEmptyTransactionCount.incrementAndGet() > emptyTransctionThresold) {
                     lastEmptyTransactionCount.set(0L);
                     lastEmptyTransactionTimestamp = currentTimestamp;
                     return doSink(events);

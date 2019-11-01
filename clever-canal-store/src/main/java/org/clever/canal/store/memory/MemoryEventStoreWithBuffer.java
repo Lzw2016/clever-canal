@@ -1,5 +1,7 @@
 package org.clever.canal.store.memory;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.CanalEntry.EventType;
@@ -31,82 +33,166 @@ import java.util.concurrent.locks.ReentrantLock;
  *   a. put操作，会首先根据bufferSize进行控制，然后再进行bufferSize * bufferMemUnit进行控制. 因存储的内容是以Event，如果纯依赖于memsize进行控制，会导致RingBuffer出现动态伸缩
  * </pre>
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge implements CanalEventStore<Event>, CanalStoreScavenge {
-
+    /**
+     * 初始状态下环形队列的位置
+     */
     private static final long INIT_SEQUENCE = -1;
+    /**
+     * 环形队列的大小
+     */
+    @Getter
+    @Setter
     private int bufferSize = 16 * 1024;
-    private int bufferMemUnit = 1024; // memsize的单位，默认为1kb大小
+    /**
+     * memSize的单位，默认为1kb大小
+     */
+    @Getter
+    @Setter
+    private int bufferMemUnit = 1024;
+    /**
+     * 用于对putSequence、getSequence、ackSequence进行取余操作，canal通过位操作进行取余，其值为 bufferSize-1
+     */
     private int indexMask;
+    /**
+     * 环形队列数据数组
+     */
     private Event[] entries;
 
-    // 记录下put/get/ack操作的三个下标
-    private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前put操作最后一次写操作发生的位置
-    private AtomicLong getSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前get操作读取的最后一条的位置
-    private AtomicLong ackSequence = new AtomicLong(INIT_SEQUENCE); // 代表当前ack操作的最后一条的位置
+    // ================================================================================================= 记录下put/get/ack操作的三个下标
 
-    // 记录下put/get/ack操作的三个memsize大小
+    /**
+     * 代表当前put操作最后一次写操作发生的位置
+     */
+    private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE);
+    /**
+     * 代表当前get操作读取的最后一条的位置
+     */
+    private AtomicLong getSequence = new AtomicLong(INIT_SEQUENCE);
+    /**
+     * 代表当前ack操作的最后一条的位置
+     */
+    private AtomicLong ackSequence = new AtomicLong(INIT_SEQUENCE);
+
+    // ================================================================================================= 记录下put/get/ack操作的三个memSize大小
+
+    /**
+     * put操作的memSize大小
+     */
     private AtomicLong putMemSize = new AtomicLong(0);
+    /**
+     * get操作的memSize大小
+     */
     private AtomicLong getMemSize = new AtomicLong(0);
+    /**
+     * ack操作的memSize大小
+     */
     private AtomicLong ackMemSize = new AtomicLong(0);
 
-    // 记录下put/get/ack操作的三个execTime
+    // ================================================================================================= 记录下put/get/ack操作的三个execTime
+
+    /**
+     * put操作的execTime
+     */
     private AtomicLong putExecTime = new AtomicLong(System.currentTimeMillis());
+    /**
+     * get操作的execTime
+     */
     private AtomicLong getExecTime = new AtomicLong(System.currentTimeMillis());
+    /**
+     * ack操作的execTime
+     */
     private AtomicLong ackExecTime = new AtomicLong(System.currentTimeMillis());
 
-    // 记录下put/get/ack操作的三个table rows
+    // ================================================================================================= 记录下put/get/ack操作的三个table rows
+
+    /**
+     * put操作的table rows
+     */
     private AtomicLong putTableRows = new AtomicLong(0);
+    /**
+     * get操作的table rows
+     */
     private AtomicLong getTableRows = new AtomicLong(0);
+    /**
+     * ack操作的table rows
+     */
     private AtomicLong ackTableRows = new AtomicLong(0);
 
-    // 阻塞put/get操作控制信号
+    // ================================================================================================= 阻塞put/get操作控制信号
+
+    /**
+     * put操作和get操作共用一把锁(lock)
+     */
     private ReentrantLock lock = new ReentrantLock();
+    /**
+     * notFull用于控制put操作，只有队列没满的情况下才能put
+     */
     private Condition notFull = lock.newCondition();
+    /**
+     * notEmpty控制get操作，只有队列不为空的情况下，才能get
+     */
     private Condition notEmpty = lock.newCondition();
 
-    private BatchMode batchMode = BatchMode.ITEMSIZE; // 默认为内存大小模式
+    // ================================================================================================= MemoryEventStoreWithBuffer配置
+
+    /**
+     * 默认为对象数量模式
+     */
+    @Getter
+    @Setter
+    private BatchMode batchMode = BatchMode.ITEM_SIZE;
+    /**
+     * 是否需要DDL隔离
+     */
+    @Getter
+    @Setter
     private boolean ddlIsolation = false;
-    private boolean raw = true; // 针对entry是否开启raw模式
+    /**
+     * 针对entry是否开启raw模式<br />
+     * 使用server/client模式时, 建议开启raw模式(raw = true)<br />
+     * 使用Embedded模式时, 建议关闭raw模式(raw = false)<br />
+     */
+    @Getter
+    @Setter
+    private boolean raw = true;
 
     public MemoryEventStoreWithBuffer() {
-
     }
 
-    public MemoryEventStoreWithBuffer(BatchMode batchMode) {
-        this.batchMode = batchMode;
-    }
-
+    @Override
     public void start() throws CanalStoreException {
         super.start();
         if (Integer.bitCount(bufferSize) != 1) {
             throw new IllegalArgumentException("bufferSize must be a power of 2");
         }
-
         indexMask = bufferSize - 1;
         entries = new Event[bufferSize];
     }
 
+    @Override
     public void stop() throws CanalStoreException {
         super.stop();
-
         cleanAll();
     }
 
+    @Override
     public void put(List<Event> data) throws InterruptedException, CanalStoreException {
         if (data == null || data.isEmpty()) {
             return;
         }
-
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
         try {
             try {
-                while (!checkFreeSlotAt(putSequence.get() + data.size())) { // 检查是否有空位
-                    notFull.await(); // wait until not full
+                // 检查是否有空位
+                while (!checkFreeSlotAt(putSequence.get() + data.size())) {
+                    // wait until not full
+                    notFull.await();
                 }
             } catch (InterruptedException ie) {
-                notFull.signal(); // propagate to non-interrupted thread
+                // propagate to non-interrupted thread
+                notFull.signal();
                 throw ie;
             }
             doPut(data);
@@ -118,11 +204,11 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public boolean put(List<Event> data, long timeout, TimeUnit unit) throws InterruptedException, CanalStoreException {
         if (data == null || data.isEmpty()) {
             return true;
         }
-
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
@@ -139,7 +225,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                 try {
                     nanos = notFull.awaitNanos(nanos);
                 } catch (InterruptedException ie) {
-                    notFull.signal(); // propagate to non-interrupted thread
+                    // propagate to non-interrupted thread
+                    notFull.signal();
                     throw ie;
                 }
             }
@@ -148,6 +235,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public boolean tryPut(List<Event> data) throws CanalStoreException {
         if (data == null || data.isEmpty()) {
             return true;
@@ -167,14 +255,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public void put(Event data) throws InterruptedException, CanalStoreException {
         put(Collections.singletonList(data));
     }
 
+    @Override
     public boolean put(Event data, long timeout, TimeUnit unit) throws InterruptedException, CanalStoreException {
         return put(Collections.singletonList(data), timeout, unit);
     }
 
+    @Override
     public boolean tryPut(Event data) throws CanalStoreException {
         return tryPut(Collections.singletonList(data));
     }
@@ -207,6 +298,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         notEmpty.signal();
     }
 
+    @Override
     public Events<Event> get(Position start, int batchSize) throws InterruptedException, CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
@@ -225,8 +317,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
-    public Events<Event> get(Position start, int batchSize, long timeout, TimeUnit unit) throws InterruptedException,
-            CanalStoreException {
+    @Override
+    public Events<Event> get(Position start, int batchSize, long timeout, TimeUnit unit) throws InterruptedException, CanalStoreException {
         long nanos = unit.toNanos(timeout);
         final ReentrantLock lock = this.lock;
         lock.lockInterruptibly();
@@ -235,25 +327,24 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                 if (checkUnGetSlotAt((LogPosition) start, batchSize)) {
                     return doGet(start, batchSize);
                 }
-
                 if (nanos <= 0) {
                     // 如果时间到了，有多少取多少
                     return doGet(start, batchSize);
                 }
-
                 try {
                     nanos = notEmpty.awaitNanos(nanos);
                 } catch (InterruptedException ie) {
-                    notEmpty.signal(); // propagate to non-interrupted thread
+                    // propagate to non-interrupted thread
+                    notEmpty.signal();
                     throw ie;
                 }
-
             }
         } finally {
             lock.unlock();
         }
     }
 
+    @Override
     public Events<Event> tryGet(Position start, int batchSize) throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -282,7 +373,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
 
         Events<Event> result = new Events<>();
-        List<Event> entrys = result.getEvents();
+        List<Event> entryList = result.getEvents();
         long memsize = 0;
         if (batchMode.isItemSize()) {
             end = Math.min((next + batchSize - 1), maxAbleSequence);
@@ -291,8 +382,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                 Event event = entries[getIndex(next)];
                 if (ddlIsolation && isDdl(event.getEventType())) {
                     // 如果是ddl隔离，直接返回
-                    if (entrys.size() == 0) {
-                        entrys.add(event);// 如果没有DML事件，加入当前的DDL事件
+                    if (entryList.size() == 0) {
+                        entryList.add(event);// 如果没有DML事件，加入当前的DDL事件
                         end = next; // 更新end为当前
                     } else {
                         // 如果之前已经有DML事件，直接返回了，因为不包含当前next这记录，需要回退一个位置
@@ -300,7 +391,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                     }
                     break;
                 } else {
-                    entrys.add(event);
+                    entryList.add(event);
                 }
             }
         } else {
@@ -310,8 +401,8 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                 Event event = entries[getIndex(next)];
                 if (ddlIsolation && isDdl(event.getEventType())) {
                     // 如果是ddl隔离，直接返回
-                    if (entrys.size() == 0) {
-                        entrys.add(event);// 如果没有DML事件，加入当前的DDL事件
+                    if (entryList.size() == 0) {
+                        entryList.add(event);// 如果没有DML事件，加入当前的DDL事件
                         end = next; // 更新end为当前
                     } else {
                         // 如果之前已经有DML事件，直接返回了，因为不包含当前next这记录，需要回退一个位置
@@ -319,7 +410,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
                     }
                     break;
                 } else {
-                    entrys.add(event);
+                    entryList.add(event);
                     memsize += calculateSize(event);
                     end = next;// 记录end位点
                 }
@@ -330,15 +421,15 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         PositionRange<LogPosition> range = new PositionRange<>();
         result.setPositionRange(range);
 
-        range.setStart(CanalEventUtils.createPosition(entrys.get(0)));
-        range.setEnd(CanalEventUtils.createPosition(entrys.get(result.getEvents().size() - 1)));
+        range.setStart(CanalEventUtils.createPosition(entryList.get(0)));
+        range.setEnd(CanalEventUtils.createPosition(entryList.get(result.getEvents().size() - 1)));
         range.setEndSeq(end);
         // 记录一下是否存在可以被ack的点
 
-        for (int i = entrys.size() - 1; i >= 0; i--) {
-            Event event = entrys.get(i);
+        for (int i = entryList.size() - 1; i >= 0; i--) {
+            Event event = entryList.get(i);
             // GTID模式,ack的位点必须是事务结尾,因为下一次订阅的时候mysql会发送这个gtid之后的next,如果在事务头就记录了会丢这最后一个事务
-            if ((CanalEntry.EntryType.TRANSACTION_BEGIN == event.getEntryType() && StringUtils.isEmpty(event.getGtid()))
+            if ((CanalEntry.EntryType.TRANSACTION_BEGIN == event.getEntryType() && StringUtils.isEmpty(event.getGtId()))
                     || CanalEntry.EntryType.TRANSACTION_END == event.getEntryType() || isDdl(event.getEventType())) {
                 // 将事务头/尾设置可被为ack的点
                 range.setAck(CanalEventUtils.createPosition(event));
@@ -356,6 +447,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public LogPosition getFirstPosition() throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -385,6 +477,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public LogPosition getLatestPosition() throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -408,10 +501,12 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public void ack(Position position) throws CanalStoreException {
         cleanUntil(position, -1L);
     }
 
+    @Override
     public void ack(Position position, Long seqId) throws CanalStoreException {
         cleanUntil(position, seqId);
     }
@@ -421,7 +516,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         cleanUntil(position, -1L);
     }
 
-    public void cleanUntil(Position position, Long seqId) throws CanalStoreException {
+    private void cleanUntil(Position position, Long seqId) throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -479,6 +574,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public void rollback() throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -490,6 +586,7 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         }
     }
 
+    @Override
     public void cleanAll() throws CanalStoreException {
         final ReentrantLock lock = this.lock;
         lock.lock();
@@ -502,9 +599,6 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             getMemSize.set(0);
             ackMemSize.set(0);
             entries = null;
-            // for (int i = 0; i < entries.length; i++) {
-            // entries[i] = null;
-            // }
         } finally {
             lock.unlock();
         }
@@ -524,13 +618,14 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     private boolean checkFreeSlotAt(final long sequence) {
         final long wrapPoint = sequence - bufferSize;
         final long minPoint = getMinimumGetOrAck();
-        if (wrapPoint > minPoint) { // 刚好追上一轮
+        // 刚好追上一轮
+        if (wrapPoint > minPoint) {
             return false;
         } else {
             // 在bufferSize模式上，再增加memSize控制
             if (batchMode.isMemSize()) {
-                final long memsize = putMemSize.get() - ackMemSize.get();
-                return memsize < bufferSize * bufferMemUnit;
+                final long memSize = putMemSize.get() - ackMemSize.get();
+                return memSize < bufferSize * bufferMemUnit;
             } else {
                 return true;
             }
@@ -545,8 +640,10 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             long current = getSequence.get();
             long maxAbleSequence = putSequence.get();
             long next = current;
-            if (startPosition == null || !startPosition.getPosition().isIncluded()) { // 第一次订阅之后，需要包含一下start位置，防止丢失第一条记录
-                next = next + 1;// 少一条数据
+            // 第一次订阅之后，需要包含一下start位置，防止丢失第一条记录
+            if (startPosition == null || !startPosition.getPosition().isIncluded()) {
+                // 少一条数据
+                next = next + 1;
             }
             return current < maxAbleSequence && next + batchSize - 1 <= maxAbleSequence;
         } else {
@@ -562,13 +659,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
         return event.getRawLength();
     }
 
-    private int getIndex(long sequcnce) {
-        return (int) sequcnce & indexMask;
+    private int getIndex(long sequence) {
+        return (int) sequence & indexMask;
     }
 
     private boolean isDdl(EventType type) {
-        return type == EventType.ALTER || type == EventType.CREATE || type == EventType.ERASE
-                || type == EventType.RENAME || type == EventType.TRUNCATE || type == EventType.C_INDEX
+        return type == EventType.ALTER
+                || type == EventType.CREATE
+                || type == EventType.ERASE
+                || type == EventType.RENAME
+                || type == EventType.TRUNCATE
+                || type == EventType.C_INDEX
                 || type == EventType.D_INDEX;
     }
 
@@ -609,78 +710,5 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
 
     private enum OP {
         PUT, GET, ACK
-    }
-
-    // ================ setter / getter ==================
-    public int getBufferSize() {
-        return this.bufferSize;
-    }
-
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
-    }
-
-    public void setBufferMemUnit(int bufferMemUnit) {
-        this.bufferMemUnit = bufferMemUnit;
-    }
-
-    public void setBatchMode(BatchMode batchMode) {
-        this.batchMode = batchMode;
-    }
-
-    public void setDdlIsolation(boolean ddlIsolation) {
-        this.ddlIsolation = ddlIsolation;
-    }
-
-    public boolean isRaw() {
-        return raw;
-    }
-
-    public void setRaw(boolean raw) {
-        this.raw = raw;
-    }
-
-    public AtomicLong getPutSequence() {
-        return putSequence;
-    }
-
-    public AtomicLong getAckSequence() {
-        return ackSequence;
-    }
-
-    public AtomicLong getPutMemSize() {
-        return putMemSize;
-    }
-
-    public AtomicLong getAckMemSize() {
-        return ackMemSize;
-    }
-
-    public BatchMode getBatchMode() {
-        return batchMode;
-    }
-
-    public AtomicLong getPutExecTime() {
-        return putExecTime;
-    }
-
-    public AtomicLong getGetExecTime() {
-        return getExecTime;
-    }
-
-    public AtomicLong getAckExecTime() {
-        return ackExecTime;
-    }
-
-    public AtomicLong getPutTableRows() {
-        return putTableRows;
-    }
-
-    public AtomicLong getGetTableRows() {
-        return getTableRows;
-    }
-
-    public AtomicLong getAckTableRows() {
-        return ackTableRows;
     }
 }

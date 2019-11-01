@@ -8,18 +8,18 @@ public enum BatchMode {
     /**
      * 对象数量
      */
-    ITEMSIZE,
+    ITEM_SIZE,
 
     /**
      * 内存大小
      */
-    MEMSIZE;
+    MEM_SIZE;
 
     public boolean isItemSize() {
-        return this == BatchMode.ITEMSIZE;
+        return this == BatchMode.ITEM_SIZE;
     }
 
     public boolean isMemSize() {
-        return this == BatchMode.MEMSIZE;
+        return this == BatchMode.MEM_SIZE;
     }
 }

@@ -16,7 +16,6 @@ import java.util.List;
  */
 @SuppressWarnings({"unused"})
 public class Event implements Serializable {
-
     private static final long serialVersionUID = 1333330351758762739L;
 
     /**
@@ -27,18 +26,46 @@ public class Event implements Serializable {
      * 原始数据(未解析的数据)
      */
     private ByteString rawEntry;
-
+    /**
+     * 执行时间
+     */
     private long executeTime;
+    /**
+     * 打散后的事件类型，主要用于标识事务的开始，变更数据，结束
+     */
     private EntryType entryType;
+    /**
+     * binlog/redolog 文件名
+     */
     private String journalName;
+    /**
+     * binlog/redolog 文件的偏移位置
+     */
     private long position;
+    /**
+     * 服务端serverId
+     */
     private long serverId;
+    /**
+     * 事件类型
+     */
     private EventType eventType;
-    private String gtid;
+    /**
+     * 当前事务的(全局事务ID) gtId
+     */
+    private String gtId;
+    /**
+     * 原始数据长度
+     */
     private long rawLength;
+    /**
+     * 数据行数
+     */
     private int rowsCount;
-
-    // ==== https://github.com/alibaba/canal/issues/1019
+    /**
+     * 解析binlog数据对应的对象 <br/>
+     * https://github.com/alibaba/canal/issues/1019
+     */
     private CanalEntry.Entry entry;
 
     public Event() {
@@ -55,7 +82,7 @@ public class Event implements Serializable {
         this.journalName = entry.getHeader().getLogfileName();
         this.position = entry.getHeader().getLogfileOffset();
         this.serverId = entry.getHeader().getServerId();
-        this.gtid = entry.getHeader().getGtId();
+        this.gtId = entry.getHeader().getGtId();
         this.eventType = entry.getHeader().getEventType();
         if (entryType == EntryType.ROW_DATA) {
             List<CanalEntry.Pair> props = entry.getHeader().getPropsList();
@@ -135,12 +162,12 @@ public class Event implements Serializable {
         this.serverId = serverId;
     }
 
-    public String getGtid() {
-        return gtid;
+    public String getGtId() {
+        return gtId;
     }
 
-    public void setGtid(String gtid) {
-        this.gtid = gtid;
+    public void setGtId(String gtId) {
+        this.gtId = gtId;
     }
 
     public long getRawLength() {

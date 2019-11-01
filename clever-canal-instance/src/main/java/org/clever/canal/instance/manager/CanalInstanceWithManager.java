@@ -167,12 +167,12 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             eventStore = memoryEventStore;
         } else if (mode.isFile()) {
             // 后续版本支持
-            throw new CanalException("unsupport MetaMode for " + mode);
+            throw new CanalException("unSupport MetaMode for " + mode);
         } else if (mode.isMixed()) {
             // 后续版本支持
-            throw new CanalException("unsupport MetaMode for " + mode);
+            throw new CanalException("unSupport MetaMode for " + mode);
         } else {
-            throw new CanalException("unsupport MetaMode for " + mode);
+            throw new CanalException("unSupport MetaMode for " + mode);
         }
         if (eventStore instanceof AbstractCanalStoreScavenge) {
             StorageScavengeMode scavengeMode = parameters.getStorageScavengeMode();

@@ -51,6 +51,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
         for (MemoryClientIdentityBatch batch : batches.values()) {
             batch.clearPositionRanges();
         }
+        batches.clear();
     }
 
     /**

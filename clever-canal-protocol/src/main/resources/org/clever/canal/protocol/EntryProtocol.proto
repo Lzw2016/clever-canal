@@ -10,11 +10,11 @@ option java_multiple_files = false;
 enum EntryType {
     // 为了兼容 proto2
     ENTRY_TYPE_COMPATIBLE_PROTO2 = 0;
-    // 事件开始
+    // 事务开始
     TRANSACTION_BEGIN = 1;
     // 行数据
     ROW_DATA = 2;
-    // 事件结束
+    // 事务结束
     TRANSACTION_END = 3;
     // 心跳类型，内部使用，外部暂不可见，可忽略
     ENTRY_HEARTBEAT = 4;
@@ -112,7 +112,7 @@ message Header {
     string gtId = 13;
 }
 
-// 解析binlog数据对用的实体
+// 解析binlog数据对应的实体
 message Entry {
     // 协议头部信息
     Header header = 1;

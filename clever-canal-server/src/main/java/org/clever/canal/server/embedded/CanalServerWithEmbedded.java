@@ -1,12 +1,14 @@
 package org.clever.canal.server.embedded;
 
 import com.google.common.collect.Maps;
+import com.google.protobuf.ByteString;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.CollectionUtils;
 import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.instance.core.CanalInstance;
 import org.clever.canal.instance.core.CanalInstanceGenerator;
+import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.ClientIdentity;
 import org.clever.canal.protocol.Message;
 import org.clever.canal.protocol.SecurityUtil;
@@ -263,30 +265,31 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
             if (CollectionUtils.isEmpty(events.getEvents())) {
                 logger.debug("get successfully, clientId:{} batchSize:{} but result is null", clientIdentity.getClientId(), batchSize);
                 // 返回空包，避免生成batchId，浪费性能
-                return new Message(-1, true, new ArrayList());
+                return new Message(-1, true);
             } else {
                 // 记录到流式信息
                 Long batchId = canalInstance.getMetaManager().addBatch(clientIdentity, events.getPositionRange());
+                List<CanalEntry.Entry> entries = Collections.emptyList();
+                List<ByteString> rawEntries = Collections.emptyList();
                 boolean raw = isRaw(canalInstance.getEventStore());
-                List entrys;
                 if (raw) {
-                    entrys = events.getEvents().stream().map(Event::getRawEntry).collect(Collectors.toList());
+                    rawEntries = events.getEvents().stream().map(Event::getRawEntry).collect(Collectors.toList());
                 } else {
-                    entrys = events.getEvents().stream().map(Event::getEntry).collect(Collectors.toList());
+                    entries = events.getEvents().stream().map(Event::getEntry).collect(Collectors.toList());
                 }
                 if (logger.isInfoEnabled()) {
                     logger.info(
                             "get successfully, clientId:{} batchSize:{} real size is {} and result is [batchId:{} , position:{}]",
                             clientIdentity.getClientId(),
                             batchSize,
-                            entrys.size(),
+                            raw ? rawEntries.size() : entries.size(),
                             batchId,
                             events.getPositionRange()
                     );
                 }
                 // 直接提交ack
                 ack(clientIdentity, batchId);
-                return new Message(batchId, raw, entrys);
+                return new Message(batchId, entries, rawEntries);
             }
         }
     }
@@ -338,28 +341,30 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
             }
             if (CollectionUtils.isEmpty(events.getEvents())) {
                 // logger.debug("getWithoutAck successfully, clientId:{} batchSize:{} but result is null", clientIdentity.getClientId(), batchSize);
-                return new Message(-1, true, new ArrayList()); // 返回空包，避免生成batchId，浪费性能
+                // 返回空包，避免生成batchId，浪费性能
+                return new Message(-1, true);
             } else {
                 // 记录到流式信息
                 Long batchId = canalInstance.getMetaManager().addBatch(clientIdentity, events.getPositionRange());
+                List<CanalEntry.Entry> entries = Collections.emptyList();
+                List<ByteString> rawEntries = Collections.emptyList();
                 boolean raw = isRaw(canalInstance.getEventStore());
-                List entrys;
                 if (raw) {
-                    entrys = events.getEvents().stream().map(Event::getRawEntry).collect(Collectors.toList());
+                    rawEntries = events.getEvents().stream().map(Event::getRawEntry).collect(Collectors.toList());
                 } else {
-                    entrys = events.getEvents().stream().map(Event::getEntry).collect(Collectors.toList());
+                    entries = events.getEvents().stream().map(Event::getEntry).collect(Collectors.toList());
                 }
                 if (logger.isInfoEnabled()) {
                     logger.info(
                             "getWithoutAck successfully, clientId:{} batchSize:{}  real size is {} and result is [batchId:{} , position:{}]",
                             clientIdentity.getClientId(),
                             batchSize,
-                            entrys.size(),
+                            raw ? rawEntries.size() : entries.size(),
                             batchId,
                             events.getPositionRange()
                     );
                 }
-                return new Message(batchId, raw, entrys);
+                return new Message(batchId, entries, rawEntries);
             }
         }
     }
@@ -371,8 +376,8 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         checkStart(clientIdentity.getDestination());
         checkSubscribe(clientIdentity);
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
-        Map<Long, PositionRange> batchs = canalInstance.getMetaManager().listAllBatches(clientIdentity);
-        List<Long> result = new ArrayList<>(batchs.keySet());
+        Map<Long, PositionRange> batches = canalInstance.getMetaManager().listAllBatches(clientIdentity);
+        List<Long> result = new ArrayList<>(batches.keySet());
         Collections.sort(result);
         return result;
     }
@@ -459,8 +464,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         }
         synchronized (canalInstance) {
             // 清除batch信息
-            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().removeBatch(clientIdentity,
-                    batchId);
+            PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().removeBatch(clientIdentity, batchId);
             if (positionRanges == null) { // 说明是重复的ack/rollback
                 throw new CanalServerException(String.format("rollback error, clientId:%s batchId:%d is not exist , please check", clientIdentity.getClientId(), batchId));
             }
