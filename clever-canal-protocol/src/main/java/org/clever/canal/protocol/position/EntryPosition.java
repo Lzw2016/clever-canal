@@ -19,9 +19,9 @@ public class EntryPosition extends TimePosition {
      * 读取 binlog 文件位置
      */
     private Long position;
-    // add by agapple at 2016-06-28
     /**
-     * Mysql Server Id (记录一下位点对应的serverId)
+     * Mysql Server Id (记录一下位点对应的serverId)<br />
+     * add by agapple at 2016-06-28
      */
     private Long serverId = null;
     /**

@@ -7,6 +7,9 @@ package org.clever.canal.protocol.position;
 public class TimePosition extends Position {
     private static final long serialVersionUID = 6185261261064226380L;
 
+    /**
+     * 时间搓
+     */
     protected Long timestamp;
 
     public TimePosition(Long timestamp) {

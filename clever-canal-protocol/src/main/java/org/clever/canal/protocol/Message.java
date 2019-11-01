@@ -15,8 +15,7 @@ public class Message implements Serializable {
     private static final long serialVersionUID = 1234034768477580009L;
     private long id;
     private List<CanalEntry.Entry> entries = new ArrayList<>();
-    // row data for performance, see:
-    // https://github.com/alibaba/canal/issues/726
+    // row data for performance, see: https://github.com/alibaba/canal/issues/726
     private boolean raw = true;
     private List<ByteString> rawEntries = new ArrayList<>();
 
