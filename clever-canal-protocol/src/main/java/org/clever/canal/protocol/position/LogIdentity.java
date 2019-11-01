@@ -17,7 +17,8 @@ public class LogIdentity extends Position {
      */
     private InetSocketAddress sourceAddress;
     /**
-     * 对应的slaveId(注：这个值没有意义，赋值永远是-1，没有读取)
+     * 对应的slaveId(注：这个值没有意义，赋值永远是-1，没有读取) <br/>
+     * 设计的本意是为了实现一个canalInstance对于多个canalClient消费
      */
     private Long slaveId;
 

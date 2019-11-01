@@ -19,7 +19,13 @@ public class Event implements Serializable {
 
     private static final long serialVersionUID = 1333330351758762739L;
 
-    private LogIdentity logIdentity; // 记录数据产生的来源
+    /**
+     * 记录数据产生的来源
+     */
+    private LogIdentity logIdentity;
+    /**
+     * 原始数据(未解析的数据)
+     */
     private ByteString rawEntry;
 
     private long executeTime;

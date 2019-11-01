@@ -8,7 +8,7 @@ public class LogPosition extends Position {
     private static final long serialVersionUID = 3875012010277005819L;
 
     /**
-     * MySql服务器标识
+     * 记录数据产生的来源(MySql服务器地址 和 消费binlog的客户端ID)
      */
     private LogIdentity identity;
     /**
