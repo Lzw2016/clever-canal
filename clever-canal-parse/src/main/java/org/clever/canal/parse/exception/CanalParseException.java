@@ -6,7 +6,6 @@ import org.clever.canal.common.CanalException;
  * canal 异常定义
  */
 public class CanalParseException extends CanalException {
-
     private static final long serialVersionUID = -7288830284122672209L;
 
     public CanalParseException(String errorCode) {

@@ -4,7 +4,6 @@ import org.clever.canal.common.CanalException;
 
 @SuppressWarnings("unused")
 public class ServerIdNotMatchException extends CanalException {
-
     private static final long serialVersionUID = -6124989280379293953L;
 
     public ServerIdNotMatchException(String errorCode) {

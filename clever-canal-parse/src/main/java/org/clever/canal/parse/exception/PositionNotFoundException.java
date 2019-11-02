@@ -2,7 +2,6 @@ package org.clever.canal.parse.exception;
 
 @SuppressWarnings("unused")
 public class PositionNotFoundException extends CanalParseException {
-
     private static final long serialVersionUID = -7382448928116244017L;
 
     public PositionNotFoundException(String errorCode) {

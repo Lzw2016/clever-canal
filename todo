@@ -19,15 +19,18 @@ clever-canal-sink
     TODO
         1.EntryEventSink#doFilter中filter从未初始化过
 
-clever-canal-driver
+clever-canal-driver -------------------> 底层库
     源码分析 - 增加注释
-    使用 Bio 还是 Netty?
+    --> 移除Netty, 使用BIO
 
-clever-canal-dbsync
+clever-canal-dbsync -------------------> 底层库
     源码分析 - 增加注释
 
 clever-canal-parse
     源码分析 - 增加注释 减少依赖
+    TODO
+        1.CanalLogPositionManager etcd 支持
+        2.TSDB支持
 
 clever-canal-instance
     源码分析 - 增加注释

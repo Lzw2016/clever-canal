@@ -9,10 +9,9 @@ import org.slf4j.LoggerFactory;
 /**
  * 基于HeartBeat信息的HA控制 , 注意：非线程安全，需要做做多例化
  */
-@SuppressWarnings("unused")
 public class HeartBeatHAController extends AbstractCanalLifeCycle implements CanalHAController, HeartBeatCallback {
-
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatHAController.class);
+
     // default 3 times
     private int detectingRetryTimes = 3;
     private int failedTimes = 0;
@@ -20,7 +19,6 @@ public class HeartBeatHAController extends AbstractCanalLifeCycle implements Can
     private CanalHASwitchable eventParser;
 
     public HeartBeatHAController() {
-
     }
 
     public void onSuccess(long costTime) {
@@ -33,7 +31,8 @@ public class HeartBeatHAController extends AbstractCanalLifeCycle implements Can
         synchronized (this) {
             if (failedTimes > detectingRetryTimes) {
                 if (switchEnable) {
-                    eventParser.doSwitch();// 通知执行一次切换
+                    // 通知执行一次切换
+                    eventParser.doSwitch();
                     failedTimes = 0;
                 } else {
                     logger.warn("HeartBeat failed Times:{} , should auto switch ?", failedTimes);
