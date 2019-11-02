@@ -18,7 +18,7 @@ public interface TableMetaTSDB {
     /**
      * 销毁资源
      */
-    void destory();
+    void destroy();
 
     /**
      * 获取当前的表结构

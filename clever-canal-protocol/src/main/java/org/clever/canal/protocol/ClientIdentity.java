@@ -16,7 +16,7 @@ public class ClientIdentity implements Serializable {
     private static final long serialVersionUID = -8262100681930834834L;
 
     /**
-     * 客户端需要订阅的数据源名称
+     * 客户端需要订阅的通道名称
      */
     private String destination;
     /**
@@ -32,7 +32,7 @@ public class ClientIdentity implements Serializable {
     }
 
     /**
-     * @param destination 客户端需要订阅的数据源名称
+     * @param destination 客户端需要订阅的通道名称
      * @param clientId    客户端ID
      */
     public ClientIdentity(String destination, short clientId) {
@@ -41,7 +41,7 @@ public class ClientIdentity implements Serializable {
     }
 
     /**
-     * @param destination 客户端需要订阅的数据源名称
+     * @param destination 客户端需要订阅的通道名称
      * @param clientId    客户端ID
      * @param filter      客户端过滤配置
      */

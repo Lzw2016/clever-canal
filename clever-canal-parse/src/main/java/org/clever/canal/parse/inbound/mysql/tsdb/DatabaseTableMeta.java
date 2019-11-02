@@ -3,8 +3,7 @@ package org.clever.canal.parse.inbound.mysql.tsdb;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastsql.sql.repository.Schema;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang3.ObjectUtils;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.filter.CanalEventFilter;
 import org.clever.canal.parse.driver.mysql.packets.server.ResultSetPacket;
@@ -25,10 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -39,36 +35,71 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
 /**
- * 基于db远程管理 see internal class: CanalTableMeta , ConsoleTableMetaTSDB
+ * 使用 内存+数据库方式维护DDL <br />
+ * <pre>
+ *     1.定时把内存中的数据刷到数据库快照表
+ *     2.只要内存数据变更就把数据刷到数据库历史记录表
+ * </pre>
  */
-@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused", "ConstantConditions", "StatementWithEmptyBody", "DuplicatedCode", "unchecked", "FieldCanBeLocal"})
 public class DatabaseTableMeta implements TableMetaTSDB {
+    private static Logger logger = LoggerFactory.getLogger(DatabaseTableMeta.class);
 
     public static final EntryPosition INIT_POSITION = new EntryPosition("0", 0L, -2L, -1L);
-    private static Logger logger = LoggerFactory.getLogger(DatabaseTableMeta.class);
-    private static Pattern pattern = Pattern.compile("Duplicate entry '.*' for key '*'");
-    private static Pattern h2Pattern = Pattern.compile("Unique index or primary key violation");
-    private static ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+    private static final Pattern pattern = Pattern.compile("Duplicate entry '.*' for key '*'");
+    private static final Pattern h2Pattern = Pattern.compile("Unique index or primary key violation");
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
         Thread thread = new Thread(r, "[scheduler-table-meta-snapshot]");
         thread.setDaemon(true);
         return thread;
     });
+
     private ReadWriteLock lock = new ReentrantReadWriteLock();
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private String destination;
     private MemoryTableMeta memoryTableMeta;
-    private volatile MysqlConnection connection; // 查询meta信息的链接
-    private CanalEventFilter filter;
-    private CanalEventFilter blackFilter;
-    private Map<String, List<String>> fieldFilterMap = new HashMap<>();
-    private Map<String, List<String>> fieldBlackFilterMap = new HashMap<>();
-    private EntryPosition lastPosition;
-    private boolean hasNewDdl;
-    private MetaHistoryDAO metaHistoryDAO;
-    private MetaSnapshotDAO metaSnapshotDAO;
-    private int snapshotInterval = 24;
-    private int snapshotExpire = 360;
     private ScheduledFuture<?> scheduleSnapshotFuture;
+    private EntryPosition lastPosition;
+    /**
+     * 是否有新的DDL变化SQL
+     */
+    private boolean hasNewDdl;
+    /**
+     * 用于查询数据库表结构信息
+     */
+    @Setter
+    private volatile MysqlConnection connection;
+    /**
+     * 白名单过滤器
+     */
+    @Setter
+    private CanalEventFilter<String> filter;
+    /**
+     * 黑名单过滤器
+     */
+    @Setter
+    private CanalEventFilter<String> blackFilter;
+    /**
+     * 操作 MetaHistory
+     */
+    @Setter
+    private MetaHistoryDAO metaHistoryDAO;
+    /**
+     * 操作 MetaSnapshot
+     */
+    @Setter
+    private MetaSnapshotDAO metaSnapshotDAO;
+    /**
+     * 生成快照的时间间隔(单位：小时) <br/>
+     * 默认1天
+     */
+    @Setter
+    private int snapshotInterval = 24;
+    /**
+     * 快照过期时间(单位：小时) <br/>
+     * 默认15天
+     */
+    @Setter
+    private int snapshotExpire = 360;
 
     public DatabaseTableMeta() {
     }
@@ -81,32 +112,43 @@ public class DatabaseTableMeta implements TableMetaTSDB {
             // 24小时生成一份snapshot
             if (snapshotInterval > 0) {
                 scheduleSnapshotFuture = scheduler.scheduleWithFixedDelay(() -> {
-                    boolean applyResult = false;
-                    try {
-                        MDC.put("destination", destination);
-                        applyResult = applySnapshotToDB(lastPosition, false);
-                    } catch (Throwable e) {
-                        logger.error("scheudle applySnapshotToDB faield", e);
-                    }
-
-                    try {
-                        MDC.put("destination", destination);
-                        if (applyResult) {
-                            snapshotExpire((int) TimeUnit.HOURS.toSeconds(snapshotExpire));
-                        }
-                    } catch (Throwable e) {
-                        logger.error("scheudle snapshotExpire faield", e);
-                    }
-                }, snapshotInterval, snapshotInterval, TimeUnit.HOURS);
+                            boolean applyResult = false;
+                            // 保存表结构快照到数据库
+                            try {
+                                MDC.put("destination", destination);
+                                applyResult = applySnapshotToDB(lastPosition, false);
+                                logger.debug("schedule applySnapshotToDB state: {}", applyResult ? "successful" : "failed");
+                            } catch (Throwable e) {
+                                logger.error("schedule applySnapshotToDB failed", e);
+                            } finally {
+                                MDC.remove("destination");
+                            }
+                            // 如果表结构快照保存成功，则设置之前的数据已过期
+                            try {
+                                MDC.put("destination", destination);
+                                if (applyResult) {
+                                    int count = snapshotExpire(TimeUnit.HOURS.toSeconds(snapshotExpire));
+                                    logger.debug("schedule snapshotExpire successful | 数据量: {}", count);
+                                }
+                            } catch (Throwable e) {
+                                logger.error("schedule snapshotExpire failed", e);
+                            } finally {
+                                MDC.remove("destination");
+                            }
+                        },
+                        snapshotInterval,
+                        snapshotInterval,
+                        TimeUnit.HOURS
+                );
             }
         }
         return true;
     }
 
     @Override
-    public void destory() {
+    public void destroy() {
         if (memoryTableMeta != null) {
-            memoryTableMeta.destory();
+            memoryTableMeta.destroy();
         }
         if (connection != null) {
             try {
@@ -151,12 +193,16 @@ public class DatabaseTableMeta implements TableMetaTSDB {
     @Override
     public boolean rollback(EntryPosition position) {
         // 每次rollback需要重新构建一次memory data
+        this.memoryTableMeta.destroy();
         this.memoryTableMeta = new MemoryTableMeta();
         boolean flag = false;
+        // 从数据库构建快照
         EntryPosition snapshotPosition = buildMemFromSnapshot(position);
         if (snapshotPosition != null) {
-            applyHistoryOnMemory(snapshotPosition, position);
-            flag = true;
+            boolean isSuccess = applyHistoryOnMemory(snapshotPosition, position);
+            if (isSuccess) {
+                flag = true;
+            }
         }
         if (!flag) {
             // 如果没有任何数据，则为初始化状态，全量dump一份关注的表
@@ -174,9 +220,196 @@ public class DatabaseTableMeta implements TableMetaTSDB {
     }
 
     /**
-     * 初始化的时候dump一下表结构
+     * 保存数据库表结构快照
+     *
+     * @param position binlog位置信息
+     * @param init     是否是第一次保存(初始化保存)
      */
-    private boolean dumpTableMeta(MysqlConnection connection, final CanalEventFilter filter) {
+    private boolean applySnapshotToDB(EntryPosition position, boolean init) {
+        // 获取一份快照
+        Map<String, String> schemaDdlList;
+        lock.readLock().lock();
+        try {
+            if (!init && !hasNewDdl) {
+                // 如果是持续构建,则识别一下是否有DDL变更过,如果没有就忽略了
+                return false;
+            }
+            this.hasNewDdl = false;
+            schemaDdlList = memoryTableMeta.snapshot();
+        } finally {
+            lock.readLock().unlock();
+        }
+        MemoryTableMeta tmpMemoryTableMeta = new MemoryTableMeta();
+        for (Map.Entry<String, String> entry : schemaDdlList.entrySet()) {
+            tmpMemoryTableMeta.apply(position, entry.getKey(), entry.getValue(), null);
+        }
+        // 基于临时内存对象进行对比
+        boolean compareAll = true;
+        for (Schema schema : tmpMemoryTableMeta.getRepository().getSchemas()) {
+            for (String table : schema.showTables()) {
+                String fullName = schema + "." + table;
+                if (blackFilter == null || !blackFilter.filter(fullName)) {
+                    if (filter == null || filter.filter(fullName)) {
+                        // issue : https://github.com/alibaba/canal/issues/1168
+                        // 在生成snapshot时重新过滤一遍
+                        if (!compareTableMetaDbAndMemory(connection, tmpMemoryTableMeta, schema.getName(), table)) {
+                            compareAll = false;
+                        }
+                    }
+                }
+            }
+        }
+        if (compareAll) {
+            // 内存中的表结构与数据库当前的一致
+            MetaSnapshotDO snapshotDO = createMetaSnapshot(position, schemaDdlList);
+            try {
+                metaSnapshotDAO.insert(snapshotDO);
+            } catch (Throwable e) {
+                if (isUkDuplicateException(e)) {
+                    // 忽略掉重复的位点
+                    logger.warn("dup apply snapshot use position : " + position + " , just ignore");
+                } else {
+                    throw new CanalParseException("apply failed caused by : " + e.getMessage(), e);
+                }
+            }
+            return true;
+        } else {
+            logger.error("compare failed , check log");
+        }
+        return false;
+    }
+
+    /**
+     * 新建表结构记录表快照数据
+     *
+     * @param position      binlog位置信息
+     * @param schemaDdlList 表结构快照数据
+     */
+    private MetaSnapshotDO createMetaSnapshot(EntryPosition position, Map<String, String> schemaDdlList) {
+        MetaSnapshotDO snapshot = new MetaSnapshotDO();
+        snapshot.setDestination(destination);
+        snapshot.setBinlogFile(position.getJournalName());
+        snapshot.setBinlogOffset(position.getPosition());
+        snapshot.setBinlogMasterId(String.valueOf(position.getServerId()));
+        snapshot.setBinlogTimestamp(position.getTimestamp());
+        snapshot.setData(JSON.toJSONString(schemaDdlList));
+        snapshot.setGmtCreate(new Date());
+        snapshot.setGmtModified(new Date());
+        // snapshot.setExtra();
+        return snapshot;
+    }
+
+    /**
+     * 记录表结构历史信息
+     *
+     * @param position binlog位置信息
+     * @param schema   schema
+     * @param ddl      ddl SQL
+     * @param extra    扩展数据
+     */
+    private boolean applyHistoryToDB(EntryPosition position, String schema, String ddl, String extra) {
+        MetaHistoryDO metaHistory = createMetaHistory(position, schema, ddl, extra);
+        try {
+            // 会建立唯一约束,解决:
+            // 1. 重复的binlog file + offset
+            // 2. 重复的masterId+timestamp
+            metaHistoryDAO.insert(metaHistory);
+        } catch (Throwable e) {
+            if (isUkDuplicateException(e)) {
+                // 忽略掉重复的位点
+                logger.warn("dup apply for sql : " + ddl);
+            } else {
+                throw new CanalParseException("apply history to db failed caused by : " + e.getMessage(), e);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 新建表结构变化明细数据
+     */
+    private MetaHistoryDO createMetaHistory(EntryPosition position, String schema, String ddl, String extra) {
+        MetaHistoryDO metaHistory = new MetaHistoryDO();
+        metaHistory.setGmtCreate(new Date());
+        metaHistory.setGmtModified(new Date());
+        metaHistory.setDestination(destination);
+        metaHistory.setBinlogFile(position.getJournalName());
+        metaHistory.setBinlogOffset(position.getPosition());
+        metaHistory.setBinlogMasterId(String.valueOf(position.getServerId()));
+        metaHistory.setBinlogTimestamp(position.getTimestamp());
+        metaHistory.setUseSchema(schema);
+        // 待补充
+        List<DdlResult> ddlResults = DruidDdlParser.parse(ddl, schema);
+        if (ddlResults.size() > 0) {
+            DdlResult ddlResult = ddlResults.get(0);
+            metaHistory.setSqlSchema(ddlResult.getSchemaName());
+            metaHistory.setSqlTable(ddlResult.getTableName());
+            metaHistory.setSqlText(ddl);
+            metaHistory.setSqlType(ddlResult.getType().name());
+            metaHistory.setExtra(extra);
+        }
+        return metaHistory;
+    }
+
+    /**
+     * 比较当前数据库表结构 与 内存中的表结构数据是否一致
+     *
+     * @param connection      数据库连接
+     * @param memoryTableMeta 内存中的表结构数据
+     * @param schema          schema名称
+     * @param table           table名称
+     */
+    private boolean compareTableMetaDbAndMemory(MysqlConnection connection, MemoryTableMeta memoryTableMeta, final String schema, final String table) {
+        TableMeta tableMetaFromMem = memoryTableMeta.find(schema, table);
+        TableMeta tableMetaFromDB = new TableMeta();
+        tableMetaFromDB.setSchema(schema);
+        tableMetaFromDB.setTable(table);
+        String createDDL = null;
+        try {
+            ResultSetPacket packet = connection.query("show create table " + getFullName(schema, table));
+            if (packet.getFieldValues().size() > 1) {
+                createDDL = packet.getFieldValues().get(1);
+                tableMetaFromDB.setFields(TableMetaCache.parseTableMeta(schema, table, packet));
+            }
+        } catch (Throwable e) {
+            try {
+                // retry for broke pipe, see:
+                // https://github.com/alibaba/canal/issues/724
+                connection.reconnect();
+                ResultSetPacket packet = connection.query("show create table " + getFullName(schema, table));
+                if (packet.getFieldValues().size() > 1) {
+                    createDDL = packet.getFieldValues().get(1);
+                    tableMetaFromDB.setFields(TableMetaCache.parseTableMeta(schema, table, packet));
+                }
+            } catch (IOException e1) {
+                if (e.getMessage().contains("errorNumber=1146")) {
+                    logger.error("table not exist in db , pls check :" + getFullName(schema, table) + " , mem : " + tableMetaFromMem);
+                    return false;
+                }
+                throw new CanalParseException(e);
+            }
+        }
+        boolean result = compareTableMeta(tableMetaFromMem, tableMetaFromDB);
+        if (!result) {
+            logger.error("pls submit github issue, show create table ddl:" + createDDL + " , compare failed . \n db : " + tableMetaFromDB + " \n mem : " + tableMetaFromMem);
+        }
+        return result;
+    }
+
+    /**
+     * 则设置${expireTimestamp}秒之前的快照数据已过期
+     *
+     * @param expireTimestamp ${expireTimestamp}秒 (单位：秒)
+     */
+    private int snapshotExpire(long expireTimestamp) {
+        return metaSnapshotDAO.deleteByTimestamp(destination, expireTimestamp);
+    }
+
+
+    /**
+     * 初始化的时候dump一下表结构(全量dump一份关注的表)
+     */
+    private boolean dumpTableMeta(MysqlConnection connection, final CanalEventFilter<String> filter) {
         try {
             ResultSetPacket packet = connection.query("show databases");
             List<String> schemas = new ArrayList<>(packet.getFieldValues());
@@ -216,152 +449,9 @@ public class DatabaseTableMeta implements TableMetaTSDB {
         }
     }
 
-    private boolean applyHistoryToDB(EntryPosition position, String schema, String ddl, String extra) {
-        Map<String, String> content = new HashMap<>();
-        content.put("destination", destination);
-        content.put("binlogFile", position.getJournalName());
-        content.put("binlogOffest", String.valueOf(position.getPosition()));
-        content.put("binlogMasterId", String.valueOf(position.getServerId()));
-        content.put("binlogTimestamp", String.valueOf(position.getTimestamp()));
-        content.put("useSchema", schema);
-        if (content.isEmpty()) {
-            throw new RuntimeException("apply failed caused by content is empty in applyHistoryToDB");
-        }
-        // 待补充
-        List<DdlResult> ddlResults = DruidDdlParser.parse(ddl, schema);
-        if (ddlResults.size() > 0) {
-            DdlResult ddlResult = ddlResults.get(0);
-            content.put("sqlSchema", ddlResult.getSchemaName());
-            content.put("sqlTable", ddlResult.getTableName());
-            content.put("sqlType", ddlResult.getType().name());
-            content.put("sqlText", ddl);
-            content.put("extra", extra);
-        }
-        MetaHistoryDO metaDO = new MetaHistoryDO();
-        try {
-            BeanUtils.populate(metaDO, content);
-            // 会建立唯一约束,解决:
-            // 1. 重复的binlog file+offest
-            // 2. 重复的masterId+timestamp
-            metaHistoryDAO.insert(metaDO);
-        } catch (Throwable e) {
-            if (isUkDuplicateException(e)) {
-                // 忽略掉重复的位点
-                logger.warn("dup apply for sql : " + ddl);
-            } else {
-                throw new CanalParseException("apply history to db failed caused by : " + e.getMessage(), e);
-            }
-        }
-        return true;
-    }
-
     /**
-     * 发布数据到console上
+     * 从数据库加载表结构快照到内存
      */
-    private boolean applySnapshotToDB(EntryPosition position, boolean init) {
-        // 获取一份快照
-        Map<String, String> schemaDdls;
-        lock.readLock().lock();
-        try {
-            if (!init && !hasNewDdl) {
-                // 如果是持续构建,则识别一下是否有DDL变更过,如果没有就忽略了
-                return false;
-            }
-            this.hasNewDdl = false;
-            schemaDdls = memoryTableMeta.snapshot();
-        } finally {
-            lock.readLock().unlock();
-        }
-        MemoryTableMeta tmpMemoryTableMeta = new MemoryTableMeta();
-        for (Map.Entry<String, String> entry : schemaDdls.entrySet()) {
-            tmpMemoryTableMeta.apply(position, entry.getKey(), entry.getValue(), null);
-        }
-        // 基于临时内存对象进行对比
-        boolean compareAll = true;
-        for (Schema schema : tmpMemoryTableMeta.getRepository().getSchemas()) {
-            for (String table : schema.showTables()) {
-                String fullName = schema + "." + table;
-                if (blackFilter == null || !blackFilter.filter(fullName)) {
-                    if (filter == null || filter.filter(fullName)) {
-                        // issue : https://github.com/alibaba/canal/issues/1168
-                        // 在生成snapshot时重新过滤一遍
-                        if (!compareTableMetaDbAndMemory(connection, tmpMemoryTableMeta, schema.getName(), table)) {
-                            compareAll = false;
-                        }
-                    }
-                }
-            }
-        }
-        if (compareAll) {
-            Map<String, String> content = new HashMap<>();
-            content.put("destination", destination);
-            content.put("binlogFile", position.getJournalName());
-            content.put("binlogOffest", String.valueOf(position.getPosition()));
-            content.put("binlogMasterId", String.valueOf(position.getServerId()));
-            content.put("binlogTimestamp", String.valueOf(position.getTimestamp()));
-            content.put("data", JSON.toJSONString(schemaDdls));
-            if (content.isEmpty()) {
-                throw new RuntimeException("apply failed caused by content is empty in applySnapshotToDB");
-            }
-            MetaSnapshotDO snapshotDO = new MetaSnapshotDO();
-            try {
-                BeanUtils.populate(snapshotDO, content);
-                metaSnapshotDAO.insert(snapshotDO);
-            } catch (Throwable e) {
-                if (isUkDuplicateException(e)) {
-                    // 忽略掉重复的位点
-                    logger.info("dup apply snapshot use position : " + position + " , just ignore");
-                } else {
-                    throw new CanalParseException("apply failed caused by : " + e.getMessage(), e);
-                }
-            }
-            return true;
-        } else {
-            logger.error("compare failed , check log");
-        }
-        return false;
-    }
-
-    private boolean compareTableMetaDbAndMemory(MysqlConnection connection, MemoryTableMeta memoryTableMeta, final String schema, final String table) {
-        TableMeta tableMetaFromMem = memoryTableMeta.find(schema, table);
-        TableMeta tableMetaFromDB = new TableMeta();
-        tableMetaFromDB.setSchema(schema);
-        tableMetaFromDB.setTable(table);
-        String createDDL = null;
-        try {
-            ResultSetPacket packet = connection.query("show create table " + getFullName(schema, table));
-            if (packet.getFieldValues().size() > 1) {
-                createDDL = packet.getFieldValues().get(1);
-                tableMetaFromDB.setFields(TableMetaCache.parseTableMeta(schema, table, packet));
-            }
-        } catch (Throwable e) {
-            try {
-                // retry for broke pipe, see:
-                // https://github.com/alibaba/canal/issues/724
-                connection.reconnect();
-                ResultSetPacket packet = connection.query("show create table " + getFullName(schema, table));
-                if (packet.getFieldValues().size() > 1) {
-                    createDDL = packet.getFieldValues().get(1);
-                    tableMetaFromDB.setFields(TableMetaCache.parseTableMeta(schema, table, packet));
-                }
-            } catch (IOException e1) {
-                if (e.getMessage().contains("errorNumber=1146")) {
-                    logger.error("table not exist in db , pls check :" + getFullName(schema, table) + " , mem : "
-                            + tableMetaFromMem);
-                    return false;
-                }
-                throw new CanalParseException(e);
-            }
-        }
-        boolean result = compareTableMeta(tableMetaFromMem, tableMetaFromDB);
-        if (!result) {
-            logger.error("pls submit github issue, show create table ddl:" + createDDL + " , compare failed . \n db : "
-                    + tableMetaFromDB + " \n mem : " + tableMetaFromMem);
-        }
-        return result;
-    }
-
-    @SuppressWarnings("deprecation")
     private EntryPosition buildMemFromSnapshot(EntryPosition position) {
         try {
             MetaSnapshotDO snapshotDO = metaSnapshotDAO.findByTimestamp(destination, position.getTimestamp());
@@ -369,16 +459,23 @@ public class DatabaseTableMeta implements TableMetaTSDB {
                 return null;
             }
             String binlogFile = snapshotDO.getBinlogFile();
-            Long binlogOffest = snapshotDO.getBinlogOffest();
+            Long binlogOffset = snapshotDO.getBinlogOffset();
             String binlogMasterId = snapshotDO.getBinlogMasterId();
             Long binlogTimestamp = snapshotDO.getBinlogTimestamp();
-            EntryPosition snapshotPosition = new EntryPosition(binlogFile, binlogOffest == null ? 0L : binlogOffest, binlogTimestamp == null ? 0L : binlogTimestamp, Long.valueOf(binlogMasterId == null ? "-2" : binlogMasterId));
+            EntryPosition snapshotPosition = new EntryPosition(
+                    binlogFile,
+                    binlogOffset == null ? 0L : binlogOffset,
+                    binlogTimestamp == null ? 0L : binlogTimestamp,
+                    Long.valueOf(binlogMasterId == null ? "-2" : binlogMasterId)
+            );
             // data存储为Map<String,String>，每个分库一套建表
             String sqlData = snapshotDO.getData();
             JSONObject jsonObj = JSON.parseObject(sqlData);
             for (Map.Entry entry : jsonObj.entrySet()) {
+                String schema = Objects.toString(entry.getKey(), StringUtils.EMPTY);
+                String ddl = Objects.toString(entry.getValue(), StringUtils.EMPTY);
                 // 记录到内存
-                if (!memoryTableMeta.apply(snapshotPosition, ObjectUtils.toString(entry.getKey()), ObjectUtils.toString(entry.getValue()), null)) {
+                if (!memoryTableMeta.apply(snapshotPosition, schema, ddl, null)) {
                     return null;
                 }
             }
@@ -388,6 +485,9 @@ public class DatabaseTableMeta implements TableMetaTSDB {
         }
     }
 
+    /**
+     * 从数据库加载表结构历史到内存
+     */
     private boolean applyHistoryOnMemory(EntryPosition position, EntryPosition rollbackPosition) {
         try {
             List<MetaHistoryDO> metaHistoryDOList = metaHistoryDAO.findByTimestamp(destination, position.getTimestamp(), rollbackPosition.getTimestamp());
@@ -396,12 +496,12 @@ public class DatabaseTableMeta implements TableMetaTSDB {
             }
             for (MetaHistoryDO metaHistoryDO : metaHistoryDOList) {
                 String binlogFile = metaHistoryDO.getBinlogFile();
-                Long binlogOffest = metaHistoryDO.getBinlogOffest();
+                Long binlogOffset = metaHistoryDO.getBinlogOffset();
                 String binlogMasterId = metaHistoryDO.getBinlogMasterId();
                 Long binlogTimestamp = metaHistoryDO.getBinlogTimestamp();
                 String useSchema = metaHistoryDO.getUseSchema();
                 String sqlData = metaHistoryDO.getSqlText();
-                EntryPosition snapshotPosition = new EntryPosition(binlogFile, binlogOffest == null ? 0L : binlogOffest, binlogTimestamp == null ? 0L : binlogTimestamp, Long.valueOf(binlogMasterId == null ? "-2" : binlogMasterId));
+                EntryPosition snapshotPosition = new EntryPosition(binlogFile, binlogOffset == null ? 0L : binlogOffset, binlogTimestamp == null ? 0L : binlogTimestamp, Long.valueOf(binlogMasterId == null ? "-2" : binlogMasterId));
                 // 如果是同一秒内,对比一下history的位点，如果比期望的位点要大，忽略之
                 if (snapshotPosition.getTimestamp() > rollbackPosition.getTimestamp()) {
                     continue;
@@ -423,24 +523,23 @@ public class DatabaseTableMeta implements TableMetaTSDB {
         return '`' + schema + '`' + '.' + '`' + table + '`';
     }
 
-    public static boolean compareTableMeta(TableMeta source, TableMeta target) {
+    /**
+     * 比较两个 TableMeta 是否一致
+     */
+    private static boolean compareTableMeta(TableMeta source, TableMeta target) {
         if (!StringUtils.equalsIgnoreCase(source.getSchema(), target.getSchema())) {
             return false;
         }
-
         if (!StringUtils.equalsIgnoreCase(source.getTable(), target.getTable())) {
             return false;
         }
-
         List<FieldMeta> sourceFields = source.getFields();
         List<FieldMeta> targetFields = target.getFields();
         if (sourceFields.size() != targetFields.size()) {
             return false;
         }
-
         /*
          * MySQL DDL的一些默认行为:
-         *
          * <pre>
          * 1. Timestamp类型的列在第一次添加时，未指定默认值会默认为CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
          * 2. Timestamp类型的列在第二次时，必须指定默认值
@@ -448,7 +547,7 @@ public class DatabaseTableMeta implements TableMetaTSDB {
          * 4. 部分数据类型是synonyms，实际show create table时会转成对应类型
          * 5. 非BLOB和TEXT类型在默认未指定NULL、NOT NULL时，默认default null
          * 6. 在列变更时，不仅变更列名数据类型，同时各个约束中列名也会变更，同时如果约束中包含key length，则变更后的数据类型不应违背key length的约束（有长度的应大于key length；BLOB、TEXT应有key length；可以在存在key length情况下变更为无key length的数据类型，约束中key length忽略；等等）
-         * 7. 字符集每列（char类、eumn、set）默认保存，指定使用指定的，未指定使用表默认的，不受修改表默认字符集而改变，同表默认时，字符集显示省略
+         * 7. 字符集每列（char类、enum、set）默认保存，指定使用指定的，未指定使用表默认的，不受修改表默认字符集而改变，同表默认时，字符集显示省略
          * 8. 新建表默认innodb引擎，latin1字符集
          * 9. BLOB、TEXT会根据给定长度自动转换为对应的TINY、MEDIUM，LONG类型，长度和字符集也有关
          * 10. unique约束在没有指定索引名是非幂等的，会自动以约束索引第一个列名称命名，同时以_2,_3这种形式添加后缀
@@ -460,11 +559,9 @@ public class DatabaseTableMeta implements TableMetaTSDB {
             if (!StringUtils.equalsIgnoreCase(sourceField.getColumnName(), targetField.getColumnName())) {
                 return false;
             }
-            // if (!StringUtils.equalsIgnoreCase(sourceField.getColumnType(),
-            // targetField.getColumnType())) {
-            // return false;
+            // if (!StringUtils.equalsIgnoreCase(sourceField.getColumnType(), targetField.getColumnType())) {
+            //     return false;
             // }
-
             // https://github.com/alibaba/canal/issues/1100
             // 支持一下 int vs int(10)
             if ((sourceField.isUnsigned() && !targetField.isUnsigned())
@@ -476,26 +573,24 @@ public class DatabaseTableMeta implements TableMetaTSDB {
             String sign = sourceField.isUnsigned() ? "unsigned" : "signed";
             sourceColumnType = StringUtils.removeEndIgnoreCase(sourceColumnType, sign).trim();
             targetColumnType = StringUtils.removeEndIgnoreCase(targetColumnType, sign).trim();
-            boolean columnTypeCompare = false;
-            columnTypeCompare |= StringUtils.containsIgnoreCase(sourceColumnType, targetColumnType);
+            boolean columnTypeCompare;
+            columnTypeCompare = StringUtils.containsIgnoreCase(sourceColumnType, targetColumnType);
             columnTypeCompare |= StringUtils.containsIgnoreCase(targetColumnType, sourceColumnType);
             if (!columnTypeCompare) {
                 // 去掉精度参数再对比一次
                 sourceColumnType = synonymsType(StringUtils.substringBefore(sourceColumnType, "(")).trim();
                 targetColumnType = synonymsType(StringUtils.substringBefore(targetColumnType, "(")).trim();
-                columnTypeCompare |= StringUtils.containsIgnoreCase(sourceColumnType, targetColumnType);
+                columnTypeCompare = StringUtils.containsIgnoreCase(sourceColumnType, targetColumnType);
                 columnTypeCompare |= StringUtils.containsIgnoreCase(targetColumnType, sourceColumnType);
                 if (!columnTypeCompare) {
                     return false;
                 }
             }
-
-            // if (!StringUtils.equalsIgnoreCase(sourceField.getDefaultValue(),
-            // targetField.getDefaultValue())) {
-            // return false;
+            // if (!StringUtils.equalsIgnoreCase(sourceField.getDefaultValue(), targetField.getDefaultValue())) {
+            //     return false;
             // }
-
             // BLOB, TEXT, GEOMETRY or JSON默认都是nullable，可以忽略比较，但比较了也是对齐
+            // noinspection StatementWithEmptyBody (压制IDE警告)
             if (StringUtils.containsIgnoreCase(sourceColumnType, "timestamp") || StringUtils.containsIgnoreCase(targetColumnType, "timestamp")) {
                 // timestamp可能会加default current_timestamp默认值,忽略对比nullable
             } else {
@@ -531,7 +626,6 @@ public class DatabaseTableMeta implements TableMetaTSDB {
         } else if (StringUtils.equalsIgnoreCase(originType, "real") || StringUtils.equalsIgnoreCase(originType, "double precision")) {
             return "double";
         }
-
         // BLOB、TEXT会根据给定长度自动转换为对应的TINY、MEDIUM，LONG类型，长度和字符集也有关，统一按照blob对比
         if (StringUtils.equalsIgnoreCase(originType, "tinyblob") || StringUtils.equalsIgnoreCase(originType, "mediumblob") || StringUtils.equalsIgnoreCase(originType, "longblob")) {
             return "blob";
@@ -541,68 +635,23 @@ public class DatabaseTableMeta implements TableMetaTSDB {
         return originType;
     }
 
-    private int snapshotExpire(int expireTimestamp) {
-        return metaSnapshotDAO.deleteByTimestamp(destination, expireTimestamp);
-    }
-
-    public void setConnection(MysqlConnection connection) {
-        this.connection = connection;
-    }
-
-    public void setFilter(CanalEventFilter filter) {
-        this.filter = filter;
-    }
-
-    public MetaHistoryDAO getMetaHistoryDAO() {
-        return metaHistoryDAO;
-    }
-
-    public void setMetaHistoryDAO(MetaHistoryDAO metaHistoryDAO) {
-        this.metaHistoryDAO = metaHistoryDAO;
-    }
-
-    public MetaSnapshotDAO getMetaSnapshotDAO() {
-        return metaSnapshotDAO;
-    }
-
-    public void setMetaSnapshotDAO(MetaSnapshotDAO metaSnapshotDAO) {
-        this.metaSnapshotDAO = metaSnapshotDAO;
-    }
-
-    public void setBlackFilter(CanalEventFilter blackFilter) {
-        this.blackFilter = blackFilter;
-    }
-
-    public void setFieldFilterMap(Map<String, List<String>> fieldFilterMap) {
-        this.fieldFilterMap = fieldFilterMap;
-    }
-
-    public void setFieldBlackFilterMap(Map<String, List<String>> fieldBlackFilterMap) {
-        this.fieldBlackFilterMap = fieldBlackFilterMap;
-    }
-
-    public int getSnapshotInterval() {
-        return snapshotInterval;
-    }
-
-    public void setSnapshotInterval(int snapshotInterval) {
-        this.snapshotInterval = snapshotInterval;
-    }
-
-    public int getSnapshotExpire() {
-        return snapshotExpire;
-    }
-
-    public void setSnapshotExpire(int snapshotExpire) {
-        this.snapshotExpire = snapshotExpire;
-    }
-
-    public MysqlConnection getConnection() {
-        return connection;
-    }
-
-    public boolean isUkDuplicateException(Throwable t) {
-        // 违反外键约束时也抛出这种异常，所以这里还要判断包含字符串Duplicate entry
+    /**
+     * 违反外键约束时也抛出这种异常，所以这里还要判断包含字符串Duplicate entry
+     */
+    private boolean isUkDuplicateException(Throwable t) {
         return pattern.matcher(t.getMessage()).find() || h2Pattern.matcher(t.getMessage()).find();
+    }
+
+
+    @SuppressWarnings("unused")
+    public void setFieldFilterMap(Map<String, List<String>> fieldFilterMap) {
+        // TODO 删除
+//        this.fieldFilterMap = fieldFilterMap;
+    }
+
+    @SuppressWarnings("unused")
+    public void setFieldBlackFilterMap(Map<String, List<String>> fieldBlackFilterMap) {
+        // TODO 删除
+//        this.fieldBlackFilterMap = fieldBlackFilterMap;
     }
 }

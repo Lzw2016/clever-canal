@@ -18,9 +18,9 @@ public interface ErosaConnection {
     /**
      * 用于快速数据查找,和dump的区别在于，seek会只给出部分的数据
      */
-    void seek(String binlogfilename, Long binlogPosition, String gtid, SinkFunction func) throws IOException;
+    void seek(String binlogFileName, Long binlogPosition, String gtid, SinkFunction func) throws IOException;
 
-    void dump(String binlogfilename, Long binlogPosition, SinkFunction func) throws IOException;
+    void dump(String binlogFileName, Long binlogPosition, SinkFunction func) throws IOException;
 
     void dump(long timestamp, SinkFunction func) throws IOException;
 
@@ -31,7 +31,7 @@ public interface ErosaConnection {
 
     // -------------
 
-    void dump(String binlogfilename, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException;
+    void dump(String binlogFileName, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException;
 
     void dump(long timestamp, MultiStageCoprocessor coprocessor) throws IOException;
 

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings({"WeakerAccess"})
 public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMetaManager {
     /**
-     * 数据源标识(destination) --> 客户端标识集合(List<ClientIdentity>)
+     * 通道名称(destination) --> 客户端标识集合(List<ClientIdentity>)
      */
     protected Map<String, List<ClientIdentity>> destinations;
     /**

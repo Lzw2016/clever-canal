@@ -59,7 +59,7 @@ public class LocalBinLogConnection implements ErosaConnection {
     public void disconnect() {
         this.running = false;
         if (this.binlogs != null) {
-            this.binlogs.destory();
+            this.binlogs.destroy();
         }
         this.binlogs = null;
         this.running = false;
@@ -69,16 +69,16 @@ public class LocalBinLogConnection implements ErosaConnection {
         return running;
     }
 
-    public void seek(String binlogfilename, Long binlogPosition, String gtid, SinkFunction func) {
+    public void seek(String binlogFileName, Long binlogPosition, String gtid, SinkFunction func) {
     }
 
-    public void dump(String binlogfilename, Long binlogPosition, SinkFunction func) throws IOException {
-        File current = new File(directory, binlogfilename);
+    public void dump(String binlogFileName, Long binlogPosition, SinkFunction func) throws IOException {
+        File current = new File(directory, binlogFileName);
         try (FileLogFetcher fetcher = new FileLogFetcher(bufferSize)) {
             LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
             LogContext context = new LogContext();
             fetcher.open(current, binlogPosition);
-            context.setLogPosition(new LogPosition(binlogfilename, binlogPosition));
+            context.setLogPosition(new LogPosition(binlogFileName, binlogPosition));
             while (running) {
                 boolean needContinue = true;
                 LogEvent event;

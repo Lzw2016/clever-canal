@@ -1,106 +1,54 @@
 package org.clever.canal.parse.inbound.mysql.tsdb.dao;
 
+import lombok.Data;
+
+import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("unused")
-public class MetaSnapshotDO {
-
+/**
+ * 表结构记录表快照表
+ */
+@Data
+public class MetaSnapshotDO implements Serializable {
+    /**
+     * 主键
+     */
     private Long id;
+    /**
+     * 创建时间
+     */
     private Date gmtCreate;
+    /**
+     * 修改时间
+     */
     private Date gmtModified;
+    /**
+     * 通道名称
+     */
     private String destination;
+    /**
+     * binlog文件名
+     */
     private String binlogFile;
-    private Long binlogOffest;
+    /**
+     * binlog偏移量
+     */
+    private Long binlogOffset;
+    /**
+     * binlog节点id
+     */
     private String binlogMasterId;
+    /**
+     * binlog应用的时间戳
+     */
     private Long binlogTimestamp;
+    /**
+     * 表结构数据
+     */
     private String data;
+    /**
+     * 额外的扩展信息
+     */
     private String extra;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
-
-    public String getBinlogFile() {
-        return binlogFile;
-    }
-
-    public void setBinlogFile(String binlogFile) {
-        this.binlogFile = binlogFile;
-    }
-
-    public Long getBinlogOffest() {
-        return binlogOffest;
-    }
-
-    public void setBinlogOffest(Long binlogOffest) {
-        this.binlogOffest = binlogOffest;
-    }
-
-    public String getBinlogMasterId() {
-        return binlogMasterId;
-    }
-
-    public void setBinlogMasterId(String binlogMasterId) {
-        this.binlogMasterId = binlogMasterId;
-    }
-
-    public Long getBinlogTimestamp() {
-        return binlogTimestamp;
-    }
-
-    public void setBinlogTimestamp(Long binlogTimestamp) {
-        this.binlogTimestamp = binlogTimestamp;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    @Override
-    public String toString() {
-        return "MetaSnapshotDO [id=" + id + ", gmtCreate=" + gmtCreate + ", gmtModified=" + gmtModified
-                + ", destination=" + destination + ", binlogFile=" + binlogFile + ", binlogOffest=" + binlogOffest
-                + ", binlogMasterId=" + binlogMasterId + ", binlogTimestamp=" + binlogTimestamp + ", data=" + data
-                + ", extra=" + extra + "]";
-    }
 }

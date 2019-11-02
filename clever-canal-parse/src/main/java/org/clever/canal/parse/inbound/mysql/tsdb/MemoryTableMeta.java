@@ -13,6 +13,7 @@ import com.alibaba.fastsql.sql.repository.Schema;
 import com.alibaba.fastsql.sql.repository.SchemaObject;
 import com.alibaba.fastsql.sql.repository.SchemaRepository;
 import com.alibaba.fastsql.util.JdbcConstants;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.parse.inbound.TableMeta;
 import org.clever.canal.parse.inbound.TableMeta.FieldMeta;
@@ -30,26 +31,39 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 基于DDL维护的内存表结构
  */
-@SuppressWarnings("WeakerAccess")
 public class MemoryTableMeta implements TableMetaTSDB {
-
     private Logger logger = LoggerFactory.getLogger(MemoryTableMeta.class);
-    private Map<List<String>, TableMeta> tableMetas = new ConcurrentHashMap<>();
+
+    @Getter
     private SchemaRepository repository = new SchemaRepository(JdbcConstants.MYSQL);
+    /**
+     * 保存数据
+     */
+    private Map<List<String>, TableMeta> tableMetas = new ConcurrentHashMap<>();
 
     public MemoryTableMeta() {
     }
 
+    /**
+     * 初始化
+     */
     @Override
     public boolean init(String destination) {
         return true;
     }
 
+    /**
+     * 销毁资源
+     */
     @Override
-    public void destory() {
+    public void destroy() {
         tableMetas.clear();
     }
 
+    /**
+     * 添加ddl到时间序列库中
+     */
+    @Override
     public boolean apply(EntryPosition position, String schema, String ddl, String extra) {
         tableMetas.clear();
         synchronized (this) {
@@ -67,19 +81,15 @@ public class MemoryTableMeta implements TableMetaTSDB {
                     repository.console(ddl);
                 }
             } catch (Throwable e) {
-                logger.warn("parse faield : " + ddl, e);
+                logger.warn("parse failed : " + ddl, e);
             }
         }
-
-        // TableMeta meta = find("tddl5_00", "ab");
-        // if (meta != null) {
-        // repository.setDefaultSchema("tddl5_00");
-        // System.out.println(repository.console("show create table tddl5_00.ab"));
-        // System.out.println(repository.console("show columns from tddl5_00.ab"));
-        // }
         return true;
     }
 
+    /**
+     * 获取当前的表结构
+     */
     @Override
     public TableMeta find(String schema, String table) {
         List<String> keys = Arrays.asList(schema, table);
@@ -118,13 +128,19 @@ public class MemoryTableMeta implements TableMetaTSDB {
         return tableMeta;
     }
 
+    /**
+     * 回滚到指定位点的表结构
+     */
     @Override
     public boolean rollback(EntryPosition position) {
         throw new RuntimeException("not support for memory");
     }
 
+    /**
+     * 生成快照内容
+     */
     public Map<String, String> snapshot() {
-        Map<String, String> schemaDdls = new HashMap<>();
+        Map<String, String> schemaDdlList = new HashMap<>();
         for (Schema schema : repository.getSchemas()) {
             StringBuffer data = new StringBuffer(4 * 1024);
             for (String table : schema.showTables()) {
@@ -132,9 +148,9 @@ public class MemoryTableMeta implements TableMetaTSDB {
                 schemaObject.getStatement().output(data);
                 data.append("; \n");
             }
-            schemaDdls.put(schema.getName(), data.toString());
+            schemaDdlList.put(schema.getName(), data.toString());
         }
-        return schemaDdls;
+        return schemaDdlList;
     }
 
     private TableMeta parse(SQLCreateTableStatement statement) {
@@ -183,7 +199,7 @@ public class MemoryTableMeta implements TableMetaTSDB {
                     dataTypStr.append(" unsigned");
                 }
                 if (dataTypeImpl.isZerofill()) {
-                    // mysql default behaiver
+                    // mysql default behavior
                     // 如果设置了zerofill，自动给列添加unsigned属性
                     if (!dataTypeImpl.isUnsigned()) {
                         dataTypStr.append(" unsigned");
@@ -251,9 +267,5 @@ public class MemoryTableMeta implements TableMetaTSDB {
         } else {
             return sqlName.toString();
         }
-    }
-
-    public SchemaRepository getRepository() {
-        return repository;
     }
 }

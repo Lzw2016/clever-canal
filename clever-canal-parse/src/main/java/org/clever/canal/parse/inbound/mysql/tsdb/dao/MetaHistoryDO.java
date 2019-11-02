@@ -1,143 +1,69 @@
 package org.clever.canal.parse.inbound.mysql.tsdb.dao;
 
+import lombok.Data;
+
+import java.io.Serializable;
 import java.util.Date;
 
-@SuppressWarnings("unused")
-public class MetaHistoryDO {
-
+/**
+ * 表结构变化明细表
+ */
+@Data
+public class MetaHistoryDO implements Serializable {
+    /**
+     * 主键
+     */
     private Long id;
+    /**
+     * 创建时间
+     */
     private Date gmtCreate;
+    /**
+     * 修改时间
+     */
     private Date gmtModified;
+    /**
+     * 通道名称
+     */
     private String destination;
+    /**
+     * binlog文件名
+     */
     private String binlogFile;
-    private Long binlogOffest;
+    /**
+     * binlog偏移量
+     */
+    private Long binlogOffset;
+    /**
+     * binlog节点id
+     */
     private String binlogMasterId;
+    /**
+     * binlog应用的时间戳
+     */
     private Long binlogTimestamp;
+    /**
+     * 执行sql时对应的schema
+     */
     private String useSchema;
+    /**
+     * 对应的schema
+     */
     private String sqlSchema;
+    /**
+     * 对应的table
+     */
     private String sqlTable;
+    /**
+     * 执行的sql
+     */
     private String sqlText;
+    /**
+     * sql类型
+     */
     private String sqlType;
+    /**
+     * 额外的扩展信息
+     */
     private String extra;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
-
-    public String getBinlogFile() {
-        return binlogFile;
-    }
-
-    public void setBinlogFile(String binlogFile) {
-        this.binlogFile = binlogFile;
-    }
-
-    public Long getBinlogOffest() {
-        return binlogOffest;
-    }
-
-    public void setBinlogOffest(Long binlogOffest) {
-        this.binlogOffest = binlogOffest;
-    }
-
-    public String getBinlogMasterId() {
-        return binlogMasterId;
-    }
-
-    public void setBinlogMasterId(String binlogMasterId) {
-        this.binlogMasterId = binlogMasterId;
-    }
-
-    public Long getBinlogTimestamp() {
-        return binlogTimestamp;
-    }
-
-    public void setBinlogTimestamp(Long binlogTimestamp) {
-        this.binlogTimestamp = binlogTimestamp;
-    }
-
-    public String getUseSchema() {
-        return useSchema;
-    }
-
-    public void setUseSchema(String useSchema) {
-        this.useSchema = useSchema;
-    }
-
-    public String getExtra() {
-        return extra;
-    }
-
-    public void setExtra(String extra) {
-        this.extra = extra;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getSqlSchema() {
-        return sqlSchema;
-    }
-
-    public void setSqlSchema(String sqlSchema) {
-        this.sqlSchema = sqlSchema;
-    }
-
-    public String getSqlTable() {
-        return sqlTable;
-    }
-
-    public void setSqlTable(String sqlTable) {
-        this.sqlTable = sqlTable;
-    }
-
-    public String getSqlText() {
-        return sqlText;
-    }
-
-    public void setSqlText(String sqlText) {
-        this.sqlText = sqlText;
-    }
-
-    public String getSqlType() {
-        return sqlType;
-    }
-
-    public void setSqlType(String sqlType) {
-        this.sqlType = sqlType;
-    }
-
-    @Override
-    public String toString() {
-        return "MetaHistoryDO [id=" + id + ", gmtCreate=" + gmtCreate + ", gmtModified=" + gmtModified
-                + ", destination=" + destination + ", binlogFile=" + binlogFile + ", binlogOffest=" + binlogOffest
-                + ", binlogMasterId=" + binlogMasterId + ", binlogTimestamp=" + binlogTimestamp + ", useSchema="
-                + useSchema + ", sqlSchema=" + sqlSchema + ", sqlTable=" + sqlTable + ", sqlText=" + sqlText
-                + ", sqlType=" + sqlType + ", extra=" + extra + "]";
-    }
 }

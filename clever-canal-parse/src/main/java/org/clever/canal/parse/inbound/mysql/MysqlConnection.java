@@ -119,10 +119,10 @@ public class MysqlConnection implements ErosaConnection {
     /**
      * 加速主备切换时的查找速度，做一些特殊优化，比如只解析事务头或者尾
      */
-    public void seek(String binlogfilename, Long binlogPosition, String gtid, SinkFunction func) throws IOException {
+    public void seek(String binlogFileName, Long binlogPosition, String gtid, SinkFunction func) throws IOException {
         updateSettings();
         loadBinlogChecksum();
-        sendBinlogDump(binlogfilename, binlogPosition);
+        sendBinlogDump(binlogFileName, binlogPosition);
         DirectLogFetcher fetcher = new DirectLogFetcher(connector.getReceiveBufferSize());
         fetcher.start(connector.getChannel());
         LogDecoder decoder = new LogDecoder();
@@ -154,11 +154,11 @@ public class MysqlConnection implements ErosaConnection {
         }
     }
 
-    public void dump(String binlogfilename, Long binlogPosition, SinkFunction func) throws IOException {
+    public void dump(String binlogFileName, Long binlogPosition, SinkFunction func) throws IOException {
         updateSettings();
         loadBinlogChecksum();
         sendRegisterSlave();
-        sendBinlogDump(binlogfilename, binlogPosition);
+        sendBinlogDump(binlogFileName, binlogPosition);
         DirectLogFetcher fetcher = new DirectLogFetcher(connector.getReceiveBufferSize());
         fetcher.start(connector.getChannel());
         LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
@@ -212,11 +212,11 @@ public class MysqlConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(String binlogfilename, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException {
+    public void dump(String binlogFileName, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException {
         updateSettings();
         loadBinlogChecksum();
         sendRegisterSlave();
-        sendBinlogDump(binlogfilename, binlogPosition);
+        sendBinlogDump(binlogFileName, binlogPosition);
         ((MysqlMultiStageCoprocessor) coprocessor).setConnection(this);
         ((MysqlMultiStageCoprocessor) coprocessor).setBinlogChecksum(binlogChecksum);
         try (DirectLogFetcher fetcher = new DirectLogFetcher(connector.getReceiveBufferSize())) {

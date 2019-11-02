@@ -36,7 +36,7 @@ public class MetaSnapshotDAO extends MetaBaseDAO {
     /**
      * 删除interval秒之前的数据
      */
-    public Integer deleteByTimestamp(String destination, int interval) {
+    public Integer deleteByTimestamp(String destination, long interval) {
         HashMap<String, Object> params = new HashMap<>();
         long timestamp = System.currentTimeMillis() - interval * 1000;
         params.put("timestamp", timestamp);

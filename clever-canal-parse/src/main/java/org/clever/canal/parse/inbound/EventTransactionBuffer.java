@@ -16,13 +16,15 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings({"WeakerAccess", "DuplicateBranchesInSwitch", "unused"})
 public class EventTransactionBuffer extends AbstractCanalLifeCycle {
 
-    private static final long INIT_SQEUENCE = -1;
+    private static final long INIT_SEQUENCE = -1;
     private int bufferSize = 1024;
     private int indexMask;
     private CanalEntry.Entry[] entries;
 
-    private AtomicLong putSequence = new AtomicLong(INIT_SQEUENCE);     // 代表当前put操作最后一次写操作发生的位置
-    private AtomicLong flushSequence = new AtomicLong(INIT_SQEUENCE);   // 代表满足flush条件后最后一次数据flush的时间
+    // 代表当前put操作最后一次写操作发生的位置
+    private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE);
+    // 代表满足flush条件后最后一次数据flush的时间
+    private AtomicLong flushSequence = new AtomicLong(INIT_SEQUENCE);
 
     private TransactionFlushCallback flushCallback;
 
@@ -44,14 +46,14 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
     }
 
     public void stop() throws CanalStoreException {
-        putSequence.set(INIT_SQEUENCE);
-        flushSequence.set(INIT_SQEUENCE);
+        putSequence.set(INIT_SEQUENCE);
+        flushSequence.set(INIT_SEQUENCE);
         entries = null;
         super.stop();
     }
 
-    public void add(List<CanalEntry.Entry> entrys) throws InterruptedException {
-        for (CanalEntry.Entry entry : entrys) {
+    public void add(List<CanalEntry.Entry> entryList) throws InterruptedException {
+        for (CanalEntry.Entry entry : entryList) {
             add(entry);
         }
     }
@@ -59,7 +61,8 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
     public void add(CanalEntry.Entry entry) throws InterruptedException {
         switch (entry.getEntryType()) {
             case TRANSACTION_BEGIN:
-                flush();// 刷新上一次的数据
+                // 刷新上一次的数据
+                flush();
                 put(entry);
                 break;
             case TRANSACTION_END:
@@ -85,8 +88,8 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
     }
 
     public void reset() {
-        putSequence.set(INIT_SQEUENCE);
-        flushSequence.set(INIT_SQEUENCE);
+        putSequence.set(INIT_SEQUENCE);
+        flushSequence.set(INIT_SEQUENCE);
     }
 
     private void put(CanalEntry.Entry data) throws InterruptedException {
@@ -98,8 +101,10 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
             entries[getIndex(next)] = data;
             putSequence.set(next);
         } else {
-            flush();    // buffer区满了，刷新一下
-            put(data);  // 继续加一下新数据
+            // buffer区满了，刷新一下
+            flush();
+            // 继续加一下新数据
+            put(data);
         }
     }
 
@@ -112,7 +117,8 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
                 transaction.add(this.entries[getIndex(next)]);
             }
             flushCallback.flush(transaction);
-            flushSequence.set(end); // flush成功后，更新flush位置
+            // flush成功后，更新flush位置
+            flushSequence.set(end);
         }
     }
 
@@ -130,8 +136,8 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
         }
     }
 
-    private int getIndex(long sequcnce) {
-        return (int) sequcnce & indexMask;
+    private int getIndex(long sequence) {
+        return (int) sequence & indexMask;
     }
 
     private boolean isDml(EventType eventType) {

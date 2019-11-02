@@ -25,7 +25,7 @@ public class EntryPosition extends TimePosition implements Comparable<EntryPosit
     private Long position;
     /**
      * Mysql Server Id (记录一下位点对应的serverId)<br />
-     * add by agapple at 2016-06-28
+     * add at 2016-06-28
      */
     private Long serverId = null;
     /**

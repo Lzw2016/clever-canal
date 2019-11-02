@@ -148,7 +148,7 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
 
     public void stop() throws CanalParseException {
         if (enableTsdb) {
-            tableMetaTSDBFactory.destory(destination);
+            tableMetaTSDBFactory.destroy(destination);
             tableMetaTSDB = null;
         }
         super.stop();

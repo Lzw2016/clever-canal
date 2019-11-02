@@ -88,7 +88,7 @@ public class Test01 {
         ClientIdentity clientIdentity = new ClientIdentity();
         clientIdentity.setClientId((short) 12);
         clientIdentity.setDestination("test");
-        clientIdentity.setFilter("test\\.demo_store1");
+        clientIdentity.setFilter("test\\.demo_store");
 
         canalServerWithEmbedded.subscribe(clientIdentity);
 

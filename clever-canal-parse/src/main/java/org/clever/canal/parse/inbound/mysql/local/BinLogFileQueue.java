@@ -43,13 +43,6 @@ public class BinLogFileQueue {
                 new TimerTask() {
                     public void run() {
                         try {
-                            // File errorFile = new File(BinLogFileQueue.this.directory,
-                            // errorFileName);
-                            // if (errorFile.isFile() && errorFile.exists()) {
-                            // String text = StringUtils.join(IOUtils.readLines(new
-                            // FileInputStream(errorFile)), "\n");
-                            // exception = new CanalParseException(text);
-                            // }
                             List<File> files = listBinlogFiles();
                             for (File file : files) {
                                 offer(file);
@@ -167,7 +160,7 @@ public class BinLogFileQueue {
         return new ArrayList<>(binlogs);
     }
 
-    public void destory() {
+    public void destroy() {
         try {
             lock.lockInterruptibly();
             timer.cancel();

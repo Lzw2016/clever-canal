@@ -23,7 +23,7 @@ import org.clever.canal.parse.inbound.mysql.LocalBinlogEventParser;
 import org.clever.canal.parse.inbound.mysql.MysqlEventParser;
 import org.clever.canal.parse.inbound.mysql.rds.RdsBinlogEventParserProxy;
 import org.clever.canal.parse.index.CanalLogPositionManager;
-import org.clever.canal.parse.index.MemoryLogPositionManager;
+import org.clever.canal.parse.index.MetaLogPositionManager;
 import org.clever.canal.parse.support.AuthenticationInfo;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.sink.entry.EntryEventSink;
@@ -126,7 +126,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
     }
 
     protected void initMetaManager() {
-        metaManager = new FileMixedMetaManager(new File("./meta-manager"), "meta.dat.json", parameters.getMetaFileFlushPeriod());
+        metaManager = new FileMixedMetaManager(new File("./meta-manager"), parameters.getMetaFileFlushPeriod());
 //        TODO lzw
         logger.info("init metaManager begin...");
 //        MetaMode mode = parameters.getMetaMode();
@@ -419,7 +419,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         logger.info("init logPositionPersistManager begin...");
         IndexMode indexMode = parameters.getIndexMode();
         CanalLogPositionManager logPositionManager = null;
-        logPositionManager = new MemoryLogPositionManager();
+        logPositionManager = new MetaLogPositionManager(metaManager);
 //        TODO lzw
 //        if (indexMode.isMemory()) {
 //            logPositionManager = new MemoryLogPositionManager();

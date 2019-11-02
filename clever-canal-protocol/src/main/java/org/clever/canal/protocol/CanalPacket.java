@@ -3222,7 +3222,7 @@ public final class CanalPacket {
 
     /**
      * <pre>
-     * 数据源名称
+     * 通道名称
      * </pre>
      *
      * <code>string destination = 5;</code>
@@ -3231,7 +3231,7 @@ public final class CanalPacket {
     java.lang.String getDestination();
     /**
      * <pre>
-     * 数据源名称
+     * 通道名称
      * </pre>
      *
      * <code>string destination = 5;</code>
@@ -3588,7 +3588,7 @@ public final class CanalPacket {
     private volatile java.lang.Object destination_;
     /**
      * <pre>
-     * 数据源名称
+     * 通道名称
      * </pre>
      *
      * <code>string destination = 5;</code>
@@ -3608,7 +3608,7 @@ public final class CanalPacket {
     }
     /**
      * <pre>
-     * 数据源名称
+     * 通道名称
      * </pre>
      *
      * <code>string destination = 5;</code>
@@ -4446,7 +4446,7 @@ public final class CanalPacket {
       private java.lang.Object destination_ = "";
       /**
        * <pre>
-       * 数据源名称
+       * 通道名称
        * </pre>
        *
        * <code>string destination = 5;</code>
@@ -4466,7 +4466,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * 数据源名称
+       * 通道名称
        * </pre>
        *
        * <code>string destination = 5;</code>
@@ -4487,7 +4487,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * 数据源名称
+       * 通道名称
        * </pre>
        *
        * <code>string destination = 5;</code>
@@ -4506,7 +4506,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * 数据源名称
+       * 通道名称
        * </pre>
        *
        * <code>string destination = 5;</code>
@@ -4520,7 +4520,7 @@ public final class CanalPacket {
       }
       /**
        * <pre>
-       * 数据源名称
+       * 通道名称
        * </pre>
        *
        * <code>string destination = 5;</code>

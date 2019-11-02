@@ -104,7 +104,7 @@ message ClientAuth {
     oneof netWriteTimeout_present {
         int32 netWriteTimeout = 4;
     }
-    // 数据源名称
+    // 通道名称
     string destination = 5;
     // 客户端ID
     string clientId = 6;

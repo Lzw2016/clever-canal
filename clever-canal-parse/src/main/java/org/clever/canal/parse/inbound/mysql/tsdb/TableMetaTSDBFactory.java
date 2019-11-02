@@ -10,5 +10,5 @@ public interface TableMetaTSDBFactory {
      */
     TableMetaTSDB build(String destination, String springXml);
 
-    void destory(String destination);
+    void destroy(String destination);
 }

@@ -6,28 +6,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 实现基于failover查找的机制完成meta的操作
+ * 管理binlog消费位置信息(实现二级管理模式)<br />
+ * 一级管理器失败 就使用 二级管理器失败
  *
  * <pre>
- * 应用场景：比如针对内存buffer，出现HA切换，先尝试从内存buffer区中找到lastest position，如果不存在才尝试找一下meta里消费的信息
+ *     实现基于failover查找的机制完成meta的操作
+ *     应用场景：比如针对内存buffer，出现HA切换，先尝试从内存buffer区中找到latest position，如果不存在才尝试找一下meta里消费的信息
  * </pre>
  */
 @SuppressWarnings("unused")
-public class FailbackLogPositionManager extends AbstractLogPositionManager {
+public class FailBackLogPositionManager extends AbstractLogPositionManager {
+    private final static Logger logger = LoggerFactory.getLogger(FailBackLogPositionManager.class);
 
-    private final static Logger logger = LoggerFactory.getLogger(FailbackLogPositionManager.class);
-
+    /**
+     * 一级管理binlog消费位置信息
+     */
     private final CanalLogPositionManager primary;
+    /**
+     * 二级管理binlog消费位置信息
+     */
     private final CanalLogPositionManager secondary;
 
-    public FailbackLogPositionManager(CanalLogPositionManager primary, CanalLogPositionManager secondary) {
+    /**
+     * @param primary   一级管理binlog消费位置信息
+     * @param secondary 二级管理binlog消费位置信息
+     */
+    public FailBackLogPositionManager(CanalLogPositionManager primary, CanalLogPositionManager secondary) {
         if (primary == null) {
             throw new NullPointerException("nul primary LogPositionManager");
         }
         if (secondary == null) {
             throw new NullPointerException("nul secondary LogPositionManager");
         }
-
         this.primary = primary;
         this.secondary = secondary;
     }

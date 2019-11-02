@@ -35,24 +35,30 @@ import java.util.concurrent.TimeUnit;
 public class FileMixedMetaManager extends MemoryMetaManager implements CanalMetaManager {
     private static final Logger logger = LoggerFactory.getLogger(FileMixedMetaManager.class);
 
-    private static final Charset charset = StandardCharsets.UTF_8;
+    /**
+     * 文件读写使用的编码
+     */
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+    /**
+     * 空位置数据
+     */
     private static final Position Null_Cursor = new Position() {
     };
+    /**
+     * 文件名称 "meta.dat"
+     */
+    private static final String Default_File_Name = "meta.dat.json";
 
     /**
      * 保存文件位置
      */
     private final File dataDir;
     /**
-     * 文件名称 "meta.dat"
-     */
-    private final String fileName;
-    /**
      * 数据从内存写入硬盘时间间隔(单位ms)
      */
     private final long period;
     /**
-     * 管理Meta文件， 数据源名称(destination) ---> meta文件
+     * 管理Meta文件， 通道名称(destination) ---> meta文件
      */
     private Map<String, File> dataFileCaches;
     /**
@@ -65,15 +71,12 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     private Set<ClientIdentity> updateCursorTasks;
 
     /**
-     * @param dataDir  保存文件位置
-     * @param fileName 文件名称
-     * @param period   数据从内存写入硬盘时间间隔(单位ms)
+     * @param dataDir 保存文件位置
+     * @param period  数据从内存写入硬盘时间间隔(单位ms)
      */
-    public FileMixedMetaManager(File dataDir, String fileName, long period) {
+    public FileMixedMetaManager(File dataDir, long period) {
         Assert.notNull(dataDir);
-        Assert.hasText(fileName);
         this.dataDir = dataDir;
-        this.fileName = fileName;
         this.period = period <= 0 ? 1000 : period;
     }
 
@@ -81,7 +84,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
      * @param dataDir 保存文件位置
      */
     public FileMixedMetaManager(File dataDir) {
-        this(dataDir, "meta.dat", 1000);
+        this(dataDir, 1000);
     }
 
     /**
@@ -143,7 +146,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
                             // 移除保存成功的客户端标识
                             updateCursorTasks.remove(clientIdentity);
                         } catch (Throwable e) {
-                            logger.error("period update" + clientIdentity.toString() + " curosr failed!", e);
+                            logger.error("period update" + clientIdentity.toString() + " cursor failed!", e);
                         } finally {
                             MDC.remove("destination");
                         }
@@ -212,7 +215,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     // ============================ helper method ======================
 
     /**
-     * 根据数据源名称(destination)创建文件夹
+     * 根据通道名称(destination)创建文件夹，返回写数据的文件句柄
      */
     private File getDataFile(String destination) {
         File destinationMetaDir = new File(dataDir, destination);
@@ -223,7 +226,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
                 throw new CanalMetaManagerException(e);
             }
         }
-        return new File(destinationMetaDir, fileName);
+        return new File(destinationMetaDir, Default_File_Name);
     }
 
     /**
@@ -236,7 +239,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
             if (!dataFile.exists()) {
                 return null;
             }
-            String json = FileUtils.readFileToString(dataFile, charset.name());
+            String json = FileUtils.readFileToString(dataFile, CHARSET.name());
             return JsonUtils.unmarshalFromString(json, FileMetaInstanceData.class);
         } catch (IOException e) {
             throw new CanalMetaManagerException(e);
@@ -244,7 +247,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     }
 
     /**
-     * 把所有的数据源(destination)对应的Meta数据写入文件
+     * 把所有的通道名称(destination)对应的Meta数据写入文件
      */
     private void flushDataToFile() {
         for (String destination : destinations.keySet()) {
@@ -253,18 +256,18 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     }
 
     /**
-     * 把数据源(destination)对应的Meta数据写入文件
+     * 把通道名称(destination)对应的Meta数据写入文件
      *
-     * @param destination 数据源名称
+     * @param destination 通道名称
      */
     private void flushDataToFile(String destination) {
         flushDataToFile(destination, dataFileCaches.get(destination));
     }
 
     /**
-     * 把数据源(destination)对应的Meta数据写入文件
+     * 把通道(destination)对应的Meta数据写入文件
      *
-     * @param destination 数据源名称
+     * @param destination 通道名称
      * @param dataFile    文件
      */
     private void flushDataToFile(String destination, File dataFile) {
@@ -288,7 +291,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
             }
             String json = JsonUtils.marshalToString(data);
             try {
-                FileUtils.writeStringToFile(dataFile, json, charset);
+                FileUtils.writeStringToFile(dataFile, json, CHARSET);
             } catch (IOException e) {
                 throw new CanalMetaManagerException(e);
             }
@@ -298,7 +301,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     /**
      * 从本地文件加载Meta数据，返回所有的客户端标识
      *
-     * @param destination 数据源名称
+     * @param destination 通道名称
      */
     private List<ClientIdentity> loadClientIdentity(String destination) {
         List<ClientIdentity> result = new ArrayList<>();
@@ -321,7 +324,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     /**
      * 从本地文件加载Meta数据，返回客户端当前位置信息(Position)
      *
-     * @param destination    数据源名称
+     * @param destination    通道名称
      * @param clientIdentity 客户端标识
      */
     private Position loadCursor(String destination, ClientIdentity clientIdentity) {
@@ -390,7 +393,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     @SuppressWarnings({"WeakerAccess"})
     public static class FileMetaInstanceData implements Serializable {
         /**
-         * 数据源名称(destination)
+         * 通道名称(destination)
          */
         private String destination;
         /**

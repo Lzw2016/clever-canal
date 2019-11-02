@@ -11,27 +11,25 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@SuppressWarnings("unused")
+/**
+ * 管理binlog消费位置信息 (基于meta信息管理器实现)
+ */
 public class MetaLogPositionManager extends AbstractLogPositionManager {
-
     private final static Logger logger = LoggerFactory.getLogger(MetaLogPositionManager.class);
 
+    /**
+     * meta信息管理器
+     */
     private final CanalMetaManager metaManager;
 
+    /**
+     * @param metaManager meta信息管理器
+     */
     public MetaLogPositionManager(CanalMetaManager metaManager) {
         if (metaManager == null) {
             throw new NullPointerException("null metaManager");
         }
-
         this.metaManager = metaManager;
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-        if (metaManager.isStart()) {
-            metaManager.stop();
-        }
     }
 
     @Override
@@ -39,6 +37,14 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
         super.start();
         if (!metaManager.isStart()) {
             metaManager.start();
+        }
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        if (metaManager.isStart()) {
+            metaManager.stop();
         }
     }
 
@@ -65,7 +71,6 @@ public class MetaLogPositionManager extends AbstractLogPositionManager {
 
     @Override
     public void persistLogPosition(String destination, LogPosition logPosition) throws CanalParseException {
-        // do nothing
         logger.info("persist LogPosition:{} - {}", destination, logPosition);
     }
 }

@@ -1,8 +1,11 @@
 package org.clever.canal.parse.inbound;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.parse.dbsync.binlog.event.TableMapLogEvent;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +18,25 @@ import java.util.List;
  * 3. unsigned字段
  * </pre>
  */
-@SuppressWarnings("unused")
-public class TableMeta {
-
+@Getter
+@Setter
+public class TableMeta implements Serializable {
+    /**
+     * 数据库 schema 名称
+     */
     private String schema;
+    /**
+     * table 名称
+     */
     private String table;
+    /**
+     * 表结构的DDL语句
+     */
+    private String ddl;
+    /**
+     * 字段信息
+     */
     private List<FieldMeta> fields = new ArrayList<>();
-    private String ddl; // 表结构的DDL语句
 
     public TableMeta() {
     }
@@ -32,69 +47,51 @@ public class TableMeta {
         this.fields = fields;
     }
 
+    /**
+     * ${schema}.${table}
+     */
     public String getFullName() {
         return schema + "." + table;
     }
 
-    public String getSchema() {
-        return schema;
+    /**
+     * 新增字段
+     */
+    public void addFieldMeta(FieldMeta fieldMeta) {
+        this.fields.add(fieldMeta);
     }
 
-    public void setSchema(String schema) {
-        this.schema = schema;
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public List<FieldMeta> getFields() {
-        return fields;
-    }
-
-    public void setFields(List<FieldMeta> fileds) {
-        this.fields = fileds;
-    }
-
+    /**
+     * 获取字段信息
+     *
+     * @param name 字段名
+     */
     public FieldMeta getFieldMetaByName(String name) {
         for (FieldMeta meta : fields) {
             if (meta.getColumnName().equalsIgnoreCase(name)) {
                 return meta;
             }
         }
-        throw new RuntimeException("unknow column : " + name);
+        throw new RuntimeException("unknown column : " + name);
     }
 
+    /**
+     * 获取表的主键字段信息
+     */
     public List<FieldMeta> getPrimaryFields() {
-        List<FieldMeta> primarys = new ArrayList<>();
+        List<FieldMeta> primaryList = new ArrayList<>();
         for (FieldMeta meta : fields) {
             if (meta.isKey()) {
-                primarys.add(meta);
+                primaryList.add(meta);
             }
         }
-        return primarys;
-    }
-
-    public String getDdl() {
-        return ddl;
-    }
-
-    public void setDdl(String ddl) {
-        this.ddl = ddl;
-    }
-
-    public void addFieldMeta(FieldMeta fieldMeta) {
-        this.fields.add(fieldMeta);
+        return primaryList;
     }
 
     @Override
     public String toString() {
         StringBuilder data = new StringBuilder();
-        data.append("TableMeta [schema=").append(schema).append(", table=").append(table).append(", fileds=");
+        data.append("TableMeta [schema=").append(schema).append(", table=").append(table).append(", fields=");
         for (FieldMeta field : fields) {
             data.append("\n\t").append(field.toString());
         }
@@ -102,8 +99,17 @@ public class TableMeta {
         return data.toString();
     }
 
-    @SuppressWarnings({"unused"})
-    public static class FieldMeta {
+    @Getter
+    @Setter
+    public static class FieldMeta implements Serializable {
+
+        private String columnName;
+        private String columnType;
+        private boolean nullable;
+        private boolean key;
+        private String defaultValue;
+        private String extra;
+        private boolean unique;
 
         public FieldMeta() {
         }
@@ -116,72 +122,8 @@ public class TableMeta {
             this.defaultValue = defaultValue;
         }
 
-        private String columnName;
-        private String columnType;
-        private boolean nullable;
-        private boolean key;
-        private String defaultValue;
-        private String extra;
-        private boolean unique;
-
-        public String getColumnName() {
-            return columnName;
-        }
-
-        public void setColumnName(String columnName) {
-            this.columnName = columnName;
-        }
-
-        public String getColumnType() {
-            return columnType;
-        }
-
-        public void setColumnType(String columnType) {
-            this.columnType = columnType;
-        }
-
-        public void setNullable(boolean nullable) {
-            this.nullable = nullable;
-        }
-
-        public String getDefaultValue() {
-            return defaultValue;
-        }
-
-        public void setDefaultValue(String defaultValue) {
-            this.defaultValue = defaultValue;
-        }
-
         public boolean isUnsigned() {
             return StringUtils.containsIgnoreCase(columnType, "unsigned");
-        }
-
-        public boolean isNullable() {
-            return nullable;
-        }
-
-        public boolean isKey() {
-            return key;
-        }
-
-        public void setKey(boolean key) {
-            this.key = key;
-        }
-
-        public String getExtra() {
-            return extra;
-        }
-
-        public void setExtra(String extra) {
-            this.extra = extra;
-        }
-
-        public boolean isUnique() {
-            return unique;
-        }
-
-        public void setUnique(boolean unique) {
-            this.unique = unique;
         }
 
         @Override
