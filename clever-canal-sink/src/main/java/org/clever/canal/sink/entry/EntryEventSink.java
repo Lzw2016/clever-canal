@@ -1,9 +1,10 @@
 package org.clever.canal.sink.entry;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.clever.canal.common.utils.Assert;
 import org.clever.canal.common.utils.CollectionUtils;
 import org.clever.canal.protocol.CanalEntry;
-import org.clever.canal.protocol.CanalEntry.Entry;
 import org.clever.canal.protocol.CanalEntry.EntryType;
 import org.clever.canal.protocol.position.LogIdentity;
 import org.clever.canal.sink.AbstractCanalEventSink;
@@ -25,27 +26,40 @@ import java.util.concurrent.locks.LockSupport;
 /**
  * mysql binlog数据对象输出
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressWarnings({"WeakerAccess"})
 public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry>> implements CanalEventSink<List<CanalEntry.Entry>> {
-
     private static final Logger logger = LoggerFactory.getLogger(EntryEventSink.class);
+    /**
+     * 最长休眠时间(单位：毫秒)
+     */
     private static final int maxFullTimes = 10;
+
+    @Getter
+    @Setter
     private CanalEventStore<Event> eventStore;
     /**
      * 是否需要尽可能过滤事务头/尾
      */
+    @Getter
+    @Setter
     protected boolean filterTransactionEntry = false;
     /**
      * 是否需要过滤空的事务头/尾
      */
+    @Getter
+    @Setter
     protected boolean filterEmptyTransactionEntry = true;
     /**
      * 空的事务输出的频率
      */
+    @Getter
+    @Setter
     protected long emptyTransactionInterval = 5 * 1000;
     /**
      * 超过8192个事务头，输出一个
      */
+    @Getter
+    @Setter
     protected long emptyTransactionThreshold = 8192;
 
     protected volatile long lastTransactionTimestamp = 0L;
@@ -53,12 +67,16 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
     protected volatile long lastEmptyTransactionTimestamp = 0L;
     protected AtomicLong lastEmptyTransactionCount = new AtomicLong(0L);
     protected AtomicLong eventsSinkBlockingTime = new AtomicLong(0L);
+    /**
+     * 是否以原始数据的方式保存(保存原始数据为了方便网络传输)
+     */
     protected boolean raw;
 
     public EntryEventSink() {
         addHandler(new HeartBeatEntryEventHandler());
     }
 
+    @Override
     public void start() {
         super.start();
         Assert.notNull(eventStore);
@@ -72,6 +90,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         }
     }
 
+    @Override
     public void stop() {
         super.stop();
         for (CanalEventDownStreamHandler handler : getHandlers()) {
@@ -81,10 +100,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         }
     }
 
-    public boolean filter(List<Entry> event, InetSocketAddress remoteAddress, String destination) {
-        return false;
-    }
-
+    @Override
     public boolean sink(List<CanalEntry.Entry> entryList, InetSocketAddress remoteAddress, String destination) throws CanalSinkException {
         return sinkData(entryList, remoteAddress);
     }
@@ -131,7 +147,6 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected boolean doFilter(CanalEntry.Entry entry) {
         if (filter != null && entry.getEntryType() == EntryType.ROW_DATA) {
             String name = getSchemaNameAndTableName(entry);
@@ -145,7 +160,6 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         }
     }
 
-    @SuppressWarnings("unchecked")
     protected boolean doSink(List<Event> events) {
         for (CanalEventDownStreamHandler<List<Event>> handler : getHandlers()) {
             events = handler.before(events);
@@ -179,11 +193,13 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
         return false;
     }
 
-    // 处理无数据的情况，避免空循环挂死
+    /**
+     * 处理无数据的情况，避免空循环挂死
+     */
     private void applyWait(int fullTimes) {
         int newFullTimes = Math.min(fullTimes, maxFullTimes);
-        // 3次以内
         if (fullTimes <= 3) {
+            // 3次以内，让出CPU
             Thread.yield();
         } else {
             // 超过3次，最多只sleep 10ms
@@ -193,29 +209,5 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
 
     private String getSchemaNameAndTableName(CanalEntry.Entry entry) {
         return entry.getHeader().getSchemaName() + "." + entry.getHeader().getTableName();
-    }
-
-    public void setEventStore(CanalEventStore<Event> eventStore) {
-        this.eventStore = eventStore;
-    }
-
-    public void setFilterTransactionEntry(boolean filterTransactionEntry) {
-        this.filterTransactionEntry = filterTransactionEntry;
-    }
-
-    public void setFilterEmptyTransactionEntry(boolean filterEmptyTransactionEntry) {
-        this.filterEmptyTransactionEntry = filterEmptyTransactionEntry;
-    }
-
-    public void setEmptyTransactionInterval(long emptyTransactionInterval) {
-        this.emptyTransactionInterval = emptyTransactionInterval;
-    }
-
-    public void setEmptyTransactionThreshold(long emptyTransactionThreshold) {
-        this.emptyTransactionThreshold = emptyTransactionThreshold;
-    }
-
-    public AtomicLong getEventsSinkBlockingTime() {
-        return eventsSinkBlockingTime;
     }
 }

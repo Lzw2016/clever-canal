@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TimelineTransactionBarrier extends TimelineBarrier {
 
     private ThreadLocal<Boolean> inTransaction = ThreadLocal.withInitial(() -> false);
-
     /**
      * <pre>
      * 几种状态：
@@ -29,6 +28,7 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
         super(groupSize);
     }
 
+    @Override
     public void await(Event event) throws InterruptedException {
         try {
             super.await(event);
@@ -40,6 +40,7 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
         }
     }
 
+    @Override
     public void await(Event event, long timeout, TimeUnit unit) throws InterruptedException {
         try {
             super.await(event, timeout, unit);
@@ -51,6 +52,7 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
         }
     }
 
+    @Override
     public void clear(Event event) {
         super.clear(event);
         // 应该先判断2，再判断是否是事务尾，因为事务尾也可以导致txState的状态为2
@@ -73,6 +75,7 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
     }
 
     @SuppressWarnings("RedundantIfStatement")
+    @Override
     protected boolean isPermit(Event event, long state) {
         // 如果处于事务中，直接允许通过。因为事务头已经做过判断
         if (txState.intValue() == 1 && inTransaction.get()) {
@@ -97,6 +100,7 @@ public class TimelineTransactionBarrier extends TimelineBarrier {
         return false;
     }
 
+    @Override
     public void interrupt() {
         super.interrupt();
         reset();

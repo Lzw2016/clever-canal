@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * </pre>
  */
-@SuppressWarnings({"WeakerAccess", "unused", "BooleanMethodIsAlwaysInverted"})
+@SuppressWarnings({"WeakerAccess"})
 public class TimelineBarrier implements GroupBarrier<Event> {
 
     protected int groupSize;
@@ -43,6 +43,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
     /**
      * 判断自己的timestamp是否可以通过
      */
+    @Override
     public void await(Event event) throws InterruptedException {
         long timestamp = getTimestamp(event);
         try {
@@ -59,6 +60,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
     /**
      * 判断自己的timestamp是否可以通过,带超时控制
      */
+    @Override
     public void await(Event event, long timeout, TimeUnit unit) throws InterruptedException {
         long timestamp = getTimestamp(event);
         try {
@@ -72,6 +74,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
         }
     }
 
+    @Override
     public void clear(Event event) {
         // 出现中断有两种可能：
         // 1.出现主备切换，需要剔除到Timeline中的时间占位(这样合并时就会小于groupSize，不满足调度条件，直到主备切换完成后才能重新开启合并处理)
@@ -79,6 +82,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
         lastTimestamps.remove(getTimestamp(event));
     }
 
+    @Override
     public void interrupt() {
         // do nothing，没有需要清理的上下文状态
     }
@@ -90,6 +94,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
     /**
      * 判断是否允许通过
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isPermit(Event event, long state) {
         return state <= state();
     }
@@ -97,6 +102,7 @@ public class TimelineBarrier implements GroupBarrier<Event> {
     /**
      * 通知一下
      */
+    @SuppressWarnings("unused")
     protected void notify(long minTimestamp) {
         // 通知阻塞的线程恢复, 这里采用single all操作，当group中的几个时间都相同时，一次性触发通过多个
         condition.signalAll();

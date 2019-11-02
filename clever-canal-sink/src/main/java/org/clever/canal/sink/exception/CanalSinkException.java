@@ -7,7 +7,6 @@ import org.clever.canal.common.CanalException;
  */
 @SuppressWarnings("unused")
 public class CanalSinkException extends CanalException {
-
     private static final long serialVersionUID = -7288830284122672209L;
 
     public CanalSinkException(String errorCode) {

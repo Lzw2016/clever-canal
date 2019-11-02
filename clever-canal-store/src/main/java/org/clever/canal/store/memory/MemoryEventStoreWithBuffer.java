@@ -633,7 +633,11 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
             // 处理内存大小判断
             long currentSize = getMemSize.get();
             long maxAbleSize = putMemSize.get();
-            // TODO 此处有bug, 当一条数据的大小 小于 bufferMemUnit(1kb) 时有问题(不能触发get)
+            if (batchSize <= 1) {
+                // 此处有bug, 当一条数据的大小 小于 bufferMemUnit(1kb) 时有问题(不能触发get)
+                // 所以当batchSize<=1时表示消费者对实时性要求较高，这里特殊处理，有数据就get(尽可能的触发get)
+                return maxAbleSize - currentSize > 0;
+            }
             return maxAbleSize - currentSize >= batchSize * bufferMemUnit;
         }
     }
