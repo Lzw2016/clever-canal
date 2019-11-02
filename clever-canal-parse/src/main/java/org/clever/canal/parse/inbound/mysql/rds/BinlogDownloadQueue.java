@@ -1,6 +1,5 @@
 package org.clever.canal.parse.inbound.mysql.rds;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.io.FileUtils;
@@ -189,7 +188,7 @@ public class BinlogDownloadQueue {
         httpGet.setConfig(requestConfig);
         HttpResponse response = httpClient.execute(httpGet);
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != HttpResponseStatus.OK.code()) {
+        if (statusCode != HttpResponseStatus.OK) {
             throw new RuntimeException("download failed , url:" + downloadLink + " , statusCode:" + statusCode);
         }
         saveFile(new File(destDir), "mysql-bin." + fileName, response);

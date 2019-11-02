@@ -201,16 +201,16 @@ public class LocalBinLogConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(String binlogfilename, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException {
-        File current = new File(directory, binlogfilename);
+    public void dump(String binlogFileName, Long binlogPosition, MultiStageCoprocessor coprocessor) throws IOException {
+        File current = new File(directory, binlogFileName);
         if (!current.exists()) {
-            throw new CanalParseException("binlog:" + binlogfilename + " is not found");
+            throw new CanalParseException("binlog:" + binlogFileName + " is not found");
         }
         try (FileLogFetcher fetcher = new FileLogFetcher(bufferSize)) {
             LogDecoder decoder = new LogDecoder(LogEvent.UNKNOWN_EVENT, LogEvent.ENUM_END_EVENT);
             LogContext context = new LogContext();
             fetcher.open(current, binlogPosition);
-            context.setLogPosition(new LogPosition(binlogfilename, binlogPosition));
+            context.setLogPosition(new LogPosition(binlogFileName, binlogPosition));
             while (running) {
                 boolean needContinue = true;
                 LogEvent event;
@@ -228,7 +228,7 @@ public class LocalBinLogConnection implements ErosaConnection {
                     }
                 }
                 fetcher.close(); // 关闭上一个文件
-                parserFinish(binlogfilename);
+                parserFinish(binlogFileName);
                 if (needContinue) {// 读取下一个
                     File nextFile;
                     if (needWait) {
@@ -241,7 +241,7 @@ public class LocalBinLogConnection implements ErosaConnection {
                     }
                     current = nextFile;
                     fetcher.open(current);
-                    binlogfilename = nextFile.getName();
+                    binlogFileName = nextFile.getName();
                 } else {
                     break;// 跳出
                 }

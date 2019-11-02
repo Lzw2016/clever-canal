@@ -1,6 +1,5 @@
 package org.clever.canal.parse.inbound.mysql.rds.request;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -18,6 +17,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
+import org.clever.canal.parse.inbound.mysql.rds.HttpResponseStatus;
 
 import javax.crypto.Mac;
 import javax.crypto.SecretKey;
@@ -197,7 +197,7 @@ public abstract class AbstractRequest<T> {
         getMethod.setConfig(requestConfig);
         HttpResponse response = httpClient.execute(getMethod);
         int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != HttpResponseStatus.OK.code() && statusCode != HttpResponseStatus.PARTIAL_CONTENT.code()) {
+        if (statusCode != HttpResponseStatus.OK && statusCode != HttpResponseStatus.PARTIAL_CONTENT) {
             String result = EntityUtils.toString(response.getEntity());
             throw new RuntimeException("return error !" + response.getStatusLine().getReasonPhrase() + ", " + result);
         }
