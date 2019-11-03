@@ -38,7 +38,6 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle implements CanalEventParser<EVENT> {
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected CanalLogPositionManager logPositionManager = null;

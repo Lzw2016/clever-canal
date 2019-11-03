@@ -113,8 +113,8 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                 ((DatabaseTableMeta) tableMetaTSDB).setConnection(metaConnection);
                 ((DatabaseTableMeta) tableMetaTSDB).setFilter(eventFilter);
                 ((DatabaseTableMeta) tableMetaTSDB).setBlackFilter(eventBlackFilter);
-                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotInterval(tsdbSnapshotInterval);
-                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotExpire(tsdbSnapshotExpire);
+                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotInterval(tsDbSnapshotInterval);
+                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotExpire(tsDbSnapshotExpire);
                 tableMetaTSDB.init(destination);
             }
             tableMetaCache = new TableMetaCache(metaConnection, tableMetaTSDB);
@@ -413,7 +413,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                     }
                     if (specificLogFilePosition == null) {
                         // position不存在，从文件头开始
-                        entryPosition.setPosition(BINLOG_START_OFFEST);
+                        entryPosition.setPosition(BINLOG_START_OFFSET);
                         return entryPosition;
                     } else {
                         return specificLogFilePosition;

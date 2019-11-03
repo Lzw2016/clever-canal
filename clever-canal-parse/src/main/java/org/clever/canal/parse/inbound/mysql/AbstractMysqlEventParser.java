@@ -20,14 +20,14 @@ import java.util.concurrent.atomic.AtomicLong;
 @SuppressWarnings({"WeakerAccess", "unchecked", "unused"})
 public abstract class AbstractMysqlEventParser extends AbstractEventParser {
 
-    protected static final long BINLOG_START_OFFEST = 4L;
+    protected static final long BINLOG_START_OFFSET = 4L;
 
     // TODO lzw 初始化 tableMetaTSDBFactory = new DefaultTableMetaTSDBFactory();
     protected TableMetaTSDBFactory tableMetaTSDBFactory;
-    protected boolean enableTsdb = false;
-    protected int tsdbSnapshotInterval = 24;
-    protected int tsdbSnapshotExpire = 360;
-    protected String tsdbSpringXml;
+    protected boolean enableTsDb = false;
+    protected int tsDbSnapshotInterval = 24;
+    protected int tsDbSnapshotExpire = 360;
+    protected String tsDbSpringXml;
     protected TableMetaTSDB tableMetaTSDB;
 
     // 编码信息
@@ -104,12 +104,10 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
     @Override
     public void setFieldBlackFilter(String fieldBlackFilter) {
         super.setFieldBlackFilter(fieldBlackFilter);
-
         // 触发一下filter变更
         if (binlogParser instanceof LogEventConvert) {
             ((LogEventConvert) binlogParser).setFieldBlackFilterMap(getFieldBlackFilterMap());
         }
-
         if (tableMetaTSDB != null && tableMetaTSDB instanceof DatabaseTableMeta) {
             ((DatabaseTableMeta) tableMetaTSDB).setFieldBlackFilterMap(getFieldBlackFilterMap());
         }
@@ -121,7 +119,7 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
     protected boolean processTableMeta(EntryPosition position) {
         if (tableMetaTSDB != null) {
             if (position.getTimestamp() == null || position.getTimestamp() <= 0) {
-                throw new CanalParseException("use gtid and TableMeta TSDB should be config timestamp > 0");
+                throw new CanalParseException("use GtId and TableMeta TsDb should be config timestamp > 0");
             }
             return tableMetaTSDB.rollback(position);
         }
@@ -129,14 +127,14 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
     }
 
     public void start() throws CanalParseException {
-        if (enableTsdb) {
+        if (enableTsDb) {
             if (tableMetaTSDB == null) {
                 synchronized (CanalEventParser.class) {
                     try {
                         // 设置当前正在加载的通道，加载spring查找文件时会用到该变量
                         System.setProperty("canal.instance.destination", destination);
                         // 初始化
-                        tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsdbSpringXml);
+                        tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
                     } finally {
                         System.setProperty("canal.instance.destination", "");
                     }
@@ -147,7 +145,7 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
     }
 
     public void stop() throws CanalParseException {
-        if (enableTsdb) {
+        if (enableTsDb) {
             tableMetaTSDBFactory.destroy(destination);
             tableMetaTSDB = null;
         }
@@ -202,22 +200,22 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
         this.useDruidDdlFilter = useDruidDdlFilter;
     }
 
-    public void setEnableTsdb(boolean enableTsdb) {
-        this.enableTsdb = enableTsdb;
-        if (this.enableTsdb) {
+    public void setEnableTsDb(boolean enableTsDb) {
+        this.enableTsDb = enableTsDb;
+        if (this.enableTsDb) {
             if (tableMetaTSDB == null) {
                 // 初始化
-                tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsdbSpringXml);
+                tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
             }
         }
     }
 
-    public void setTsdbSpringXml(String tsdbSpringXml) {
-        this.tsdbSpringXml = tsdbSpringXml;
-        if (this.enableTsdb) {
+    public void setTsDbSpringXml(String tsDbSpringXml) {
+        this.tsDbSpringXml = tsDbSpringXml;
+        if (this.enableTsDb) {
             if (tableMetaTSDB == null) {
                 // 初始化
-                tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsdbSpringXml);
+                tableMetaTSDB = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
             }
         }
     }
@@ -234,19 +232,19 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser {
         return this.receivedBinlogBytes;
     }
 
-    public int getTsdbSnapshotInterval() {
-        return tsdbSnapshotInterval;
+    public int getTsDbSnapshotInterval() {
+        return tsDbSnapshotInterval;
     }
 
-    public void setTsdbSnapshotInterval(int tsdbSnapshotInterval) {
-        this.tsdbSnapshotInterval = tsdbSnapshotInterval;
+    public void setTsDbSnapshotInterval(int tsDbSnapshotInterval) {
+        this.tsDbSnapshotInterval = tsDbSnapshotInterval;
     }
 
-    public int getTsdbSnapshotExpire() {
-        return tsdbSnapshotExpire;
+    public int getTsDbSnapshotExpire() {
+        return tsDbSnapshotExpire;
     }
 
-    public void setTsdbSnapshotExpire(int tsdbSnapshotExpire) {
-        this.tsdbSnapshotExpire = tsdbSnapshotExpire;
+    public void setTsDbSnapshotExpire(int tsDbSnapshotExpire) {
+        this.tsDbSnapshotExpire = tsDbSnapshotExpire;
     }
 }
