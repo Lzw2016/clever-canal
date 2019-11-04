@@ -36,7 +36,7 @@ public class MetaSnapshotDAO extends MetaBaseDAO {
 
     private static final String Delete_By_Timestamp = "delete from meta_snapshot where destination = ? and binlog_timestamp < ? and binlog_timestamp > 0";
 
-    public static final String Exists = "select count(1) from meta_snapshot where destination=? and binlog_master_id=? and binlog_file=? and binlog_offset=?";
+    private static final String Exists = "select count(1) from meta_snapshot where destination=? and binlog_master_id=? and binlog_file=? and binlog_offset=?";
 
     public MetaSnapshotDAO(DataSource dataSource) {
         super(dataSource);
