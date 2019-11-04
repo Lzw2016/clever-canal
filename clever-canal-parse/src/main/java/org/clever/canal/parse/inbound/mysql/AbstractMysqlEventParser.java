@@ -11,9 +11,7 @@ import org.clever.canal.parse.inbound.AbstractEventParser;
 import org.clever.canal.parse.inbound.BinlogParser;
 import org.clever.canal.parse.inbound.MultiStageCoprocessor;
 import org.clever.canal.parse.inbound.mysql.dbsync.LogEventConvert;
-import org.clever.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
-import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTSDBFactory;
-import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTsDb;
+import org.clever.canal.parse.inbound.mysql.tsdb.*;
 import org.clever.canal.protocol.position.EntryPosition;
 
 import java.nio.charset.Charset;
@@ -45,10 +43,16 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
      * 表结构的时间序列存储实现
      */
     protected TableMetaTsDb tableMetaTsDb;
-    // TODO lzw 初始化 tableMetaTSDBFactory = new DefaultTableMetaTSDBFactory();
+    /**
+     * DatabaseTableMeta 创建工厂
+     */
     @Setter
-    protected TableMetaTSDBFactory tableMetaTSDBFactory;
-    protected String tsDbSpringXml;
+    protected TableMetaTsDbFactory tableMetaTsDbFactory = DefaultTableMetaTsDbFactory.Instance;
+    /**
+     * 存储TableMeta的数据源配置信息
+     */
+    @Setter
+    protected TableMetaDataSourceConfig dataSourceConfig;
 
     // ================================================================================================================================= 配置信息
     /**
@@ -206,9 +210,9 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
                         // 设置当前正在加载的通道，加载spring查找文件时会用到该变量
                         System.setProperty("canal.instance.destination", destination);
                         // 初始化
-                        tableMetaTsDb = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
+                        tableMetaTsDb = tableMetaTsDbFactory.build(destination, dataSourceConfig);
                     } finally {
-                        System.setProperty("canal.instance.destination", "");
+                        System.clearProperty("canal.instance.destination");
                     }
                 }
             }
@@ -219,7 +223,7 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
     @Override
     public void stop() throws CanalParseException {
         if (enableTsDb) {
-            tableMetaTSDBFactory.destroy(destination);
+            tableMetaTsDbFactory.destroy(destination);
             tableMetaTsDb = null;
         }
         super.stop();
@@ -232,29 +236,15 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
         return mysqlMultiStageCoprocessor;
     }
 
-//    public void setConnectionCharset(String connectionCharset) {
-//        this.connectionCharset = Charset.forName(connectionCharset);
-//    }
-
     public void setEnableTsDb(boolean enableTsDb) {
         this.enableTsDb = enableTsDb;
         if (this.enableTsDb) {
             if (tableMetaTsDb == null) {
                 // 初始化
-                tableMetaTsDb = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
+                tableMetaTsDb = tableMetaTsDbFactory.build(destination, dataSourceConfig);
             }
         }
     }
-
-//    public void setTsDbSpringXml(String tsDbSpringXml) {
-//        this.tsDbSpringXml = tsDbSpringXml;
-//        if (this.enableTsDb) {
-//            if (tableMetaTsDb == null) {
-//                // 初始化
-//                tableMetaTsDb = tableMetaTSDBFactory.build(destination, tsDbSpringXml);
-//            }
-//        }
-//    }
 
     @SuppressWarnings("unused")
     public Long getEventsPublishBlockingTime() {

@@ -4,23 +4,23 @@
 /* ====================================================================================================================
     meta_history -- 表结构变化明细表
 ==================================================================================================================== */
-CREATE TABLE meta_history (
-  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-  gmt_create timestamp NOT NULL,
-  gmt_modified timestamp NOT NULL,
-  destination varchar(128) DEFAULT NULL,
-  binlog_file varchar(64) DEFAULT NULL,
-  binlog_offset bigint DEFAULT NULL,
-  binlog_master_id varchar(64) DEFAULT NULL,
-  binlog_timestamp bigint DEFAULT NULL,
-  use_schema varchar(1024) DEFAULT NULL,
-  sql_schema varchar(1024) DEFAULT NULL,
-  sql_table varchar(1024) DEFAULT NULL,
-  sql_text clob(16 M) DEFAULT NULL,
-  sql_type varchar(1024) DEFAULT NULL,
-  extra varchar(512) DEFAULT NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT meta_history_binlog_file_offset UNIQUE (destination,binlog_master_id,binlog_file,binlog_offset)
+create table meta_history (
+  id bigint generated always as identity not null,
+  gmt_create timestamp not null,
+  gmt_modified timestamp not null,
+  destination varchar(128) default null,
+  binlog_file varchar(64) default null,
+  binlog_offset bigint default null,
+  binlog_master_id varchar(64) default null,
+  binlog_timestamp bigint default null,
+  use_schema varchar(1024) default null,
+  sql_schema varchar(1024) default null,
+  sql_table varchar(1024) default null,
+  sql_text clob(16 m) default null,
+  sql_type varchar(1024) default null,
+  extra varchar(512) default null,
+  primary key (id),
+  constraint meta_history_binlog_file_offset unique (destination,binlog_master_id,binlog_file,binlog_offset)
 );
 
 create index meta_history_destination on meta_history(destination);
@@ -34,19 +34,19 @@ create index meta_history_gmt_modified on meta_history(gmt_modified);
 /* ====================================================================================================================
     meta_snapshot -- 表结构记录表快照表
 ==================================================================================================================== */
-CREATE TABLE meta_snapshot (
-  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
-  gmt_create timestamp NOT NULL,
-  gmt_modified timestamp NOT NULL,
-  destination varchar(128) DEFAULT NULL,
-  binlog_file varchar(64) DEFAULT NULL,
-  binlog_offset bigint DEFAULT NULL,
-  binlog_master_id varchar(64) DEFAULT NULL,
-  binlog_timestamp bigint DEFAULT NULL,
-  data clob(16 M) DEFAULT NULL,
-  extra varchar(512) DEFAULT NULL,
-  PRIMARY KEY (id),
-  CONSTRAINT meta_snapshot_binlog_file_offset UNIQUE (destination,binlog_master_id,binlog_file,binlog_offset)
+create table meta_snapshot (
+  id bigint generated always as identity not null,
+  gmt_create timestamp not null,
+  gmt_modified timestamp not null,
+  destination varchar(128) default null,
+  binlog_file varchar(64) default null,
+  binlog_offset bigint default null,
+  binlog_master_id varchar(64) default null,
+  binlog_timestamp bigint default null,
+  data clob(16 m) default null,
+  extra varchar(512) default null,
+  primary key (id),
+  constraint meta_snapshot_binlog_file_offset unique (destination,binlog_master_id,binlog_file,binlog_offset)
 );
 
 create index meta_snapshot_destination on meta_snapshot(destination);

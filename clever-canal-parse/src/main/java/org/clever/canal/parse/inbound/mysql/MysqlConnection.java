@@ -51,7 +51,7 @@ public class MysqlConnection implements ErosaConnection {
     private BinlogFormat binlogFormat;
     private BinlogImage binlogImage;
 
-    // tsdb releated
+    // TsDb related
     private AuthenticationInfo authInfo;
     protected int connTimeout = 5 * 1000;       // 5秒
     protected int soTimeout = 60 * 60 * 1000;   // 1小时

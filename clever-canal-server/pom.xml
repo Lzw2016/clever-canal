@@ -22,5 +22,11 @@
             <groupId>org.clever</groupId>
             <artifactId>clever-canal-instance</artifactId>
         </dependency>
+
+        <!--TODO 当前测试使用-->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
     </dependencies>
 </project>

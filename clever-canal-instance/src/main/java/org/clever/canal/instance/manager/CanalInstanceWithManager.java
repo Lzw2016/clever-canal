@@ -22,6 +22,7 @@ import org.clever.canal.parse.inbound.group.GroupEventParser;
 import org.clever.canal.parse.inbound.mysql.LocalBinlogEventParser;
 import org.clever.canal.parse.inbound.mysql.MysqlEventParser;
 import org.clever.canal.parse.inbound.mysql.rds.RdsBinlogEventParserProxy;
+import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaDataSourceConfig;
 import org.clever.canal.parse.index.CanalLogPositionManager;
 import org.clever.canal.parse.index.MetaLogPositionManager;
 import org.clever.canal.parse.support.AuthenticationInfo;
@@ -316,31 +317,16 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
                 mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsdbSnapshotExpire());
             }
 //            TODO lzw
-//            boolean tsdbEnable = BooleanUtils.toBoolean(parameters.getTsdbEnable());
-//            if (tsdbEnable) {
-//                mysqlEventParser.setTableMetaTSDBFactory(new DefaultTableMetaTSDBFactory() {
-//                    @Override
-//                    public void destory(String destination) {
-//                        TableMetaTSDBBuilder.destory(destination);
-//                    }
-//
-//                    @Override
-//                    public TableMetaTSDB build(String destination, String springXml) {
-//                        try {
-//                            System.setProperty("canal.instance.tsdb.url", parameters.getTsdbJdbcUrl());
-//                            System.setProperty("canal.instance.tsdb.dbUsername", parameters.getTsdbJdbcUserName());
-//                            System.setProperty("canal.instance.tsdb.dbPassword", parameters.getTsdbJdbcPassword());
-//
-//                            return TableMetaTSDBBuilder.build(destination, "classpath:spring/tsdb/mysql-tsdb.xml");
-//                        } finally {
-//                            System.setProperty("canal.instance.tsdb.url", "");
-//                            System.setProperty("canal.instance.tsdb.dbUsername", "");
-//                            System.setProperty("canal.instance.tsdb.dbPassword", "");
-//                        }
-//                    }
-//                });
-//                mysqlEventParser.setEnableTsdb(tsdbEnable);
-//            }
+            boolean tsDbEnable = BooleanUtils.toBoolean(parameters.getTsdbEnable());
+            if (tsDbEnable) {
+                TableMetaDataSourceConfig dataSourceConfig = new TableMetaDataSourceConfig();
+                dataSourceConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                dataSourceConfig.setUrl(parameters.getTsdbJdbcUrl());
+                dataSourceConfig.setUsername(parameters.getTsdbJdbcUserName());
+                dataSourceConfig.setPassword(parameters.getTsdbJdbcPassword());
+                mysqlEventParser.setDataSourceConfig(dataSourceConfig);
+                mysqlEventParser.setEnableTsDb(tsDbEnable);
+            }
             eventParser = mysqlEventParser;
         } else if (type.isLocalBinlog()) {
             LocalBinlogEventParser localBinlogEventParser = new LocalBinlogEventParser();

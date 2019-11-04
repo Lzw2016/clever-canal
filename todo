@@ -27,10 +27,10 @@ clever-canal-dbsync -------------------> 底层库
     源码分析 - 增加注释
 
 clever-canal-parse
-    源码分析 - 增加注释 减少依赖
+    源码分析 - 增加注释 减少依赖            ### OK
     TODO
         1.CanalLogPositionManager etcd 支持
-        2.TSDB支持
+     OK 2.TsDb支持
 
 clever-canal-instance
     源码分析 - 增加注释

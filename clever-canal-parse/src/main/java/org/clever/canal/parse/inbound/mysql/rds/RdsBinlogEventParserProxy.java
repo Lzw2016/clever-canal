@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  * 注意点：aliyun的binlog会有定期清理并备份到oss上, 这里实现了一份自动下载oss+rds binlog的机制
  * </pre>
  */
-@SuppressWarnings({"unchecked", "unused"})
+@SuppressWarnings({"unused"})
 public class RdsBinlogEventParserProxy extends MysqlEventParser {
 
     private String rdsOpenApiUrl = "https://rds.aliyuncs.com/"; // openapi地址

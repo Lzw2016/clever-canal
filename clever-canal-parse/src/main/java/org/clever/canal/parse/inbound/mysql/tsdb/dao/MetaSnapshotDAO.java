@@ -1,52 +1,113 @@
 package org.clever.canal.parse.inbound.mysql.tsdb.dao;
 
-import java.util.HashMap;
+import javax.sql.DataSource;
+import java.sql.ResultSet;
+import java.util.Date;
 
 /**
- * canal数据的存储 TODO lzw
+ * MetaSnapshot DAO 操作
  */
-@SuppressWarnings({"MismatchedQueryAndUpdateOfCollection", "UnusedReturnValue", "unused"})
 public class MetaSnapshotDAO extends MetaBaseDAO {
+    private static final String INSERT = " insert into meta_snapshot " +
+            "     (gmt_create, gmt_modified, destination, binlog_file, binlog_offset, binlog_master_id, binlog_timestamp, data, extra) " +
+            " values " +
+            "     (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?)";
 
-    public Long insert(MetaSnapshotDO snapshotDO) {
-//        return (Long) getSqlMapClientTemplate().insert("meta_snapshot.insert", snapshotDO);
-        return 0L;
+    private static final String UPDATE = " update meta_snapshot set " +
+            "     gmt_modified = now()," +
+            "     binlog_file = ?, " +
+            "     binlog_offset = ?, " +
+            "     binlog_master_id = ?, " +
+            "     binlog_timestamp = ?, " +
+            "     data = ?, " +
+            "     extra = ? " +
+            "where destination = ? " +
+            "    and binlog_timestamp=0";
+
+    private static final String Find_By_Timestamp = " select" +
+            "     id, gmt_create, gmt_modified, destination, binlog_file, binlog_offset, binlog_master_id, binlog_timestamp, data, extra " +
+            " from meta_snapshot " +
+            " where destination = ? " +
+            "     and binlog_timestamp < ? " +
+            " order by binlog_timestamp desc, id desc " +
+            " limit 1";
+
+    private static final String Delete_By_Name = "delete from meta_snapshot where destination = ?";
+
+    private static final String Delete_By_Timestamp = "delete from meta_snapshot where destination = ? and binlog_timestamp < ? and binlog_timestamp > 0";
+
+    public MetaSnapshotDAO(DataSource dataSource) {
+        super(dataSource);
     }
 
-    public Long update(MetaSnapshotDO snapshotDO) {
-//        return (Long) getSqlMapClientTemplate().insert("meta_snapshot.update", snapshotDO);
-        return 0L;
+    @SuppressWarnings("UnusedReturnValue")
+    public int insert(MetaSnapshotDO metaSnapshot) {
+        return execute(INSERT, preparedStatement -> {
+            preparedStatement.setString(1, metaSnapshot.getDestination());
+            preparedStatement.setString(2, metaSnapshot.getBinlogFile());
+            preparedStatement.setLong(3, metaSnapshot.getBinlogOffset());
+            preparedStatement.setString(4, metaSnapshot.getBinlogMasterId());
+            preparedStatement.setLong(5, metaSnapshot.getBinlogTimestamp());
+            preparedStatement.setString(6, metaSnapshot.getData());
+            preparedStatement.setString(7, metaSnapshot.getExtra());
+            return preparedStatement.executeUpdate();
+        });
     }
 
+    public int update(MetaSnapshotDO metaSnapshot) {
+        return execute(UPDATE, preparedStatement -> {
+            preparedStatement.setString(1, metaSnapshot.getBinlogFile());
+            preparedStatement.setLong(2, metaSnapshot.getBinlogOffset());
+            preparedStatement.setString(3, metaSnapshot.getBinlogMasterId());
+            preparedStatement.setLong(4, metaSnapshot.getBinlogTimestamp());
+            preparedStatement.setString(5, metaSnapshot.getData());
+            preparedStatement.setString(6, metaSnapshot.getExtra());
+            preparedStatement.setString(7, metaSnapshot.getDestination());
+            return preparedStatement.executeUpdate();
+        });
+    }
+
+    @SuppressWarnings("DuplicatedCode")
     public MetaSnapshotDO findByTimestamp(String destination, Long timestamp) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("timestamp", timestamp == null ? 0L : timestamp);
-        params.put("destination", destination);
-//        return (MetaSnapshotDO) getSqlMapClientTemplate().queryForObject("meta_snapshot.findByTimestamp", params);
-        return null;
+        return execute(Find_By_Timestamp, preparedStatement -> {
+            preparedStatement.setString(1, destination);
+            preparedStatement.setLong(2, timestamp == null ? 0L : timestamp);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            MetaSnapshotDO metaSnapshot = null;
+            if (resultSet.next()) {
+                metaSnapshot = new MetaSnapshotDO();
+                metaSnapshot.setId(resultSet.getLong(1));
+                metaSnapshot.setGmtCreate(new Date(resultSet.getDate(2).getTime()));
+                metaSnapshot.setGmtModified(new Date(resultSet.getDate(3).getTime()));
+                metaSnapshot.setDestination(resultSet.getString(4));
+                metaSnapshot.setBinlogFile(resultSet.getString(5));
+                metaSnapshot.setBinlogOffset(resultSet.getLong(6));
+                metaSnapshot.setBinlogMasterId(resultSet.getString(7));
+                metaSnapshot.setBinlogTimestamp(resultSet.getLong(8));
+                metaSnapshot.setData(resultSet.getString(9));
+                metaSnapshot.setExtra(resultSet.getString(10));
+            }
+            return metaSnapshot;
+        });
     }
 
-    public Integer deleteByName(String destination) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("destination", destination);
-//        return getSqlMapClientTemplate().delete("meta_snapshot.deleteByName", params);
-        return 0;
+    @SuppressWarnings("unused")
+    public int deleteByName(String destination) {
+        return execute(Delete_By_Name, preparedStatement -> {
+            preparedStatement.setString(1, destination);
+            return preparedStatement.executeUpdate();
+        });
     }
 
     /**
      * 删除interval秒之前的数据
      */
-    public Integer deleteByTimestamp(String destination, long interval) {
-        HashMap<String, Object> params = new HashMap<>();
+    public int deleteByTimestamp(String destination, long interval) {
         long timestamp = System.currentTimeMillis() - interval * 1000;
-        params.put("timestamp", timestamp);
-        params.put("destination", destination);
-//        return getSqlMapClientTemplate().delete("meta_snapshot.deleteByTimestamp", params);
-        return 0;
+        return execute(Delete_By_Timestamp, preparedStatement -> {
+            preparedStatement.setString(1, destination);
+            preparedStatement.setLong(2, timestamp);
+            return preparedStatement.executeUpdate();
+        });
     }
-
-    protected void initDao() throws Exception {
-        initTable("meta_snapshot");
-    }
-
 }

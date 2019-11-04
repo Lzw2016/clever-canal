@@ -4,11 +4,11 @@
 /* ====================================================================================================================
     meta_history -- 表结构变化明细表
 ==================================================================================================================== */
-create table meta_history
+create table if not exists meta_history
 (
     id                  bigint(20)      not null        auto_increment                          comment '主键',
-    gmt_create          datetime(3)     not null                                                comment '创建时间',
-    gmt_modified        datetime(3)     not null                                                comment '修改时间',
+    gmt_create          datetime        not null                                                comment '创建时间',
+    gmt_modified        datetime        not null                                                comment '修改时间',
     destination         varchar(127)                                                            comment '通道名称',
     binlog_file         varchar(63)                                                             comment 'binlog文件名',
     binlog_offset       bigint(20)                                                              comment 'binlog偏移量',
@@ -34,11 +34,11 @@ create table meta_history
 /* ====================================================================================================================
     meta_snapshot -- 表结构记录表快照表
 ==================================================================================================================== */
-create table meta_snapshot
+create table if not exists meta_snapshot
 (
     id                  bigint(20)      not null        auto_increment                          comment '主键',
-    gmt_create          datetime(3)     not null                                                comment '创建时间',
-    gmt_modified        datetime(3)     not null                                                comment '修改时间',
+    gmt_create          datetime        not null                                                comment '创建时间',
+    gmt_modified        datetime        not null                                                comment '修改时间',
     destination         varchar(127)                                                            comment '通道名称',
     binlog_file         varchar(63)                                                             comment 'binlog文件名',
     binlog_offset       bigint(20)                                                              comment 'binlog偏移量',

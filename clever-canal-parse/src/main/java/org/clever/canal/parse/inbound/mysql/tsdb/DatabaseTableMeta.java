@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -47,8 +48,8 @@ public class DatabaseTableMeta implements TableMetaTsDb {
     public static final EntryPosition INIT_POSITION = new EntryPosition("0", 0L, -2L, -1L);
     private static final Pattern pattern = Pattern.compile("Duplicate entry '.*' for key '*'");
     private static final Pattern h2Pattern = Pattern.compile("Unique index or primary key violation");
-    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-        Thread thread = new Thread(r, "[scheduler-table-meta-snapshot]");
+    private static final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+        Thread thread = new Thread(runnable, "[scheduler-table-meta-snapshot]");
         thread.setDaemon(true);
         return thread;
     });
@@ -81,13 +82,11 @@ public class DatabaseTableMeta implements TableMetaTsDb {
     /**
      * 操作 MetaHistory
      */
-    @Setter
-    private MetaHistoryDAO metaHistoryDAO;
+    private final MetaHistoryDAO metaHistoryDAO;
     /**
      * 操作 MetaSnapshot
      */
-    @Setter
-    private MetaSnapshotDAO metaSnapshotDAO;
+    private final MetaSnapshotDAO metaSnapshotDAO;
     /**
      * 生成快照的时间间隔(单位：小时) <br/>
      * 默认1天
@@ -101,7 +100,9 @@ public class DatabaseTableMeta implements TableMetaTsDb {
     @Setter
     private int snapshotExpire = 360;
 
-    public DatabaseTableMeta() {
+    public DatabaseTableMeta(DataSource dataSource) {
+        this.metaHistoryDAO = new MetaHistoryDAO(dataSource);
+        this.metaSnapshotDAO = new MetaSnapshotDAO(dataSource);
     }
 
     @Override

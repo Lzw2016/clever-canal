@@ -1,17 +1,16 @@
 package org.clever.canal.parse.support;
 
-import com.alibaba.druid.filter.config.ConfigTools;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.clever.canal.parse.utils.ConfigTools;
 
 import java.net.InetSocketAddress;
 
 /**
  * 数据库认证信息
  */
-@SuppressWarnings("unused")
 @Getter
 @Setter
 public class AuthenticationInfo {
@@ -40,6 +39,7 @@ public class AuthenticationInfo {
      */
     private boolean enableDruid;
 
+    @SuppressWarnings("unused")
     public void initPwd() throws Exception {
         if (enableDruid) {
             this.password = ConfigTools.decrypt(pwdPublicKey, password);
@@ -49,6 +49,7 @@ public class AuthenticationInfo {
     public AuthenticationInfo() {
     }
 
+    @SuppressWarnings("unused")
     public AuthenticationInfo(InetSocketAddress address, String username, String password) {
         this(address, username, password, "");
     }
