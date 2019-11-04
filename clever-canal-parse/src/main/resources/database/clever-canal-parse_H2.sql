@@ -21,7 +21,7 @@ create table if not exists meta_history
     sql_type            varchar(255)                                                            comment 'sql类型',
     extra               text                                                                    comment '额外的扩展信息',
     primary key (id),
-    unique key meta_history_binlog_file_offest(destination, binlog_master_id, binlog_file, binlog_offset),
+    unique key meta_history_binlog_file_offset(destination, binlog_master_id, binlog_file, binlog_offset),
     key meta_history_destination (destination),
     key meta_history_destination_timestamp (destination, binlog_timestamp),
     key meta_history_gmt_modified (gmt_modified)
@@ -47,7 +47,7 @@ create table if not exists meta_snapshot
     data                longtext                                                                comment '表结构数据',
     extra               text                                                                    comment '额外的扩展信息',
     primary key (id),
-    unique key meta_snapshot_binlog_file_offest(destination, binlog_master_id, binlog_file, binlog_offset),
+    unique key meta_snapshot_binlog_file_offset(destination, binlog_master_id, binlog_file, binlog_offset),
     key meta_snapshot_destination (destination),
     key meta_snapshot_destination_timestamp (destination, binlog_timestamp),
     key meta_snapshot_gmt_modified (gmt_modified)

@@ -69,7 +69,7 @@ public class Test01 {
                 canalParameter.setStorageBatchMode(CanalParameter.BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
 
-                canalParameter.setTsdbEnable(false);
+                canalParameter.setTsdbEnable(true);
                 canalParameter.setTsdbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
                 canalParameter.setTsdbJdbcUserName("clever-canal");
                 canalParameter.setTsdbJdbcPassword("lizhiwei");

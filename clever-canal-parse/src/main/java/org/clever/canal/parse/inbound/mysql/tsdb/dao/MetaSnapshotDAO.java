@@ -36,12 +36,29 @@ public class MetaSnapshotDAO extends MetaBaseDAO {
 
     private static final String Delete_By_Timestamp = "delete from meta_snapshot where destination = ? and binlog_timestamp < ? and binlog_timestamp > 0";
 
+    public static final String Exists = "select count(1) from meta_snapshot where destination=? and binlog_master_id=? and binlog_file=? and binlog_offset=?";
+
     public MetaSnapshotDAO(DataSource dataSource) {
         super(dataSource);
     }
 
     @SuppressWarnings("UnusedReturnValue")
     public int insert(MetaSnapshotDO metaSnapshot) {
+        int count = execute(Exists, preparedStatement -> {
+            preparedStatement.setString(1, metaSnapshot.getDestination());
+            preparedStatement.setString(2, metaSnapshot.getBinlogMasterId());
+            preparedStatement.setString(3, metaSnapshot.getBinlogFile());
+            preparedStatement.setLong(4, metaSnapshot.getBinlogOffset());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            int countTmp = 0;
+            if (resultSet.next()) {
+                countTmp = resultSet.getInt(1);
+            }
+            return countTmp;
+        });
+        if (count >= 1) {
+            return 0;
+        }
         return execute(INSERT, preparedStatement -> {
             preparedStatement.setString(1, metaSnapshot.getDestination());
             preparedStatement.setString(2, metaSnapshot.getBinlogFile());
