@@ -3,7 +3,7 @@ package org.clever.canal.parse.dbsync.binlog;
 import org.clever.canal.parse.dbsync.binlog.event.FormatDescriptionLogEvent;
 import org.clever.canal.parse.dbsync.binlog.event.GtidLogEvent;
 import org.clever.canal.parse.dbsync.binlog.event.TableMapLogEvent;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public final class LogContext {
 
     private LogPosition logPosition;
 
-    private GTIDSet gtidSet;
+    private GtIdSet gtidSet;
 
     private GtidLogEvent gtidLogEvent; // save current gtid log event
 
@@ -65,11 +65,11 @@ public final class LogContext {
         mapOfTable.clear();
     }
 
-    public GTIDSet getGtidSet() {
+    public GtIdSet getGtidSet() {
         return gtidSet;
     }
 
-    public void setGtidSet(GTIDSet gtidSet) {
+    public void setGtidSet(GtIdSet gtidSet) {
         this.gtidSet = gtidSet;
     }
 

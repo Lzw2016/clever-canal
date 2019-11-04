@@ -8,7 +8,7 @@ import org.clever.canal.parse.dbsync.binlog.LogContext;
 import org.clever.canal.parse.dbsync.binlog.LogDecoder;
 import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.dbsync.binlog.event.*;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 import org.clever.canal.parse.exception.CanalParseException;
 import org.clever.canal.parse.inbound.ErosaConnection;
 import org.clever.canal.parse.inbound.EventTransactionBuffer;
@@ -49,7 +49,7 @@ public class MysqlMultiStageCoprocessor extends AbstractCanalLifeCycle implement
     private String destination;
     private volatile CanalParseException exception;
     private AtomicLong eventsPublishBlockingTime;
-    private GTIDSet gtidSet;
+    private GtIdSet gtidSet;
     private WorkerPool<MessageEvent> workerPool;
     private BatchEventProcessor<MessageEvent> simpleParserStage;
     private BatchEventProcessor<MessageEvent> sinkStoreStage;
@@ -427,7 +427,7 @@ public class MysqlMultiStageCoprocessor extends AbstractCanalLifeCycle implement
         this.eventsPublishBlockingTime = eventsPublishBlockingTime;
     }
 
-    public void setGtidSet(GTIDSet gtidSet) {
+    public void setGtidSet(GtIdSet gtidSet) {
         this.gtidSet = gtidSet;
     }
 }

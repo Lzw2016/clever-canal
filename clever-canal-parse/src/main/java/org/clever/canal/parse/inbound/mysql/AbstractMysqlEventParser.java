@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings({"WeakerAccess", "unchecked", "unused"})
 public abstract class AbstractMysqlEventParser extends AbstractEventParser {
-
     protected static final long BINLOG_START_OFFSET = 4L;
 
     // TODO lzw 初始化 tableMetaTSDBFactory = new DefaultTableMetaTSDBFactory();

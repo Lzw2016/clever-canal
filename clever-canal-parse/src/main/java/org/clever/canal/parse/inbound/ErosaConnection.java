@@ -1,6 +1,6 @@
 package org.clever.canal.parse.inbound;
 
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public interface ErosaConnection {
     /**
      * 通过GTID同步binlog
      */
-    void dump(GTIDSet gtidSet, SinkFunction func) throws IOException;
+    void dump(GtIdSet gtidSet, SinkFunction func) throws IOException;
 
     // -------------
 
@@ -35,7 +35,7 @@ public interface ErosaConnection {
 
     void dump(long timestamp, MultiStageCoprocessor coprocessor) throws IOException;
 
-    void dump(GTIDSet gtidSet, MultiStageCoprocessor coprocessor) throws IOException;
+    void dump(GtIdSet gtidSet, MultiStageCoprocessor coprocessor) throws IOException;
 
     ErosaConnection fork();
 

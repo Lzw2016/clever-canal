@@ -1,5 +1,7 @@
 package org.clever.canal.parse.inbound;
 
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.Assert;
 import org.clever.canal.protocol.CanalEntry;
@@ -11,25 +13,40 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 缓冲event队列，提供按事务刷新数据的机制
+ * 缓冲event队列，提供按事务刷新数据的机制 (环形队列)
  */
-@SuppressWarnings({"WeakerAccess", "DuplicateBranchesInSwitch", "unused"})
+@SuppressWarnings("WeakerAccess")
+@NoArgsConstructor
 public class EventTransactionBuffer extends AbstractCanalLifeCycle {
-
+    /**
+     * 队列位置
+     */
     private static final long INIT_SEQUENCE = -1;
-    private int bufferSize = 1024;
+    /**
+     * 队列位置(掩码)
+     */
     private int indexMask;
+    /**
+     * 队列容量(size)
+     */
+    @Setter
+    private int bufferSize = 1024;
+    /**
+     * 队列数组
+     */
     private CanalEntry.Entry[] entries;
-
-    // 代表当前put操作最后一次写操作发生的位置
+    /**
+     * 代表当前put操作最后一次写操作发生的位置
+     */
     private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE);
-    // 代表满足flush条件后最后一次数据flush的时间
+    /**
+     * 代表满足flush条件后最后一次数据flush的时间
+     */
     private AtomicLong flushSequence = new AtomicLong(INIT_SEQUENCE);
-
+    /**
+     * 事务刷新机制(事务刷新回调)
+     */
     private TransactionFlushCallback flushCallback;
-
-    public EventTransactionBuffer() {
-    }
 
     public EventTransactionBuffer(TransactionFlushCallback flushCallback) {
         this.flushCallback = flushCallback;
@@ -66,6 +83,9 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
                 put(entry);
                 break;
             case TRANSACTION_END:
+                // 事务已经结束
+            case ENTRY_HEARTBEAT:
+                // master过来的heartbeat，说明binlog已经读完了，是idle状态
                 put(entry);
                 flush();
                 break;
@@ -76,11 +96,6 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
                 if (eventType != null && !isDml(eventType)) {
                     flush();
                 }
-                break;
-            case ENTRY_HEARTBEAT:
-                // master过来的heartbeat，说明binlog已经读完了，是idle状态
-                put(entry);
-                flush();
                 break;
             default:
                 break;
@@ -97,7 +112,7 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
         if (checkFreeSlotAt(putSequence.get() + 1)) {
             long current = putSequence.get();
             long next = current + 1;
-            // 先写数据，再更新对应的cursor,并发度高的情况，putSequence会被get请求可见，拿出了ringbuffer中的老的Entry值
+            // 先写数据，再更新对应的cursor,并发度高的情况，putSequence会被get请求可见，拿出了ringBuffer中的老的Entry值
             entries[getIndex(next)] = data;
             putSequence.set(next);
         } else {
@@ -144,21 +159,10 @@ public class EventTransactionBuffer extends AbstractCanalLifeCycle {
         return eventType == EventType.INSERT || eventType == EventType.UPDATE || eventType == EventType.DELETE;
     }
 
-    // ================ setter / getter ==================
-
-    public void setBufferSize(int bufferSize) {
-        this.bufferSize = bufferSize;
-    }
-
-    public void setFlushCallback(TransactionFlushCallback flushCallback) {
-        this.flushCallback = flushCallback;
-    }
-
     /**
      * 事务刷新机制
      */
-    @SuppressWarnings("UnnecessaryInterfaceModifier")
-    public static interface TransactionFlushCallback {
+    public interface TransactionFlushCallback {
         void flush(List<CanalEntry.Entry> transaction) throws InterruptedException;
     }
 }

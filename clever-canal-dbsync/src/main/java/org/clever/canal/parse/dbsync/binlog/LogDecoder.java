@@ -2,7 +2,7 @@ package org.clever.canal.parse.dbsync.binlog;
 
 import org.clever.canal.parse.dbsync.binlog.event.*;
 import org.clever.canal.parse.dbsync.binlog.event.mariadb.*;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +125,7 @@ public final class LogDecoder {
             // remove checksum bytes
             buffer.limit(header.getEventLen() - LogEvent.BINLOG_CHECKSUM_LEN);
         }
-        GTIDSet gtidSet = context.getGtidSet();
+        GtIdSet gtidSet = context.getGtidSet();
         GtidLogEvent gtidLogEvent = context.getGtidLogEvent();
         switch (header.getType()) {
             case LogEvent.QUERY_EVENT: {

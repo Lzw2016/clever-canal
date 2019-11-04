@@ -2,7 +2,7 @@ package org.clever.canal.parse.dbsync.binlog.event;
 
 import org.clever.canal.parse.dbsync.binlog.LogBuffer;
 import org.clever.canal.parse.dbsync.binlog.LogEvent;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -317,7 +317,7 @@ public final class LogHeader {
         return gtidMap.get(CURRENT_GTID_LAST_COMMIT);
     }
 
-    public void putGtid(GTIDSet gtidSet, GtidLogEvent event) {
+    public void putGtid(GtIdSet gtidSet, GtidLogEvent event) {
         if (gtidSet != null) {
             gtidMap.put(GTID_SET_STRING, gtidSet.toString());
             if (event != null) {

@@ -10,9 +10,9 @@ import org.clever.canal.parse.dbsync.binlog.event.FormatDescriptionLogEvent;
 import org.clever.canal.parse.driver.mysql.MysqlConnector;
 import org.clever.canal.parse.driver.mysql.MysqlQueryExecutor;
 import org.clever.canal.parse.driver.mysql.MysqlUpdateExecutor;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 import org.clever.canal.parse.driver.mysql.packets.HeaderPacket;
-import org.clever.canal.parse.driver.mysql.packets.MysqlGTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.MysqlGtIdSet;
 import org.clever.canal.parse.driver.mysql.packets.client.BinlogDumpCommandPacket;
 import org.clever.canal.parse.driver.mysql.packets.client.BinlogDumpGTIDCommandPacket;
 import org.clever.canal.parse.driver.mysql.packets.client.RegisterSlaveCommandPacket;
@@ -138,7 +138,7 @@ public class MysqlConnection implements ErosaConnection {
         // using CHANGE MASTER TO MASTER_AUTO_POSITION = 1 ...
         if (StringUtils.isNotEmpty(gtid)) {
             decoder.handle(LogEvent.GTID_LOG_EVENT);
-            context.setGtidSet(MysqlGTIDSet.parse(gtid));
+            context.setGtidSet(MysqlGtIdSet.parse(gtid));
         }
         context.setFormatDescription(new FormatDescriptionLogEvent(4, binlogChecksum));
         while (fetcher.fetch()) {
@@ -181,7 +181,7 @@ public class MysqlConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, SinkFunction func) throws IOException {
+    public void dump(GtIdSet gtidSet, SinkFunction func) throws IOException {
         updateSettings();
         loadBinlogChecksum();
         sendBinlogDumpGTID(gtidSet);
@@ -238,7 +238,7 @@ public class MysqlConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, MultiStageCoprocessor coprocessor) throws IOException {
+    public void dump(GtIdSet gtidSet, MultiStageCoprocessor coprocessor) throws IOException {
         updateSettings();
         loadBinlogChecksum();
         sendBinlogDumpGTID(gtidSet);
@@ -324,7 +324,7 @@ public class MysqlConnection implements ErosaConnection {
         PacketManager.writePkg(connector.getChannel(), semiAckHeader.toBytes(), cmdBody);
     }
 
-    private void sendBinlogDumpGTID(GTIDSet gtidSet) throws IOException {
+    private void sendBinlogDumpGTID(GtIdSet gtidSet) throws IOException {
         BinlogDumpGTIDCommandPacket binlogDumpCmd = new BinlogDumpGTIDCommandPacket();
         binlogDumpCmd.slaveServerId = this.slaveId;
         binlogDumpCmd.gtidSet = gtidSet;

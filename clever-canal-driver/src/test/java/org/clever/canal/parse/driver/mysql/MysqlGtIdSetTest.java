@@ -1,7 +1,7 @@
 package org.clever.canal.parse.driver.mysql;
 
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
-import org.clever.canal.parse.driver.mysql.packets.MysqlGTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
+import org.clever.canal.parse.driver.mysql.packets.MysqlGtIdSet;
 import org.clever.canal.parse.driver.mysql.packets.UUIDSet;
 import org.junit.Test;
 
@@ -10,10 +10,10 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
-public class MysqlGTIDSetTest {
+public class MysqlGtIdSetTest {
     @Test
     public void testEncode() throws IOException {
-        GTIDSet gtidSet = MysqlGTIDSet.parse("726757ad-4455-11e8-ae04-0242ac110002:1");
+        GtIdSet gtidSet = MysqlGtIdSet.parse("726757ad-4455-11e8-ae04-0242ac110002:1");
         byte[] bytes = gtidSet.encode();
 
         byte[] expected = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x67, 0x57, (byte) 0xad, 0x44, 0x55,
@@ -28,7 +28,7 @@ public class MysqlGTIDSetTest {
 
     @Test
     public void testParse() {
-        Map<String, MysqlGTIDSet> cases = new HashMap<>(5);
+        Map<String, MysqlGtIdSet> cases = new HashMap<>(5);
         cases.put("726757ad-4455-11e8-ae04-0242ac110002:1",
                 buildForTest(new Material("726757ad-4455-11e8-ae04-0242ac110002", 1, 2)));
         cases.put("726757ad-4455-11e8-ae04-0242ac110002:1-3",
@@ -41,9 +41,9 @@ public class MysqlGTIDSetTest {
                 buildForTest(Arrays.asList(new Material("726757ad-4455-11e8-ae04-0242ac110002", 1, 4),
                         new Material("726757ad-4455-11e8-ae04-0242ac110003", 4, 5))));
 
-        for (Map.Entry<String, MysqlGTIDSet> entry : cases.entrySet()) {
-            MysqlGTIDSet expected = entry.getValue();
-            MysqlGTIDSet actual = MysqlGTIDSet.parse(entry.getKey());
+        for (Map.Entry<String, MysqlGtIdSet> entry : cases.entrySet()) {
+            MysqlGtIdSet expected = entry.getValue();
+            MysqlGtIdSet actual = MysqlGtIdSet.parse(entry.getKey());
 
             assertEquals(expected, actual);
         }
@@ -75,11 +75,11 @@ public class MysqlGTIDSetTest {
         public long stop1;
     }
 
-    private MysqlGTIDSet buildForTest(Material material) {
+    private MysqlGtIdSet buildForTest(Material material) {
         return buildForTest(Collections.singletonList(material));
     }
 
-    private MysqlGTIDSet buildForTest(List<Material> materials) {
+    private MysqlGtIdSet buildForTest(List<Material> materials) {
         Map<String, UUIDSet> sets = new HashMap<>();
         for (Material a : materials) {
             UUIDSet.Interval interval = new UUIDSet.Interval();
@@ -98,7 +98,7 @@ public class MysqlGTIDSetTest {
             us.intervals = intervals;
             sets.put(a.uuid, us);
         }
-        MysqlGTIDSet gs = new MysqlGTIDSet();
+        MysqlGtIdSet gs = new MysqlGtIdSet();
         gs.sets = sets;
         return gs;
     }

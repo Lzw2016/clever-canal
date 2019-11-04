@@ -1,7 +1,7 @@
 package org.clever.canal.parse.driver.mysql.packets.client;
 
 import org.clever.canal.parse.driver.mysql.packets.CommandPacket;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 import org.clever.canal.parse.driver.mysql.utils.ByteHelper;
 
 import java.io.ByteArrayOutputStream;
@@ -18,7 +18,7 @@ public class BinlogDumpGTIDCommandPacket extends CommandPacket {
     public static final int BINLOG_THROUGH_GTID = 0x04;
 
     public long slaveServerId;
-    public GTIDSet gtidSet;
+    public GtIdSet gtidSet;
 
     public BinlogDumpGTIDCommandPacket() {
         setCommand((byte) 0x1e);

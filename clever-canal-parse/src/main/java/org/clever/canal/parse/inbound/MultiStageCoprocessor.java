@@ -14,11 +14,11 @@ import org.clever.canal.parse.dbsync.binlog.LogEvent;
  * 4. 投递到store (单线程)
  * </pre>
  */
-@SuppressWarnings({"BooleanMethodIsAlwaysInverted"})
 public interface MultiStageCoprocessor extends CanalLifeCycle {
     /**
      * 网络数据投递
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean publish(LogBuffer buffer);
 
     boolean publish(LogEvent event);

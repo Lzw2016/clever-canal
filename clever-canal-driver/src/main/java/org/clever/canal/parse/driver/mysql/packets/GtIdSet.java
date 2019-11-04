@@ -2,7 +2,7 @@ package org.clever.canal.parse.driver.mysql.packets;
 
 import java.io.IOException;
 
-public interface GTIDSet {
+public interface GtIdSet {
 
     /**
      * 序列化成字节数组

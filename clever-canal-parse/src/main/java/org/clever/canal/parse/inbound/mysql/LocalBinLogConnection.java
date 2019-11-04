@@ -4,7 +4,7 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.parse.dbsync.binlog.*;
 import org.clever.canal.parse.dbsync.binlog.event.QueryLogEvent;
-import org.clever.canal.parse.driver.mysql.packets.GTIDSet;
+import org.clever.canal.parse.driver.mysql.packets.GtIdSet;
 import org.clever.canal.parse.exception.CanalParseException;
 import org.clever.canal.parse.exception.ServerIdNotMatchException;
 import org.clever.canal.parse.inbound.ErosaConnection;
@@ -196,7 +196,7 @@ public class LocalBinLogConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, SinkFunction func) {
+    public void dump(GtIdSet gtidSet, SinkFunction func) {
         throw new NotImplementedException(this.getClass().getName());
     }
 
@@ -334,7 +334,7 @@ public class LocalBinLogConnection implements ErosaConnection {
     }
 
     @Override
-    public void dump(GTIDSet gtidSet, MultiStageCoprocessor coprocessor) {
+    public void dump(GtIdSet gtidSet, MultiStageCoprocessor coprocessor) {
         throw new NotImplementedException(this.getClass().getName());
     }
 

@@ -317,7 +317,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
     }
 
     protected EntryPosition findStartPosition(ErosaConnection connection) throws IOException {
-        if (isGTIDMode()) {
+        if (isGtIdMode()) {
             // GTID模式下，CanalLogPositionManager里取最后的gtid，没有则取instanc配置中的
             LogPosition logPosition = getLogPositionManager().getLatestIndexBy(destination);
             if (logPosition != null) {
@@ -572,7 +572,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                 throw new CanalParseException("command : 'show master status' has an error! pls check. you need (at least one of) the SUPER,REPLICATION CLIENT privilege(s) for this operation");
             }
             EntryPosition endPosition = new EntryPosition(fields.get(0), Long.valueOf(fields.get(1)));
-            if (isGTIDMode() && fields.size() > 4) {
+            if (isGtIdMode() && fields.size() > 4) {
                 endPosition.setGtId(fields.get(4));
             }
             return endPosition;

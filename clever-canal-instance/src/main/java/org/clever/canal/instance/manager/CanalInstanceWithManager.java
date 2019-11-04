@@ -307,8 +307,8 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             mysqlEventParser.setProfilingEnabled(false);
             mysqlEventParser.setFilterTableError(parameters.getFilterTableError());
             mysqlEventParser.setParallel(parameters.getParallel());
-            mysqlEventParser.setIsGTIDMode(BooleanUtils.toBoolean(parameters.getGtidEnable()));
-            // tsdb
+            mysqlEventParser.setGtIdMode(BooleanUtils.toBoolean(parameters.getGtidEnable()));
+            // TsBb
             if (parameters.getTsdbSnapshotInterval() != null) {
                 mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsdbSnapshotInterval());
             }

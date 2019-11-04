@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MysqlGTIDSet implements GTIDSet {
+public class MysqlGtIdSet implements GtIdSet {
     public Map<String, UUIDSet> sets;
 
     @Override
@@ -38,8 +38,8 @@ public class MysqlGTIDSet implements GTIDSet {
     public boolean equals(Object o) {
         if (o == null) return false;
         if (this == o) return true;
-        if (!(o instanceof MysqlGTIDSet)) return false;
-        MysqlGTIDSet gs = (MysqlGTIDSet) o;
+        if (!(o instanceof MysqlGtIdSet)) return false;
+        MysqlGtIdSet gs = (MysqlGtIdSet) o;
         if (gs.sets == null) return false;
         for (Map.Entry<String, UUIDSet> entry : sets.entrySet()) {
             if (!entry.getValue().equals(gs.sets.get(entry.getKey()))) {
@@ -71,7 +71,7 @@ public class MysqlGTIDSet implements GTIDSet {
      * 726757ad-4455-11e8-ae04-0242ac110002, intervals: [{start:4, stop:5}] } }
      * }
      */
-    public static MysqlGTIDSet parse(String gtidData) {
+    public static MysqlGtIdSet parse(String gtidData) {
         Map<String, UUIDSet> m;
 
         if (gtidData == null || gtidData.length() < 1) {
@@ -85,7 +85,7 @@ public class MysqlGTIDSet implements GTIDSet {
                 m.put(uuidSet.SID.toString(), uuidSet);
             }
         }
-        MysqlGTIDSet gs = new MysqlGTIDSet();
+        MysqlGtIdSet gs = new MysqlGtIdSet();
         gs.sets = m;
         return gs;
     }
