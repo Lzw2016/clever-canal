@@ -13,7 +13,7 @@ import org.clever.canal.parse.inbound.mysql.MysqlConnection;
 import org.clever.canal.parse.inbound.mysql.ddl.DruidDdlParser;
 import org.clever.canal.parse.inbound.mysql.tsdb.DatabaseTableMeta;
 import org.clever.canal.parse.inbound.mysql.tsdb.MemoryTableMeta;
-import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTSDB;
+import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTsDb;
 import org.clever.canal.protocol.position.EntryPosition;
 
 import java.io.IOException;
@@ -38,11 +38,11 @@ public class TableMetaCache {
     private boolean isOnRDS = false;
     private boolean isOnTSDB = false;
 
-    private TableMetaTSDB tableMetaTSDB;
+    private TableMetaTsDb tableMetaTSDB;
     // 第一层tableId,第二层schema.table,解决tableId重复，对应多张表
     private LoadingCache<String, TableMeta> tableMetaDB;
 
-    public TableMetaCache(MysqlConnection con, TableMetaTSDB tableMetaTSDB) {
+    public TableMetaCache(MysqlConnection con, TableMetaTsDb tableMetaTSDB) {
         this.connection = con;
         this.tableMetaTSDB = tableMetaTSDB;
         // 如果持久存储的表结构为空，从db里面获取下

@@ -8,7 +8,7 @@ public interface TableMetaTSDBFactory {
     /**
      * 代理一下tableMetaTSDB的获取,使用隔离的spring定义
      */
-    TableMetaTSDB build(String destination, String springXml);
+    TableMetaTsDb build(String destination, String springXml);
 
     void destroy(String destination);
 }

@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
  *     2.只要内存数据变更就把数据刷到数据库历史记录表
  * </pre>
  */
-public class DatabaseTableMeta implements TableMetaTSDB {
+public class DatabaseTableMeta implements TableMetaTsDb {
     private static Logger logger = LoggerFactory.getLogger(DatabaseTableMeta.class);
 
     public static final EntryPosition INIT_POSITION = new EntryPosition("0", 0L, -2L, -1L);

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.clever.canal.common.utils.Assert;
 import org.clever.canal.parse.CanalEventParser;
+import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.exception.CanalParseException;
 import org.clever.canal.parse.exception.PositionNotFoundException;
 import org.clever.canal.parse.exception.ServerIdNotMatchException;
@@ -22,7 +23,7 @@ import java.util.List;
  * 基于rds binlog备份文件的复制
  */
 @SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
-public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements CanalEventParser, LocalBinLogConnection.FileParserListener {
+public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements CanalEventParser<LogEvent>, LocalBinLogConnection.FileParserListener {
 
     private String url;                // openapi地址
     private String accesskey;          // 云账号的ak

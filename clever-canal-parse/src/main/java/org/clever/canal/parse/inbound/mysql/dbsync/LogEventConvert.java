@@ -987,8 +987,6 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
         } else {
             this.fieldFilterMap = new HashMap<>();
         }
-
-
         for (Map.Entry<String, List<String>> entry : this.fieldFilterMap.entrySet()) {
             logger.warn("--> init field filter : " + entry.getKey() + "->" + entry.getValue());
         }
@@ -1000,7 +998,6 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
         } else {
             this.fieldBlackFilterMap = new HashMap<>();
         }
-
         for (Map.Entry<String, List<String>> entry : this.fieldBlackFilterMap.entrySet()) {
             logger.warn("--> init field black filter : " + entry.getKey() + "->" + entry.getValue());
         }

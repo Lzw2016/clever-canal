@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * 表结构的时间序列存储
  */
-public interface TableMetaTSDB {
+public interface TableMetaTsDb {
 
     /**
      * 初始化

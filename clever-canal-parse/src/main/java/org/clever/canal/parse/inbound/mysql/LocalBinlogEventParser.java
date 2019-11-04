@@ -2,6 +2,7 @@ package org.clever.canal.parse.inbound.mysql;
 
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.parse.CanalEventParser;
+import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.exception.CanalParseException;
 import org.clever.canal.parse.inbound.ErosaConnection;
 import org.clever.canal.parse.inbound.mysql.dbsync.LogEventConvert;
@@ -18,7 +19,7 @@ import java.io.IOException;
  * 基于本地binlog文件的复制
  */
 @SuppressWarnings({"WeakerAccess", "DuplicatedCode", "unused"})
-public class LocalBinlogEventParser extends AbstractMysqlEventParser implements CanalEventParser {
+public class LocalBinlogEventParser extends AbstractMysqlEventParser implements CanalEventParser<LogEvent> {
 
     // 数据库信息
     protected AuthenticationInfo masterInfo;
@@ -47,15 +48,15 @@ public class LocalBinlogEventParser extends AbstractMysqlEventParser implements 
         } catch (IOException e) {
             throw new CanalParseException(e);
         }
-        if (tableMetaTSDB != null && tableMetaTSDB instanceof DatabaseTableMeta) {
-            ((DatabaseTableMeta) tableMetaTSDB).setConnection(metaConnection);
-            ((DatabaseTableMeta) tableMetaTSDB).setFilter(eventFilter);
-            ((DatabaseTableMeta) tableMetaTSDB).setBlackFilter(eventBlackFilter);
-            ((DatabaseTableMeta) tableMetaTSDB).setSnapshotInterval(tsDbSnapshotInterval);
-            ((DatabaseTableMeta) tableMetaTSDB).setSnapshotExpire(tsDbSnapshotExpire);
-            tableMetaTSDB.init(destination);
+        if (tableMetaTsDb != null && tableMetaTsDb instanceof DatabaseTableMeta) {
+            ((DatabaseTableMeta) tableMetaTsDb).setConnection(metaConnection);
+            ((DatabaseTableMeta) tableMetaTsDb).setFilter(eventFilter);
+            ((DatabaseTableMeta) tableMetaTsDb).setBlackFilter(eventBlackFilter);
+            ((DatabaseTableMeta) tableMetaTsDb).setSnapshotInterval(tsDbSnapshotInterval);
+            ((DatabaseTableMeta) tableMetaTsDb).setSnapshotExpire(tsDbSnapshotExpire);
+            tableMetaTsDb.init(destination);
         }
-        tableMetaCache = new TableMetaCache(metaConnection, tableMetaTSDB);
+        tableMetaCache = new TableMetaCache(metaConnection, tableMetaTsDb);
         ((LogEventConvert) binlogParser).setTableMetaCache(tableMetaCache);
     }
 

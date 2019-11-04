@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 基于DDL维护的内存表结构
  */
-public class MemoryTableMeta implements TableMetaTSDB {
+public class MemoryTableMeta implements TableMetaTsDb {
     private Logger logger = LoggerFactory.getLogger(MemoryTableMeta.class);
 
     @Getter

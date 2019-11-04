@@ -40,8 +40,8 @@ import java.util.TimerTask;
  * 2. 切换机制
  * </pre>
  */
-@SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode", "FinalPrivateMethod", "unchecked"})
-public class MysqlEventParser extends AbstractMysqlEventParser implements CanalEventParser, CanalHASwitchable {
+@SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode", "FinalPrivateMethod"})
+public class MysqlEventParser extends AbstractMysqlEventParser implements CanalEventParser<LogEvent>, CanalHASwitchable {
 
     private CanalHAController haController = null;
 
@@ -109,15 +109,15 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
                     throw new CanalParseException("Unsupported BinlogImage " + image);
                 }
             }
-            if (tableMetaTSDB != null && tableMetaTSDB instanceof DatabaseTableMeta) {
-                ((DatabaseTableMeta) tableMetaTSDB).setConnection(metaConnection);
-                ((DatabaseTableMeta) tableMetaTSDB).setFilter(eventFilter);
-                ((DatabaseTableMeta) tableMetaTSDB).setBlackFilter(eventBlackFilter);
-                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotInterval(tsDbSnapshotInterval);
-                ((DatabaseTableMeta) tableMetaTSDB).setSnapshotExpire(tsDbSnapshotExpire);
-                tableMetaTSDB.init(destination);
+            if (tableMetaTsDb != null && tableMetaTsDb instanceof DatabaseTableMeta) {
+                ((DatabaseTableMeta) tableMetaTsDb).setConnection(metaConnection);
+                ((DatabaseTableMeta) tableMetaTsDb).setFilter(eventFilter);
+                ((DatabaseTableMeta) tableMetaTsDb).setBlackFilter(eventBlackFilter);
+                ((DatabaseTableMeta) tableMetaTsDb).setSnapshotInterval(tsDbSnapshotInterval);
+                ((DatabaseTableMeta) tableMetaTsDb).setSnapshotExpire(tsDbSnapshotExpire);
+                tableMetaTsDb.init(destination);
             }
-            tableMetaCache = new TableMetaCache(metaConnection, tableMetaTSDB);
+            tableMetaCache = new TableMetaCache(metaConnection, tableMetaTsDb);
             ((LogEventConvert) binlogParser).setTableMetaCache(tableMetaCache);
         }
     }
@@ -351,7 +351,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
 
     protected EntryPosition findEndPositionWithMasterIdAndTimestamp(MysqlConnection connection) {
         final EntryPosition endPosition = findEndPosition(connection);
-        if (tableMetaTSDB != null) {
+        if (tableMetaTsDb != null) {
             long startTimestamp = System.currentTimeMillis();
             return findAsPerTimestampInSpecificLogFile(connection, startTimestamp, endPosition, endPosition.getJournalName(), true);
         } else {
@@ -360,7 +360,7 @@ public class MysqlEventParser extends AbstractMysqlEventParser implements CanalE
     }
 
     protected EntryPosition findPositionWithMasterIdAndTimestamp(MysqlConnection connection, EntryPosition fixedPosition) {
-        if (tableMetaTSDB != null && (fixedPosition.getTimestamp() == null || fixedPosition.getTimestamp() <= 0)) {
+        if (tableMetaTsDb != null && (fixedPosition.getTimestamp() == null || fixedPosition.getTimestamp() <= 0)) {
             // 使用一个未来极大的时间，基于位点进行定位
             long startTimestamp = System.currentTimeMillis() + 102L * 365 * 24 * 3600 * 1000; // 当前时间的未来102年
             EntryPosition entryPosition = findAsPerTimestampInSpecificLogFile(connection, startTimestamp, fixedPosition, fixedPosition.getJournalName(), true);
