@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.parse.exception.PositionNotFoundException;
 import org.clever.canal.parse.inbound.ParserExceptionHandler;
 import org.clever.canal.parse.inbound.mysql.MysqlEventParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,7 +19,8 @@ import java.util.concurrent.Executors;
  */
 @SuppressWarnings({"unused"})
 public class RdsBinlogEventParserProxy extends MysqlEventParser {
-
+    private final Logger logger = LoggerFactory.getLogger(RdsBinlogEventParserProxy.class);
+    
     private String rdsOpenApiUrl = "https://rds.aliyuncs.com/"; // openapi地址
     private String accesskey;                                   // 云账号的ak
     private String secretkey;                                   // 云账号sk
@@ -60,8 +63,8 @@ public class RdsBinlogEventParserProxy extends MysqlEventParser {
             rdsLocalBinlogEventParser.setMasterPosition(this.masterPosition);
             rdsLocalBinlogEventParser.setTransactionSize(this.transactionSize);
             rdsLocalBinlogEventParser.setUrl(this.rdsOpenApiUrl);
-            rdsLocalBinlogEventParser.setAccesskey(this.accesskey);
-            rdsLocalBinlogEventParser.setSecretkey(this.secretkey);
+            rdsLocalBinlogEventParser.setAccessKey(this.accesskey);
+            rdsLocalBinlogEventParser.setSecretKey(this.secretkey);
             rdsLocalBinlogEventParser.setInstanceId(this.instanceId);
             rdsLocalBinlogEventParser.setEventSink(eventSink);
             rdsLocalBinlogEventParser.setDirectory(directory);

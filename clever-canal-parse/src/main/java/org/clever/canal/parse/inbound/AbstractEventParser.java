@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @SuppressWarnings({"WeakerAccess"})
 public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle implements CanalEventParser<EVENT> {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(AbstractEventParser.class);
 
     /**
      * 管理binlog消费位置信息

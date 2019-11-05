@@ -14,6 +14,9 @@ import org.clever.canal.store.CanalEventStore;
 @SuppressWarnings({"unused"})
 public interface CanalInstance extends CanalLifeCycle {
 
+    /**
+     * 通道名称
+     */
     String getDestination();
 
     CanalEventParser getEventParser();

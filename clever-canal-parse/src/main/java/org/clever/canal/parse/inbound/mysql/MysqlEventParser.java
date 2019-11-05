@@ -24,6 +24,8 @@ import org.clever.canal.parse.support.AuthenticationInfo;
 import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.protocol.position.LogPosition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -44,6 +46,8 @@ import java.util.TimerTask;
  */
 @SuppressWarnings({"unused", "WeakerAccess", "DuplicatedCode"})
 public class MysqlEventParser extends AbstractMysqlEventParser implements CanalEventParser<LogEvent>, CanalHASwitchable {
+    private final Logger logger = LoggerFactory.getLogger(MysqlEventParser.class);
+
     /**
      * HA 控制器实现
      */

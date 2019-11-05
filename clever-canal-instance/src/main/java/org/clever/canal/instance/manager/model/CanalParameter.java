@@ -418,6 +418,9 @@ public class CanalParameter implements Serializable {
     public void addGroupDbAddresses(List<DataSourcing> list) {
         if (groupDbAddresses == null) {
             groupDbAddresses = new ArrayList<>(list.size());
+            for (int i = 0; i < list.size(); i++) {
+                groupDbAddresses.add(new ArrayList<>());
+            }
         } else if (groupDbAddresses.size() != list.size()) {
             throw new CanalException("Group Size is " + groupDbAddresses.size() + ", list size is" + list.size() + ". not equals!");
         }

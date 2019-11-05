@@ -14,6 +14,8 @@ import org.clever.canal.parse.inbound.mysql.LocalBinlogEventParser;
 import org.clever.canal.parse.inbound.mysql.rds.data.BinlogFile;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.protocol.position.LogPosition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;
@@ -24,10 +26,11 @@ import java.util.List;
  */
 @SuppressWarnings({"WeakerAccess", "ResultOfMethodCallIgnored", "unused"})
 public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements CanalEventParser<LogEvent>, LocalBinLogConnection.FileParserListener {
+    private final Logger logger = LoggerFactory.getLogger(RdsLocalBinlogEventParser.class);
 
-    private String url;                // openapi地址
-    private String accesskey;          // 云账号的ak
-    private String secretkey;          // 云账号sk
+    private String url;                // openApi地址
+    private String accessKey;          // 云账号的ak
+    private String secretKey;          // 云账号sk
     private String instanceId;         // rds实例id
     private Long startTime;
     private Long endTime;
@@ -40,8 +43,8 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
 
     public void start() throws CanalParseException {
         try {
-            Assert.notNull(accesskey);
-            Assert.notNull(secretkey);
+            Assert.notNull(accessKey);
+            Assert.notNull(secretKey);
             Assert.notNull(instanceId);
             Assert.notNull(url);
             Assert.notNull(directory);
@@ -57,7 +60,7 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
                 throw new PositionNotFoundException("position timestamp is empty!");
             }
             startTime = startTimeInMill;
-            List<BinlogFile> binlogFiles = RdsBinlogOpenApi.listBinlogFiles(url, accesskey, secretkey, instanceId, new Date(startTime), new Date(endTime));
+            List<BinlogFile> binlogFiles = RdsBinlogOpenApi.listBinlogFiles(url, accessKey, secretKey, instanceId, new Date(startTime), new Date(endTime));
             if (binlogFiles.isEmpty()) {
                 throw new CanalParseException("start timestamp : " + startTimeInMill + " binlog files is empty");
             }
@@ -119,12 +122,12 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
         }
     }
 
-    public void setAccesskey(String accesskey) {
-        this.accesskey = accesskey;
+    public void setAccessKey(String accessKey) {
+        this.accessKey = accessKey;
     }
 
-    public void setSecretkey(String secretkey) {
-        this.secretkey = secretkey;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     public void setInstanceId(String instanceId) {

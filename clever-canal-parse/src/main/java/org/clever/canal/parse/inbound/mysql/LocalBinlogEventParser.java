@@ -12,6 +12,8 @@ import org.clever.canal.parse.index.CanalLogPositionManager;
 import org.clever.canal.parse.support.AuthenticationInfo;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.protocol.position.LogPosition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -20,6 +22,7 @@ import java.io.IOException;
  */
 @SuppressWarnings({"WeakerAccess", "DuplicatedCode", "unused"})
 public class LocalBinlogEventParser extends AbstractMysqlEventParser implements CanalEventParser<LogEvent> {
+    private final Logger logger = LoggerFactory.getLogger(LocalBinlogEventParser.class);
 
     // 数据库信息
     protected AuthenticationInfo masterInfo;
