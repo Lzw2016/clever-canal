@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings("unused")
 public class LogAlarmHandler extends AbstractCanalLifeCycle implements CanalAlarmHandler {
-
     private static final Logger logger = LoggerFactory.getLogger(LogAlarmHandler.class);
 
     public void sendAlarm(String destination, String msg) {

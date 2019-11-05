@@ -51,20 +51,17 @@ public class Test01 {
                 CanalParameter canalParameter = new CanalParameter();
 
                 canalParameter.addGroupDbAddresses(new CanalParameter.DataSourcing(CanalParameter.SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
+                canalParameter.setSlaveId(123L);
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
-                canalParameter.setSlaveId(123L);
-//                canalParameter.setMetaMode(CanalParameter.MetaMode.MIXED);
+                canalParameter.setMetaMode(CanalParameter.MetaMode.LOCAL_FILE);
                 canalParameter.setStorageBatchMode(BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
-
                 canalParameter.setTsDbEnable(false);
                 canalParameter.setTsDbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
                 canalParameter.setTsDbJdbcUserName("clever-canal");
                 canalParameter.setTsDbJdbcPassword("lizhiwei");
-
                 canalParameter.setLogPositionMode(CanalParameter.LogPositionMode.META);
-
                 return new Canal(1L, "test", canalParameter);
             }
 

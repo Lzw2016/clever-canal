@@ -514,7 +514,7 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
             RowChange rowChange = rowChangeBuider.build();
             if (tableError) {
                 Entry entry = createEntry(header, EntryType.ROW_DATA, ByteString.EMPTY);
-                logger.warn("table parser error : {}storeValue: {}", entry.toString(), rowChange.toString());
+                logger.info("table parser error : {}storeValue: {}", entry.toString(), rowChange.toString());
                 return null;
             } else {
                 return createEntry(header, EntryType.ROW_DATA, rowChange.toByteString());
@@ -990,7 +990,7 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
             this.fieldFilterMap = new HashMap<>();
         }
         for (Map.Entry<String, List<String>> entry : this.fieldFilterMap.entrySet()) {
-            logger.warn("--> init field filter : " + entry.getKey() + "->" + entry.getValue());
+            logger.info("--> init field filter : " + entry.getKey() + "->" + entry.getValue());
         }
     }
 
@@ -1001,7 +1001,7 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
             this.fieldBlackFilterMap = new HashMap<>();
         }
         for (Map.Entry<String, List<String>> entry : this.fieldBlackFilterMap.entrySet()) {
-            logger.warn("--> init field black filter : " + entry.getKey() + "->" + entry.getValue());
+            logger.info("--> init field black filter : " + entry.getKey() + "->" + entry.getValue());
         }
     }
 

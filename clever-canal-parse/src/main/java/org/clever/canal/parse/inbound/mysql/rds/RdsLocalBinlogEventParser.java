@@ -167,11 +167,11 @@ public class RdsLocalBinlogEventParser extends LocalBinlogEventParser implements
                 logPositionManager.persistLogPosition(destination, newLogPosition);
             }
             if (binlogDownloadQueue.isLastFile(fileName)) {
-                logger.warn("last file : " + fileName + " , timestamp : " + timestamp + " , all file parse complete, switch to mysql parser!");
+                logger.info("last file : " + fileName + " , timestamp : " + timestamp + " , all file parse complete, switch to mysql parser!");
                 finishListener.onFinish();
                 return;
             } else {
-                logger.warn("parse local binlog file : " + fileName + " , timestamp : " + timestamp + " , try the next binlog !");
+                logger.info("parse local binlog file : " + fileName + " , timestamp : " + timestamp + " , try the next binlog !");
             }
             binlogDownloadQueue.prepare();
         } catch (Exception e) {

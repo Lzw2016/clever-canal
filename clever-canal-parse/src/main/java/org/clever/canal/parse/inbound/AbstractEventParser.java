@@ -343,7 +343,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
                         }
                         // 4. 获取最后的位置信息
                         long start = System.currentTimeMillis();
-                        logger.warn("---> begin to find start position, it will be long time for reset or first position");
+                        logger.info("---> begin to find start position, it will be long time for reset or first position");
                         final EntryPosition startPosition = findStartPosition(erosaConnection);
                         if (startPosition == null) {
                             throw new PositionNotFoundException("can't find start position for " + destination);
@@ -352,7 +352,7 @@ public abstract class AbstractEventParser<EVENT> extends AbstractCanalLifeCycle 
                             throw new CanalParseException("can't find init table meta for " + destination + " with position : " + startPosition);
                         }
                         long end = System.currentTimeMillis();
-                        logger.warn("---> find start position successfully, {}", startPosition.toString() + " cost : " + (end - start) + "ms , the next step is binlog dump");
+                        logger.info("---> find start position successfully, {}", startPosition.toString() + " cost : " + (end - start) + "ms , the next step is binlog dump");
                         // 重新链接，因为在找position过程中可能有状态，需要断开后重建
                         erosaConnection.reconnect();
                         final SinkFunction sinkHandler = new SinkFunction<EVENT>() {

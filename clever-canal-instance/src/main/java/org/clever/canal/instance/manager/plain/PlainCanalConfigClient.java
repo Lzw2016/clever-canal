@@ -25,20 +25,20 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
     private final static Integer REQUEST_TIMEOUT = 5000;
     private String configURL;
     private String user;
-    private String passwd;
+    private String password;
     private HttpHelper httpHelper;
     private String localIp;
     private int adminPort;
     private boolean autoRegister;
     private String autoCluster;
 
-    public PlainCanalConfigClient(String configURL, String user, String passwd, String localIp, int adminPort, boolean autoRegister, String autoCluster) {
-        this(configURL, user, passwd, localIp, adminPort);
+    public PlainCanalConfigClient(String configURL, String user, String password, String localIp, int adminPort, boolean autoRegister, String autoCluster) {
+        this(configURL, user, password, localIp, adminPort);
         this.autoCluster = autoCluster;
         this.autoRegister = autoRegister;
     }
 
-    public PlainCanalConfigClient(String configURL, String user, String passwd, String localIp, int adminPort) {
+    public PlainCanalConfigClient(String configURL, String user, String password, String localIp, int adminPort) {
         this.configURL = configURL;
         if (!StringUtils.startsWithIgnoreCase(configURL, "http")) {
             this.configURL = "http://" + configURL;
@@ -46,7 +46,7 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
             this.configURL = configURL;
         }
         this.user = user;
-        this.passwd = passwd;
+        this.password = password;
         this.httpHelper = new HttpHelper();
         if (StringUtils.isEmpty(localIp)) {
             // 本地测试用
@@ -111,7 +111,7 @@ public class PlainCanalConfigClient extends AbstractCanalLifeCycle implements Ca
     private ResponseModel<CanalConfig> doQuery(String url) {
         Map<String, String> heads = new HashMap<>();
         heads.put("user", user);
-        heads.put("passwd", passwd);
+        heads.put("passwd", password);
         String response = httpHelper.get(url, heads, REQUEST_TIMEOUT);
         ResponseModel<CanalConfig> resp = JSONObject.parseObject(
                 response,

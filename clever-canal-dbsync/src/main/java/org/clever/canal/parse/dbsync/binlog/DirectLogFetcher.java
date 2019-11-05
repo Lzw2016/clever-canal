@@ -93,7 +93,6 @@ public final class DirectLogFetcher extends LogFetcher {
                 // org.springframework.jdbc.datasource.ConnectionProxy not
                 // found.
             }
-
             try {
                 Class<?> connProxy = Class.forName("org.apache.commons.dbcp.DelegatingConnection");
                 if (connProxy.isInstance(conn)) {
@@ -103,7 +102,6 @@ public final class DirectLogFetcher extends LogFetcher {
             } catch (ClassNotFoundException e) {
                 // org.apache.commons.dbcp.DelegatingConnection not found.
             }
-
             try {
                 if (conn instanceof java.sql.Wrapper) {
                     Class<?> connIface = Class.forName("com.mysql.jdbc.Connection");
@@ -113,11 +111,8 @@ public final class DirectLogFetcher extends LogFetcher {
             } catch (ClassNotFoundException e) {
                 // com.mysql.jdbc.Connection not found.
             } catch (SQLException e) {
-                logger.warn("Unwrap " + conn.getClass().getName() + " to " + connClazz.getName() + " failed: "
-                                + e.getMessage(),
-                        e);
+                logger.warn("Unwrap " + conn.getClass().getName() + " to " + connClazz.getName() + " failed: " + e.getMessage(), e);
             }
-
             return null;
         }
         return conn;
@@ -132,8 +127,7 @@ public final class DirectLogFetcher extends LogFetcher {
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Cannot invoke method: \'" + name + "\' @ " + objClazz.getName(), e);
         } catch (InvocationTargetException e) {
-            throw new IllegalArgumentException("Invoke method failed: \'" + name + "\' @ " + objClazz.getName(),
-                    e.getTargetException());
+            throw new IllegalArgumentException("Invoke method failed: \'" + name + "\' @ " + objClazz.getName(), e.getTargetException());
         }
     }
 
