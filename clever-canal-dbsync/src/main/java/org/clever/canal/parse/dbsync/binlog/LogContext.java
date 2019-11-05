@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: Document Me!! NOTE: Log context will NOT write multi-threaded.
+ * Log context will NOT write multi-threaded.
  */
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class LogContext {

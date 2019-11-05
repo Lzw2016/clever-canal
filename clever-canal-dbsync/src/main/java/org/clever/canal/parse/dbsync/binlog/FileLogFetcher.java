@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * TODO: Document It!!
- *
  * <pre>
  * FileLogFetcher fetcher = new FileLogFetcher();
  * fetcher.open(file, 0);

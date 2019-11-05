@@ -6,8 +6,7 @@ import org.apache.commons.lang3.RandomUtils;
 import org.clever.canal.filter.aviater.AviaterRegexFilter;
 import org.clever.canal.instance.manager.CanalConfigClient;
 import org.clever.canal.instance.manager.ManagerCanalInstanceGenerator;
-import org.clever.canal.instance.manager.model.Canal;
-import org.clever.canal.instance.manager.model.CanalParameter;
+import org.clever.canal.instance.manager.model.*;
 import org.clever.canal.parse.dbsync.binlog.LogEvent;
 import org.clever.canal.parse.inbound.mysql.MysqlConnection;
 import org.clever.canal.parse.inbound.mysql.dbsync.LogEventConvert;
@@ -50,18 +49,18 @@ public class Test01 {
             public Canal findCanal(String destination) {
                 CanalParameter canalParameter = new CanalParameter();
 
-                canalParameter.addGroupDbAddresses(new CanalParameter.DataSourcing(CanalParameter.SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
+                canalParameter.addGroupDbAddresses(new DataSourcing(SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
                 canalParameter.setSlaveId(123L);
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
-                canalParameter.setMetaMode(CanalParameter.MetaMode.LOCAL_FILE);
+                canalParameter.setMetaMode(MetaMode.LOCAL_FILE);
                 canalParameter.setStorageBatchMode(BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
                 canalParameter.setTsDbEnable(false);
                 canalParameter.setTsDbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
                 canalParameter.setTsDbJdbcUserName("clever-canal");
                 canalParameter.setTsDbJdbcPassword("lizhiwei");
-                canalParameter.setLogPositionMode(CanalParameter.LogPositionMode.META);
+                canalParameter.setLogPositionMode(LogPositionMode.META);
                 return new Canal(1L, "test", canalParameter);
             }
 
@@ -71,11 +70,9 @@ public class Test01 {
             }
         };
 
-        ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator();
-        managerCanalInstanceGenerator.setCanalConfigClient(canalConfigClient);
+        ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator(canalConfigClient);
         CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.instance();
         canalServerWithEmbedded.setCanalInstanceGenerator(managerCanalInstanceGenerator);
-//        canalServerWithEmbedded.setMetricsPort(13306);
         canalServerWithEmbedded.start();
         canalServerWithEmbedded.start("test");
 

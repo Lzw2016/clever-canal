@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 
 /**
- * TODO: Document Me!!
  */
 @SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused", "DuplicatedCode", "StatementWithEmptyBody", "FinalPrivateMethod", "FinalStaticMethod", "UnnecessaryLocalVariable"})
 public class LogBuffer {

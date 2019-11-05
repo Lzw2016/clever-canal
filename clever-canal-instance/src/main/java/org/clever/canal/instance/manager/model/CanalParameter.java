@@ -1,6 +1,5 @@
 package org.clever.canal.instance.manager.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -9,7 +8,6 @@ import org.clever.canal.common.utils.CanalToStringStyle;
 import org.clever.canal.store.model.BatchMode;
 
 import java.io.Serializable;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -234,182 +232,6 @@ public class CanalParameter implements Serializable {
      * CanalLogPositionManager 的存储模式
      */
     private LogPositionMode logPositionMode = LogPositionMode.MEMORY;
-
-    /**
-     * 告警模式
-     */
-    public enum AlarmMode {
-        /**
-         * 写文件日志
-         */
-        LOGGER,
-    }
-
-    /**
-     * MetaManager 的存储模式
-     */
-    public enum MetaMode {
-        /**
-         * 内存存储模式
-         */
-        MEMORY,
-        /**
-         * 本地文件存储模式(内存 + 本地文件存储)
-         */
-        LOCAL_FILE,
-//        /**
-//         * 文件存储模式
-//         */
-//        ZOOKEEPER,
-//        /**
-//         * 混合模式，内存+文件
-//         */
-//        MIXED;
-    }
-
-    /**
-     * EventStore 存储模式
-     */
-    public enum StorageMode {
-        /**
-         * 内存存储模式
-         */
-        MEMORY,
-//        /**
-//         * 文件存储模式
-//         */
-//        FILE,
-//        /**
-//         * 混合模式，内存+文件
-//         */
-//        MIXED,
-    }
-
-    /**
-     * EventStore 内存回收模式
-     */
-    @SuppressWarnings("unused")
-    public enum StorageScavengeMode {
-        /**
-         * 在存储满的时候触发
-         */
-        ON_FULL,
-        /**
-         * 在每次有ack请求时触发
-         */
-        ON_ACK,
-        /**
-         * 定时触发，需要外部控制
-         */
-        ON_SCHEDULE,
-        /**
-         * 不做任何操作，由外部进行清理
-         */
-        NO_OP,
-    }
-
-    /**
-     * 数据源类型
-     */
-    @SuppressWarnings("unused")
-    public enum SourcingType {
-        /**
-         * mysql DB
-         */
-        MYSQL,
-        /**
-         * localBinLog
-         */
-        LOCAL_BINLOG,
-        /**
-         * oracle DB
-         */
-        ORACLE,
-        /**
-         * RDS mysql DB
-         */
-        RDS_MYSQL,
-    }
-
-    /**
-     * 高可用模式
-     */
-    @SuppressWarnings("unused")
-    public enum HAMode {
-        /**
-         * 心跳检测
-         */
-        HEARTBEAT,
-        /**
-         * otter media
-         */
-        MEDIA,
-    }
-
-    /**
-     * CanalLogPositionManager 的存储模式
-     */
-    public enum LogPositionMode {
-        /**
-         * 内存存储模式
-         */
-        MEMORY,
-        /**
-         * 基于meta信息
-         */
-        META,
-        /**
-         * 基于内存+meta的failBack实现
-         */
-        MEMORY_META_FAIL_BACK,
-//        /**
-//         * 文件存储模式 zookeeper
-//         */
-//        ZOOKEEPER,
-//        /**
-//         * 混合模式，内存+文件
-//         */
-//        MIXED,
-    }
-
-//    /**
-//     * 集群模式
-//     */
-//    public enum ClusterMode {
-//        /**
-//         * 嵌入式
-//         */
-//        STANDALONE,
-//        /**
-//         * 冷备
-//         */
-//        STANDBY,
-//        /**
-//         * 热备
-//         */
-//        ACTIVE,
-//    }
-
-    /**
-     * 数据来源描述
-     */
-    @Data
-    public static class DataSourcing implements Serializable {
-        private static final long serialVersionUID = -1770648468678085234L;
-        /**
-         * 数据源类型
-         */
-        private SourcingType type;
-        /**
-         * 数据源地址
-         */
-        private InetSocketAddress dbAddress;
-
-        public DataSourcing(SourcingType type, InetSocketAddress dbAddress) {
-            this.type = type;
-            this.dbAddress = dbAddress;
-        }
-    }
 
     /**
      * 新增一个数据源组(主库，备库)

@@ -15,8 +15,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * TODO: Document It!!
- *
  * <pre>
  * DirectLogFetcher fetcher = new DirectLogFetcher();
  * fetcher.open(conn, file, 0, 13);
