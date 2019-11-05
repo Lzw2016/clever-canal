@@ -11,7 +11,7 @@ import org.clever.canal.store.CanalEventStore;
 /**
  * 代表单个canal实例，比如一个destination会独立一个实例
  */
-@SuppressWarnings({"unused", "UnusedReturnValue"})
+@SuppressWarnings({"unused"})
 public interface CanalInstance extends CanalLifeCycle {
 
     String getDestination();
@@ -29,6 +29,7 @@ public interface CanalInstance extends CanalLifeCycle {
     /**
      * 客户端发生订阅/取消订阅行为
      */
+    @SuppressWarnings("UnusedReturnValue")
     boolean subscribeChange(ClientIdentity identity);
 
     CanalMQConfig getMqConfig();

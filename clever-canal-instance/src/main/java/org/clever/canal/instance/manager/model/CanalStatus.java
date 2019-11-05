@@ -13,10 +13,12 @@ public enum CanalStatus {
      */
     STOP;
 
+    @SuppressWarnings("unused")
     public boolean isStart() {
         return this.equals(CanalStatus.START);
     }
 
+    @SuppressWarnings("unused")
     public boolean isStop() {
         return this.equals(CanalStatus.STOP);
     }

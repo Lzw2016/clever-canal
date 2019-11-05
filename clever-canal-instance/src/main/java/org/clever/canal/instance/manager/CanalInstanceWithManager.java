@@ -2,7 +2,6 @@ package org.clever.canal.instance.manager;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.clever.canal.common.CanalException;
 import org.clever.canal.common.alarm.CanalAlarmHandler;
 import org.clever.canal.common.alarm.LogAlarmHandler;
@@ -14,6 +13,7 @@ import org.clever.canal.instance.manager.model.Canal;
 import org.clever.canal.instance.manager.model.CanalParameter;
 import org.clever.canal.instance.manager.model.CanalParameter.*;
 import org.clever.canal.meta.FileMixedMetaManager;
+import org.clever.canal.meta.MemoryMetaManager;
 import org.clever.canal.parse.CanalEventParser;
 import org.clever.canal.parse.ha.CanalHAController;
 import org.clever.canal.parse.ha.HeartBeatHAController;
@@ -31,40 +31,37 @@ import org.clever.canal.sink.entry.EntryEventSink;
 import org.clever.canal.sink.entry.group.GroupEventSink;
 import org.clever.canal.store.AbstractCanalStoreScavenge;
 import org.clever.canal.store.memory.MemoryEventStoreWithBuffer;
-import org.clever.canal.store.model.BatchMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.InetSocketAddress;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.clever.canal.common.zookeeper.ZkClientx;
-//import org.clever.canal.meta.PeriodMixedMetaManager;
-//import org.clever.canal.meta.ZooKeeperMetaManager;
-//import org.clever.canal.parse.inbound.mysql.tsdb.DefaultTableMetaTSDBFactory;
-//import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaTSDBBuilder;
-
 /**
  * 单个canal实例，比如一个destination会独立一个实例
  */
-@SuppressWarnings({"WeakerAccess", "unchecked", "ConstantConditions", "unused"})
+@SuppressWarnings({"WeakerAccess"})
 public class CanalInstanceWithManager extends AbstractCanalInstance {
-
     private static final Logger logger = LoggerFactory.getLogger(CanalInstanceWithManager.class);
-    protected String filter;                // 过滤表达式
-    protected CanalParameter parameters;    // 对应参数
+
+    /**
+     * 过滤表达式
+     */
+    protected String filter;
+    /**
+     * 对应参数
+     */
+    protected CanalParameter parameters;
 
     public CanalInstanceWithManager(Canal canal, String filter) {
         this.parameters = canal.getCanalParameter();
         this.canalId = canal.getId();
         this.destination = canal.getName();
         this.filter = filter;
-        logger.info("init CanalInstance for {}-{} with parameters:{}", canalId, destination, parameters);
+        logger.info("[{}-{}] Init CanalInstance | parameters: {}", canalId, destination, parameters);
         // 初始化报警机制
         initAlarmHandler();
         // 初始化metaManager
@@ -82,137 +79,113 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         if (!metaManager.isStart()) {
             metaManager.start();
         }
-        logger.info("init successful....");
+        logger.info("[{}-{}] Init Successful!", canalId, destination);
     }
 
+    @Override
     public void start() {
         // 初始化metaManager
-        logger.info("start CannalInstance for {}-{} with parameters:{}", canalId, destination, parameters);
+        logger.info("[{}-{}] Starting CanalInstance | parameters: {}", canalId, destination, parameters);
         super.start();
     }
 
+    @Override
+    protected void startEventParserInternal(CanalEventParser eventParser, boolean isGroup) {
+        if (eventParser instanceof AbstractEventParser) {
+            AbstractEventParser abstractEventParser = (AbstractEventParser) eventParser;
+            abstractEventParser.setAlarmHandler(getAlarmHandler());
+        }
+        super.startEventParserInternal(eventParser, isGroup);
+    }
+
+    /**
+     * 初始化报警机制
+     */
     protected void initAlarmHandler() {
-        logger.info("init alarmHandler begin...");
-        String alarmHandlerClass = parameters.getAlarmHandlerClass();
-        String alarmHandlerPluginDir = parameters.getAlarmHandlerPluginDir();
-        if (alarmHandlerClass == null || alarmHandlerPluginDir == null) {
+        logger.info("[{}-{}] Init alarmHandler begin...", canalId, destination);
+        AlarmMode mode = parameters.getAlarmMode();
+        if (AlarmMode.LOGGER.equals(mode)) {
             alarmHandler = new LogAlarmHandler();
         } else {
-            try {
-                File externalLibDir = new File(alarmHandlerPluginDir);
-                File[] jarFiles = externalLibDir.listFiles((dir, name) -> name.endsWith(".jar"));
-                if (jarFiles == null || jarFiles.length == 0) {
-                    throw new IllegalStateException(String.format("alarmHandlerPluginDir [%s] can't find any name endswith \".jar\" file.", alarmHandlerPluginDir));
-                }
-                URL[] urls = new URL[jarFiles.length];
-                for (int i = 0; i < jarFiles.length; i++) {
-                    urls[i] = jarFiles[i].toURI().toURL();
-                }
-                ClassLoader currentClassLoader = new URLClassLoader(urls, CanalInstanceWithManager.class.getClassLoader());
-                Class<CanalAlarmHandler> _alarmClass = (Class<CanalAlarmHandler>) currentClassLoader.loadClass(alarmHandlerClass);
-                alarmHandler = _alarmClass.newInstance();
-                logger.info("init [{}] alarm handler success.", alarmHandlerClass);
-            } catch (Throwable e) {
-                String errorMsg = String.format(
-                        "init alarmHandlerPluginDir [%s] alarm handler [%s] error: %s",
-                        alarmHandlerPluginDir,
-                        alarmHandlerClass,
-                        ExceptionUtils.getStackTrace(e)
-                );
-                logger.error(errorMsg);
-                throw new CanalException(errorMsg, e);
-            }
+            throw new CanalException("unsupported AlarmMode for " + mode);
         }
-        logger.info("init alarmHandler end! \n\t load CanalAlarmHandler:{} ", alarmHandler.getClass().getName());
+        logger.info("[{}-{}] Init alarmHandler end! -> load CanalAlarmHandler: {} ", canalId, destination, alarmHandler.getClass().getName());
     }
 
+    /**
+     * 初始化 metaManager
+     */
     protected void initMetaManager() {
-        metaManager = new FileMixedMetaManager(new File("./meta-manager"), parameters.getMetaFileFlushPeriod());
-//        TODO lzw
-        logger.info("init metaManager begin...");
-//        MetaMode mode = parameters.getMetaMode();
-//        if (mode.isMemory()) {
-//            metaManager = new MemoryMetaManager();
-//        } else if (mode.isZookeeper()) {
-//            metaManager = new ZooKeeperMetaManager();
-//            ((ZooKeeperMetaManager) metaManager).setZkClientx(getZkclientx());
-//        } else if (mode.isMixed()) {
-//            // metaManager = new MixedMetaManager();
-//            metaManager = new PeriodMixedMetaManager();// 换用优化过的mixed, at
-//            // 2012-09-11
-//            // 设置内嵌的zk metaManager
-//            ZooKeeperMetaManager zooKeeperMetaManager = new ZooKeeperMetaManager();
-//            zooKeeperMetaManager.setZkClientx(getZkclientx());
-//            ((PeriodMixedMetaManager) metaManager).setZooKeeperMetaManager(zooKeeperMetaManager);
-//        } else if (mode.isLocalFile()) {
-//            FileMixedMetaManager fileMixedMetaManager = new FileMixedMetaManager();
-//            fileMixedMetaManager.setDataDir(parameters.getDataDir());
-//            fileMixedMetaManager.setPeriod(parameters.getMetaFileFlushPeriod());
-//            metaManager = fileMixedMetaManager;
-//        } else {
-//            throw new CanalException("unsupport MetaMode for " + mode);
-//        }
-        logger.info("init metaManager end! \n\t load CanalMetaManager:{} ", metaManager.getClass().getName());
+        logger.info("[{}-{}] Init metaManager begin...", canalId, destination);
+        MetaMode mode = parameters.getMetaMode();
+        if (MetaMode.MEMORY.equals(mode)) {
+            metaManager = new MemoryMetaManager();
+        } else if (MetaMode.LOCAL_FILE.equals(mode)) {
+            metaManager = new FileMixedMetaManager(new File(parameters.getDataDir()), parameters.getMetaFileFlushPeriod());
+        } else {
+            throw new CanalException("unsupported MetaMode for " + mode);
+        }
+        logger.info("[{}-{}] Init metaManager end! -> load CanalMetaManager: {} ", canalId, destination, metaManager.getClass().getName());
     }
 
+    /**
+     * 初始化eventStore
+     */
     protected void initEventStore() {
-        logger.info("init eventStore begin...");
+        logger.info("[{}-{}] Init eventStore begin...", canalId, destination);
         StorageMode mode = parameters.getStorageMode();
-        if (mode.isMemory()) {
+        if (StorageMode.MEMORY.equals(mode)) {
             MemoryEventStoreWithBuffer memoryEventStore = new MemoryEventStoreWithBuffer();
             memoryEventStore.setBufferSize(parameters.getMemoryStorageBufferSize());
             memoryEventStore.setBufferMemUnit(parameters.getMemoryStorageBufferMemUnit());
-            memoryEventStore.setBatchMode(BatchMode.valueOf(parameters.getStorageBatchMode().name()));
-            memoryEventStore.setDdlIsolation(parameters.getDdlIsolation());
+            memoryEventStore.setBatchMode(parameters.getStorageBatchMode());
             memoryEventStore.setRaw(parameters.getMemoryStorageRawEntry());
+            memoryEventStore.setDdlIsolation(parameters.getDdlIsolation());
             eventStore = memoryEventStore;
-        } else if (mode.isFile()) {
-            // 后续版本支持
-            throw new CanalException("unSupport MetaMode for " + mode);
-        } else if (mode.isMixed()) {
-            // 后续版本支持
-            throw new CanalException("unSupport MetaMode for " + mode);
         } else {
-            throw new CanalException("unSupport MetaMode for " + mode);
+            throw new CanalException("unsupported StorageMode for " + mode);
         }
+        // noinspection ConstantConditions (压制警告)
         if (eventStore instanceof AbstractCanalStoreScavenge) {
             StorageScavengeMode scavengeMode = parameters.getStorageScavengeMode();
             AbstractCanalStoreScavenge eventScavengeStore = (AbstractCanalStoreScavenge) eventStore;
             eventScavengeStore.setDestination(destination);
             eventScavengeStore.setCanalMetaManager(metaManager);
-            eventScavengeStore.setOnAck(scavengeMode.isOnAck());
-            eventScavengeStore.setOnFull(scavengeMode.isOnFull());
-            eventScavengeStore.setOnSchedule(scavengeMode.isOnSchedule());
-            if (scavengeMode.isOnSchedule()) {
-                eventScavengeStore.setScavengeSchedule(parameters.getScavengeSchdule());
+            eventScavengeStore.setOnAck(StorageScavengeMode.ON_ACK.equals(scavengeMode));
+            eventScavengeStore.setOnFull(StorageScavengeMode.ON_FULL.equals(scavengeMode));
+            eventScavengeStore.setOnSchedule(StorageScavengeMode.ON_SCHEDULE.equals(scavengeMode));
+            if (StorageScavengeMode.ON_SCHEDULE.equals(scavengeMode)) {
+                eventScavengeStore.setScavengeSchedule(parameters.getScavengeSchedule());
             }
         }
-        logger.info("init eventStore end! \n\t load CanalEventStore:{}", eventStore.getClass().getName());
+        logger.info("[{}-{}] Init eventStore end! -> load CanalEventStore: {}", canalId, destination, eventStore.getClass().getName());
     }
 
+    /**
+     * 初始化eventSink
+     */
     protected void initEventSink() {
-        logger.info("init eventSink begin...");
+        logger.info("[{}-{}] Init eventSink begin...", canalId, destination);
         int groupSize = getGroupSize();
         if (groupSize <= 1) {
             eventSink = new EntryEventSink();
         } else {
             eventSink = new GroupEventSink(groupSize);
         }
+        // noinspection ConstantConditions (压制警告)
         if (eventSink instanceof EntryEventSink) {
             ((EntryEventSink) eventSink).setFilterTransactionEntry(false);
             ((EntryEventSink) eventSink).setEventStore(getEventStore());
         }
-        // if (StringUtils.isNotEmpty(filter)) {
-        // AviaterRegexFilter aviaterFilter = new AviaterRegexFilter(filter);
-        // ((AbstractCanalEventSink) eventSink).setFilter(aviaterFilter);
-        // }
-        logger.info("init eventSink end! \n\t load CanalEventSink:{}", eventSink.getClass().getName());
+        logger.info("[{}-{}] Init eventSink end! -> load CanalEventSink:{}", canalId, destination, eventSink.getClass().getName());
     }
 
+    /**
+     * 初始化eventParser
+     */
     protected void initEventParser() {
-        logger.info("init eventParser begin...");
+        logger.info("[{}-{}] Init eventParser begin...", canalId, destination);
         SourcingType type = parameters.getSourcingType();
-
         List<List<DataSourcing>> groupDbAddresses = parameters.getGroupDbAddresses();
         if (!CollectionUtils.isEmpty(groupDbAddresses)) {
             // 取第一个分组的数量，主备分组的数量必须一致
@@ -223,10 +196,13 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
                 SourcingType lastType = null;
                 for (List<DataSourcing> groupDbAddress : groupDbAddresses) {
                     if (lastType != null && !lastType.equals(groupDbAddress.get(i).getType())) {
-                        throw new CanalException(String.format("master/slave Sourcing type is unmatch. %s vs %s", lastType, groupDbAddress.get(i).getType()));
+                        throw new CanalException(String.format("master/slave Sourcing type is un match. %s vs %s", lastType, groupDbAddress.get(i).getType()));
                     }
                     lastType = groupDbAddress.get(i).getType();
                     dbAddress.add(groupDbAddress.get(i).getDbAddress());
+                }
+                if (lastType == null) {
+                    throw new CanalException("SourcingType is not null");
                 }
                 // 初始化其中的一个分组parser
                 eventParsers.add(doInitEventParser(lastType, dbAddress));
@@ -243,27 +219,30 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             // 创建一个空数据库地址的parser，可能使用了tddl指定地址，启动的时候才会从tddl获取地址
             this.eventParser = doInitEventParser(type, new ArrayList<>());
         }
-        logger.info("init eventParser end! \n\t load CanalEventParser:{}", eventParser.getClass().getName());
+        logger.info("[{}-{}] Init eventParser end! -> load CanalEventParser:{}", canalId, destination, eventParser.getClass().getName());
     }
 
+    /**
+     * 初始化eventParser的实现
+     */
     private CanalEventParser doInitEventParser(SourcingType type, List<InetSocketAddress> dbAddresses) {
         CanalEventParser eventParser;
-        if (type.isMysql()) {
+        if (SourcingType.MYSQL.equals(type)) {
             MysqlEventParser mysqlEventParser;
             if (StringUtils.isNotEmpty(parameters.getRdsAccesskey())
-                    && StringUtils.isNotEmpty(parameters.getRdsSecretkey())
+                    && StringUtils.isNotEmpty(parameters.getRdsSecretKey())
                     && StringUtils.isNotEmpty(parameters.getRdsInstanceId())) {
                 mysqlEventParser = new RdsBinlogEventParserProxy();
                 ((RdsBinlogEventParserProxy) mysqlEventParser).setAccesskey(parameters.getRdsAccesskey());
-                ((RdsBinlogEventParserProxy) mysqlEventParser).setSecretkey(parameters.getRdsSecretkey());
+                ((RdsBinlogEventParserProxy) mysqlEventParser).setSecretkey(parameters.getRdsSecretKey());
                 ((RdsBinlogEventParserProxy) mysqlEventParser).setInstanceId(parameters.getRdsInstanceId());
             } else {
                 mysqlEventParser = new MysqlEventParser();
             }
             mysqlEventParser.setDestination(destination);
             // 编码参数
-            mysqlEventParser.setConnectionCharset(Charset.forName(parameters.getConnectionCharset()));
             mysqlEventParser.setConnectionCharsetNumber(parameters.getConnectionCharsetNumber());
+            mysqlEventParser.setConnectionCharset(Charset.forName(parameters.getConnectionCharset()));
             // 网络相关参数
             mysqlEventParser.setDefaultConnectionTimeoutInSeconds(parameters.getDefaultConnectionTimeoutInSeconds());
             mysqlEventParser.setSendBufferSize(parameters.getSendBufferSize());
@@ -283,7 +262,6 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
                                 parameters.getDefaultDatabaseName()
                         )
                 );
-
                 if (dbAddresses.size() > 1) {
                     mysqlEventParser.setStandbyInfo(
                             new AuthenticationInfo(
@@ -308,7 +286,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             mysqlEventParser.setProfilingEnabled(false);
             mysqlEventParser.setFilterTableError(parameters.getFilterTableError());
             mysqlEventParser.setParallel(parameters.getParallel());
-            mysqlEventParser.setGtIdMode(BooleanUtils.toBoolean(parameters.getGtidEnable()));
+            mysqlEventParser.setGtIdMode(parameters.getGtIdEnable());
             // TsBb
             if (parameters.getTsdbSnapshotInterval() != null) {
                 mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsdbSnapshotInterval());
@@ -328,7 +306,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
                 mysqlEventParser.setEnableTsDb(tsDbEnable);
             }
             eventParser = mysqlEventParser;
-        } else if (type.isLocalBinlog()) {
+        } else if (SourcingType.LOCAL_BINLOG.equals(type)) {
             LocalBinlogEventParser localBinlogEventParser = new LocalBinlogEventParser();
             localBinlogEventParser.setDestination(destination);
             localBinlogEventParser.setBufferSize(parameters.getReceiveBufferSize());
@@ -342,32 +320,32 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             localBinlogEventParser.setParallel(parameters.getParallel());
             // 数据库信息，反查表结构时需要
             if (!CollectionUtils.isEmpty(dbAddresses)) {
-                localBinlogEventParser.setMasterInfo(new AuthenticationInfo(dbAddresses.get(0),
-                        parameters.getDbUsername(),
-                        parameters.getDbPassword(),
-                        parameters.getDefaultDatabaseName()));
+                localBinlogEventParser.setMasterInfo(new AuthenticationInfo(
+                                dbAddresses.get(0),
+                                parameters.getDbUsername(),
+                                parameters.getDbPassword(),
+                                parameters.getDefaultDatabaseName()
+                        )
+                );
             }
-
             eventParser = localBinlogEventParser;
-        } else if (type.isOracle()) {
-            throw new CanalException("unsupport SourcingType for " + type);
+        } else if (SourcingType.ORACLE.equals(type)) {
+            throw new CanalException("unsupported SourcingType for " + type);
         } else {
-            throw new CanalException("unsupport SourcingType for " + type);
+            throw new CanalException("unsupported SourcingType for " + type);
         }
-
         // add transaction support at 2012-12-06
+        // noinspection ConstantConditions (压制警告)
         if (eventParser instanceof AbstractEventParser) {
             AbstractEventParser abstractEventParser = (AbstractEventParser) eventParser;
             abstractEventParser.setTransactionSize(parameters.getTransactionSize());
             abstractEventParser.setLogPositionManager(initLogPositionManager());
             abstractEventParser.setAlarmHandler(getAlarmHandler());
             abstractEventParser.setEventSink(getEventSink());
-
             if (StringUtils.isNotEmpty(filter)) {
                 AviaterRegexFilter aviaterFilter = new AviaterRegexFilter(filter);
                 abstractEventParser.setEventFilter(aviaterFilter);
             }
-
             // 设置黑名单
             if (StringUtils.isNotEmpty(parameters.getBlackFilter())) {
                 AviaterRegexFilter aviaterFilter = new AviaterRegexFilter(parameters.getBlackFilter());
@@ -376,7 +354,6 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         }
         if (eventParser instanceof MysqlEventParser) {
             MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
-
             // 初始化haController，绑定与eventParser的关系，haController会控制eventParser
             CanalHAController haController = initHaController();
             mysqlEventParser.setHaController(haController);
@@ -430,14 +407,6 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         return logPositionManager;
     }
 
-    protected void startEventParserInternal(CanalEventParser eventParser, boolean isGroup) {
-        if (eventParser instanceof AbstractEventParser) {
-            AbstractEventParser abstractEventParser = (AbstractEventParser) eventParser;
-            abstractEventParser.setAlarmHandler(getAlarmHandler());
-        }
-
-        super.startEventParserInternal(eventParser, isGroup);
-    }
 
     private int getGroupSize() {
         List<List<DataSourcing>> groupDbAddresses = parameters.getGroupDbAddresses();

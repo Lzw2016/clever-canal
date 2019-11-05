@@ -20,7 +20,8 @@ public class ClientIdentity implements Serializable {
      */
     private String destination;
     /**
-     * 客户端ID
+     * 客户端ID<br />
+     * 目前canal server上的一个instance只能有一个client消费，clientId的设计是为1个instance多client消费模式而预留的，暂时不需要理会
      */
     private short clientId;
     /**

@@ -1,5 +1,6 @@
 package org.clever.canal.store;
 
+import lombok.Setter;
 import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.CollectionUtils;
 import org.clever.canal.meta.CanalMetaManager;
@@ -12,16 +13,22 @@ import java.util.List;
 /**
  * store回收机制
  */
-@SuppressWarnings({"WeakerAccess", "unused"})
 public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle implements CanalStoreScavenge {
 
+    @Setter
     protected String destination;
+    @Setter
     protected CanalMetaManager canalMetaManager;
+    @Setter
     protected boolean onAck = true;
+    @Setter
     protected boolean onFull = false;
+    @Setter
     protected boolean onSchedule = false;
+    @Setter
     protected String scavengeSchedule = null;
 
+    @SuppressWarnings("unused")
     public void scavenge() {
         Position position = getLatestAckPosition(destination);
         cleanUntil(position);
@@ -77,33 +84,5 @@ public abstract class AbstractCanalStoreScavenge extends AbstractCanalLifeCycle 
                 return position1;
             }
         }
-    }
-
-    public void setOnAck(boolean onAck) {
-        this.onAck = onAck;
-    }
-
-    public void setOnFull(boolean onFull) {
-        this.onFull = onFull;
-    }
-
-    public void setOnSchedule(boolean onSchedule) {
-        this.onSchedule = onSchedule;
-    }
-
-    public String getScavengeSchedule() {
-        return scavengeSchedule;
-    }
-
-    public void setScavengeSchedule(String scavengeSchedule) {
-        this.scavengeSchedule = scavengeSchedule;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setCanalMetaManager(CanalMetaManager canalMetaManager) {
-        this.canalMetaManager = canalMetaManager;
     }
 }

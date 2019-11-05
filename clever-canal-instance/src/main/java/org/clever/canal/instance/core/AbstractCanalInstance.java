@@ -22,30 +22,61 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+/**
+ * canal实例抽象实现类
+ */
+@SuppressWarnings({"WeakerAccess"})
 public class AbstractCanalInstance extends AbstractCanalLifeCycle implements CanalInstance {
     private static final Logger logger = LoggerFactory.getLogger(AbstractCanalInstance.class);
 
-    protected Long canalId;                                         // 和manager交互唯一标示
-    protected String destination;                                   // 队列名字
-    protected CanalEventStore<Event> eventStore;                    // 有序队列
-    protected CanalEventParser eventParser;                         // 解析对应的数据信息
-    protected CanalEventSink<List<CanalEntry.Entry>> eventSink;     // 链接parse和store的桥接器
-    protected CanalMetaManager metaManager;                         // 消费信息管理器
-    protected CanalAlarmHandler alarmHandler;                       // alarm报警机制
-    protected CanalMQConfig mqConfig;                               // mq的配置
+    /**
+     * 和manager交互唯一标示
+     */
+    protected Long canalId;
+    /**
+     * 队列名字(通道名称)
+     */
+    protected String destination;
+    /**
+     * 有序队列
+     */
+    protected CanalEventStore<Event> eventStore;
+    /**
+     * 解析对应的数据信息
+     */
+    protected CanalEventParser eventParser;
+    /**
+     * 链接parse和store的桥接器
+     */
+    protected CanalEventSink<List<CanalEntry.Entry>> eventSink;
+    /**
+     * 消费信息管理器
+     */
+    protected CanalMetaManager metaManager;
+    /**
+     * alarm报警机制
+     */
+    protected CanalAlarmHandler alarmHandler;
+    /**
+     * mq的配置
+     */
+    protected CanalMQConfig mqConfig;
 
+    /**
+     * 客户端发生订阅/取消订阅行为
+     */
     @Override
     public boolean subscribeChange(ClientIdentity identity) {
         if (StringUtils.isNotEmpty(identity.getFilter())) {
-            logger.info("subscribe filter change to " + identity.getFilter());
+            logger.info("[{}-{}] subscribe filter change to {}", canalId, destination, identity.getFilter());
             AviaterRegexFilter aviaterFilter = new AviaterRegexFilter(identity.getFilter());
 
             boolean isGroup = (eventParser instanceof GroupEventParser);
             if (isGroup) {
                 // 处理group的模式
                 List<CanalEventParser> eventParsers = ((GroupEventParser) eventParser).getEventParsers();
-                for (CanalEventParser singleEventParser : eventParsers) {// 需要遍历启动
+                // 需要遍历启动
+                for (CanalEventParser singleEventParser : eventParsers) {
                     if (singleEventParser instanceof AbstractEventParser) {
                         ((AbstractEventParser) singleEventParser).setEventFilter(aviaterFilter);
                     }
@@ -63,8 +94,12 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
         return true;
     }
 
+    /**
+     * 启动 CanalInstance
+     */
     @Override
     public void start() {
+        logger.info("[{}-{}] Starting CanalInstance...", canalId, destination);
         super.start();
         if (!metaManager.isStart()) {
             metaManager.start();
@@ -83,13 +118,16 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
             eventParser.start();
             afterStartEventParser(eventParser);
         }
-        logger.info("start successful....");
+        logger.info("[{}-{}] Started Successful!", canalId, destination);
     }
 
+    /**
+     * 停止 CanalInstance
+     */
     @Override
     public void stop() {
+        logger.info("[{}-{}] Stopping CanalInstance...", canalId, destination);
         super.stop();
-        logger.info("stop CannalInstance for {}-{} ", new Object[]{canalId, destination});
         if (eventParser.isStart()) {
             beforeStopEventParser(eventParser);
             eventParser.stop();
@@ -107,9 +145,47 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
         if (alarmHandler.isStart()) {
             alarmHandler.stop();
         }
-        logger.info("stop successful....");
+        logger.info("[{}-{}] Stopped Successful!", canalId, destination);
     }
 
+    @Override
+    public String getDestination() {
+        return destination;
+    }
+
+    @Override
+    public CanalEventParser getEventParser() {
+        return eventParser;
+    }
+
+    @Override
+    public CanalEventSink<List<CanalEntry.Entry>> getEventSink() {
+        return eventSink;
+    }
+
+    @Override
+    public CanalEventStore<Event> getEventStore() {
+        return eventStore;
+    }
+
+    @Override
+    public CanalMetaManager getMetaManager() {
+        return metaManager;
+    }
+
+    @Override
+    public CanalAlarmHandler getAlarmHandler() {
+        return alarmHandler;
+    }
+
+    @Override
+    public CanalMQConfig getMqConfig() {
+        return mqConfig;
+    }
+
+    /**
+     * 启动binlog解析之前
+     */
     protected void beforeStartEventParser(CanalEventParser eventParser) {
         boolean isGroup = (eventParser instanceof GroupEventParser);
         if (isGroup) {
@@ -124,20 +200,28 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
         }
     }
 
-    // around event parser, default impl
+    /**
+     * 启动binlog解析之后
+     */
+    @SuppressWarnings("unused")
     protected void afterStartEventParser(CanalEventParser eventParser) {
         // 读取一下历史订阅的filter信息
-        List<ClientIdentity> clientIdentitys = metaManager.listAllSubscribeInfo(destination);
-        for (ClientIdentity clientIdentity : clientIdentitys) {
+        List<ClientIdentity> clientIdentities = metaManager.listAllSubscribeInfo(destination);
+        for (ClientIdentity clientIdentity : clientIdentities) {
             subscribeChange(clientIdentity);
         }
     }
 
-    // around event parser
+    /**
+     * 停止binlog解析之前
+     */
+    @SuppressWarnings("unused")
     protected void beforeStopEventParser(CanalEventParser eventParser) {
-        // noop
     }
 
+    /**
+     * 停止binlog解析之后
+     */
     protected void afterStopEventParser(CanalEventParser eventParser) {
         boolean isGroup = (eventParser instanceof GroupEventParser);
         if (isGroup) {
@@ -176,6 +260,9 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
         }
     }
 
+    /**
+     * 停止单个eventParser
+     */
     protected void stopEventParserInternal(CanalEventParser eventParser) {
         if (eventParser instanceof AbstractEventParser) {
             AbstractEventParser abstractEventParser = (AbstractEventParser) eventParser;
@@ -192,41 +279,5 @@ public class AbstractCanalInstance extends AbstractCanalLifeCycle implements Can
                 haController.stop();
             }
         }
-    }
-
-    // ==================getter==================================
-    @Override
-    public String getDestination() {
-        return destination;
-    }
-
-    @Override
-    public CanalEventParser getEventParser() {
-        return eventParser;
-    }
-
-    @Override
-    public CanalEventSink getEventSink() {
-        return eventSink;
-    }
-
-    @Override
-    public CanalEventStore getEventStore() {
-        return eventStore;
-    }
-
-    @Override
-    public CanalMetaManager getMetaManager() {
-        return metaManager;
-    }
-
-    @Override
-    public CanalAlarmHandler getAlarmHandler() {
-        return alarmHandler;
-    }
-
-    @Override
-    public CanalMQConfig getMqConfig() {
-        return mqConfig;
     }
 }

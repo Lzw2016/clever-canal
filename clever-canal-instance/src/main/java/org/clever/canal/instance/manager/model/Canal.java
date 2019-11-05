@@ -1,5 +1,7 @@
 package org.clever.canal.instance.manager.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
@@ -9,73 +11,39 @@ import java.util.Date;
 /**
  * 对应的canal模型对象
  */
-@SuppressWarnings("unused")
+@Getter
+@Setter
 public class Canal implements Serializable {
     private static final long serialVersionUID = 8333284022624682754L;
 
+    /**
+     * canalId (唯一)
+     */
     private Long id;
-    private String name;                    // 对应的名字
-    private String desc;                    // 描述
+    /**
+     * 对应的名字
+     */
+    private String name;
+    /**
+     * 描述
+     */
+    private String desc;
+    /**
+     * 运行状态
+     */
     private CanalStatus status;
-    private CanalParameter canalParameter;  // 参数定义
-    private Date gmtCreate;                 // 创建时间
-    private Date gmtModified;               // 修改时间
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public CanalParameter getCanalParameter() {
-        return canalParameter;
-    }
-
-    public void setCanalParameter(CanalParameter canalParameter) {
-        this.canalParameter = canalParameter;
-    }
-
-    public CanalStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(CanalStatus status) {
-        this.status = status;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
-    }
+    /**
+     * 参数定义
+     */
+    private CanalParameter canalParameter;
+    /**
+     * 创建时间
+     */
+    private Date gmtCreate = new Date();
+    /**
+     * 修改时间
+     */
+    private Date gmtModified = new Date();
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);
