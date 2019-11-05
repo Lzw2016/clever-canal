@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -59,9 +58,7 @@ public class Test01 {
                 canal.setGmtModified(new Date());
                 CanalParameter canalParameter = new CanalParameter();
                 canal.setCanalParameter(canalParameter);
-                canalParameter.setDbAddresses(new ArrayList<InetSocketAddress>() {{
-                    add(new InetSocketAddress("127.0.0.1", 3306));
-                }});
+                canalParameter.addGroupDbAddresses(new CanalParameter.DataSourcing(CanalParameter.SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
                 canalParameter.setSlaveId(123L);
@@ -69,10 +66,10 @@ public class Test01 {
                 canalParameter.setStorageBatchMode(BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
 
-                canalParameter.setTsdbEnable(true);
-                canalParameter.setTsdbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
-                canalParameter.setTsdbJdbcUserName("clever-canal");
-                canalParameter.setTsdbJdbcPassword("lizhiwei");
+                canalParameter.setTsDbEnable(true);
+                canalParameter.setTsDbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
+                canalParameter.setTsDbJdbcUserName("clever-canal");
+                canalParameter.setTsDbJdbcPassword("lizhiwei");
                 return canal;
             }
 

@@ -1,6 +1,5 @@
 package org.clever.canal.instance.manager;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.common.CanalException;
 import org.clever.canal.common.alarm.LogAlarmHandler;
@@ -141,7 +140,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             memoryEventStore.setBufferMemUnit(parameters.getMemoryStorageBufferMemUnit());
             memoryEventStore.setBatchMode(parameters.getStorageBatchMode());
             memoryEventStore.setRaw(parameters.getMemoryStorageRawEntry());
-            memoryEventStore.setDdlIsolation(parameters.getDdlIsolation());
+            memoryEventStore.setDdlIsolation(parameters.isDdlIsolation());
             eventStore = memoryEventStore;
         } else {
             throw new CanalException("unsupported StorageMode for " + mode);
@@ -188,10 +187,13 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         logger.info("[{}-{}] Init eventParser begin...", canalId, destination);
         SourcingType type = parameters.getSourcingType();
         List<List<DataSourcing>> groupDbAddresses = parameters.getGroupDbAddresses();
-        if (!CollectionUtils.isEmpty(groupDbAddresses)) {
+        if (CollectionUtils.isEmpty(groupDbAddresses)) {
+            // 创建一个空数据库地址的parser，可能使用了tddl指定地址，启动的时候才会从tddl获取地址
+            this.eventParser = doInitEventParser(type, new ArrayList<>());
+        } else {
             // 取第一个分组的数量，主备分组的数量必须一致
-            int size = groupDbAddresses.get(0).size();
             List<CanalEventParser> eventParsers = new ArrayList<>();
+            int size = groupDbAddresses.get(0).size();
             for (int i = 0; i < size; i++) {
                 List<InetSocketAddress> dbAddress = new ArrayList<>();
                 SourcingType lastType = null;
@@ -216,27 +218,26 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             } else {
                 this.eventParser = eventParsers.get(0);
             }
-        } else {
-            // 创建一个空数据库地址的parser，可能使用了tddl指定地址，启动的时候才会从tddl获取地址
-            this.eventParser = doInitEventParser(type, new ArrayList<>());
         }
         logger.info("[{}-{}] Init eventParser end! -> load CanalEventParser: {}", canalId, destination, eventParser.getClass().getName());
     }
 
     /**
      * 初始化eventParser的实现
+     *
+     * @param type        数据源类型
+     * @param dbAddresses 数据源分组
      */
     private CanalEventParser doInitEventParser(SourcingType type, List<InetSocketAddress> dbAddresses) {
         CanalEventParser eventParser;
-        if (SourcingType.MYSQL.equals(type)) {
+        if (SourcingType.MYSQL.equals(type) || SourcingType.RDS_MYSQL.equals(type)) {
             MysqlEventParser mysqlEventParser;
-            if (StringUtils.isNotEmpty(parameters.getRdsAccesskey())
-                    && StringUtils.isNotEmpty(parameters.getRdsSecretKey())
-                    && StringUtils.isNotEmpty(parameters.getRdsInstanceId())) {
-                mysqlEventParser = new RdsBinlogEventParserProxy();
-                ((RdsBinlogEventParserProxy) mysqlEventParser).setAccesskey(parameters.getRdsAccesskey());
-                ((RdsBinlogEventParserProxy) mysqlEventParser).setSecretkey(parameters.getRdsSecretKey());
-                ((RdsBinlogEventParserProxy) mysqlEventParser).setInstanceId(parameters.getRdsInstanceId());
+            if (SourcingType.RDS_MYSQL.equals(type)) {
+                RdsBinlogEventParserProxy rdsBinlogEventParserProxy = new RdsBinlogEventParserProxy();
+                rdsBinlogEventParserProxy.setAccesskey(parameters.getRdsAccesskey());
+                rdsBinlogEventParserProxy.setSecretkey(parameters.getRdsSecretKey());
+                rdsBinlogEventParserProxy.setInstanceId(parameters.getRdsInstanceId());
+                mysqlEventParser = rdsBinlogEventParserProxy;
             } else {
                 mysqlEventParser = new MysqlEventParser();
             }
@@ -254,30 +255,21 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             mysqlEventParser.setDetectingIntervalInSeconds(parameters.getDetectingIntervalInSeconds());
             // 数据库信息参数
             mysqlEventParser.setSlaveId(parameters.getSlaveId());
+            // 设置授权信息
             if (!CollectionUtils.isEmpty(dbAddresses)) {
-                mysqlEventParser.setMasterInfo(
-                        new AuthenticationInfo(
-                                dbAddresses.get(0),
-                                parameters.getDbUsername(),
-                                parameters.getDbPassword(),
-                                parameters.getDefaultDatabaseName()
-                        )
-                );
+                AuthenticationInfo authInfo = new AuthenticationInfo(dbAddresses.get(0), parameters.getDbUsername(), parameters.getDbPassword(), parameters.getDefaultDatabaseName());
+                mysqlEventParser.setMasterInfo(authInfo);
                 if (dbAddresses.size() > 1) {
-                    mysqlEventParser.setStandbyInfo(
-                            new AuthenticationInfo(
-                                    dbAddresses.get(1),
-                                    parameters.getDbUsername(),
-                                    parameters.getDbPassword(),
-                                    parameters.getDefaultDatabaseName()
-                            )
-                    );
+                    authInfo = new AuthenticationInfo(dbAddresses.get(1), parameters.getDbUsername(), parameters.getDbPassword(), parameters.getDefaultDatabaseName());
+                    mysqlEventParser.setStandbyInfo(authInfo);
                 }
             }
+            // 设置 binlog 消费位置信息
             if (!CollectionUtils.isEmpty(parameters.getPositions())) {
+                // 主库 binlog位置 信息
                 EntryPosition masterPosition = JsonUtils.unmarshalFromString(parameters.getPositions().get(0), EntryPosition.class);
-                // binlog位置参数
                 mysqlEventParser.setMasterPosition(masterPosition);
+                // 备库 binlog位置 信息
                 if (parameters.getPositions().size() > 1) {
                     EntryPosition standbyPosition = JsonUtils.unmarshalFromString(parameters.getPositions().get(1), EntryPosition.class);
                     mysqlEventParser.setStandbyPosition(standbyPosition);
@@ -289,19 +281,18 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             mysqlEventParser.setParallel(parameters.getParallel());
             mysqlEventParser.setGtIdMode(parameters.getGtIdEnable());
             // TsBb
-            if (parameters.getTsdbSnapshotInterval() != null) {
-                mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsdbSnapshotInterval());
+            if (parameters.getTsDbSnapshotInterval() != null) {
+                mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsDbSnapshotInterval());
             }
-            if (parameters.getTsdbSnapshotExpire() != null) {
-                mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsdbSnapshotExpire());
+            if (parameters.getTsDbSnapshotExpire() != null) {
+                mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsDbSnapshotExpire());
             }
-            boolean tsDbEnable = BooleanUtils.toBoolean(parameters.getTsdbEnable());
-            if (tsDbEnable) {
+            if (parameters.getTsDbEnable()) {
                 TableMetaDataSourceConfig dataSourceConfig = new TableMetaDataSourceConfig();
                 dataSourceConfig.setDriverClassName(parameters.getTsDbDriverClassName());
-                dataSourceConfig.setUrl(parameters.getTsdbJdbcUrl());
-                dataSourceConfig.setUsername(parameters.getTsdbJdbcUserName());
-                dataSourceConfig.setPassword(parameters.getTsdbJdbcPassword());
+                dataSourceConfig.setUrl(parameters.getTsDbJdbcUrl());
+                dataSourceConfig.setUsername(parameters.getTsDbJdbcUserName());
+                dataSourceConfig.setPassword(parameters.getTsDbJdbcPassword());
                 mysqlEventParser.setDataSourceConfig(dataSourceConfig);
                 mysqlEventParser.setEnableTsDb(true);
             }
@@ -320,13 +311,8 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             localBinlogEventParser.setParallel(parameters.getParallel());
             // 数据库信息，反查表结构时需要
             if (!CollectionUtils.isEmpty(dbAddresses)) {
-                localBinlogEventParser.setMasterInfo(new AuthenticationInfo(
-                                dbAddresses.get(0),
-                                parameters.getDbUsername(),
-                                parameters.getDbPassword(),
-                                parameters.getDefaultDatabaseName()
-                        )
-                );
+                AuthenticationInfo authInfo = new AuthenticationInfo(dbAddresses.get(0), parameters.getDbUsername(), parameters.getDbPassword(), parameters.getDefaultDatabaseName());
+                localBinlogEventParser.setMasterInfo(authInfo);
             }
             eventParser = localBinlogEventParser;
         } else if (SourcingType.ORACLE.equals(type)) {
@@ -334,7 +320,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         } else {
             throw new CanalException("unsupported SourcingType for " + type);
         }
-        // add transaction support at 2012-12-06
+        // 设置事务支持配置 (add transaction support at 2012-12-06)
         // noinspection ConstantConditions (压制警告)
         if (eventParser instanceof AbstractEventParser) {
             AbstractEventParser abstractEventParser = (AbstractEventParser) eventParser;
@@ -352,6 +338,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
                 abstractEventParser.setEventBlackFilter(aviaterFilter);
             }
         }
+        // 设置HA控制器
         if (eventParser instanceof MysqlEventParser) {
             MysqlEventParser mysqlEventParser = (MysqlEventParser) eventParser;
             // 初始化haController，绑定与eventParser的关系，haController会控制eventParser
@@ -395,6 +382,9 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         return logPositionManager;
     }
 
+    /**
+     * 获取 Group 的数量
+     */
     private int getGroupSize() {
         List<List<DataSourcing>> groupDbAddresses = parameters.getGroupDbAddresses();
         if (!CollectionUtils.isEmpty(groupDbAddresses)) {
