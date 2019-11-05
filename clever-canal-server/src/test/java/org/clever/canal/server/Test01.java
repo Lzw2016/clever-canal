@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -49,15 +48,8 @@ public class Test01 {
         CanalConfigClient canalConfigClient = new CanalConfigClient() {
             @Override
             public Canal findCanal(String destination) {
-                Canal canal = new Canal();
-                canal.setId(1L);
-                canal.setName("test");
-                canal.setDesc("test");
-//                 canal.setStatus(CanalStatus.START);
-                canal.setGmtCreate(new Date());
-                canal.setGmtModified(new Date());
                 CanalParameter canalParameter = new CanalParameter();
-                canal.setCanalParameter(canalParameter);
+
                 canalParameter.addGroupDbAddresses(new CanalParameter.DataSourcing(CanalParameter.SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
@@ -70,7 +62,8 @@ public class Test01 {
                 canalParameter.setTsDbJdbcUrl("jdbc:mysql://mysql.msvc.top:3306/clever-canal");
                 canalParameter.setTsDbJdbcUserName("clever-canal");
                 canalParameter.setTsDbJdbcPassword("lizhiwei");
-                return canal;
+
+                return new Canal(1L, "test", canalParameter);
             }
 
             @Override

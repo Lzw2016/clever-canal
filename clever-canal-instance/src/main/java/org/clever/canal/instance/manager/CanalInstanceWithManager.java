@@ -59,7 +59,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
     public CanalInstanceWithManager(Canal canal, String filter) {
         this.parameters = canal.getCanalParameter();
         this.canalId = canal.getId();
-        this.destination = canal.getName();
+        this.destination = canal.getDestination();
         this.filter = filter;
         logger.info("[{}-{}] Init CanalInstance | parameters: {}", canalId, destination, parameters);
         // 初始化报警机制
@@ -139,7 +139,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             memoryEventStore.setBufferSize(parameters.getMemoryStorageBufferSize());
             memoryEventStore.setBufferMemUnit(parameters.getMemoryStorageBufferMemUnit());
             memoryEventStore.setBatchMode(parameters.getStorageBatchMode());
-            memoryEventStore.setRaw(parameters.getMemoryStorageRawEntry());
+            memoryEventStore.setRaw(parameters.isMemoryStorageRawEntry());
             memoryEventStore.setDdlIsolation(parameters.isDdlIsolation());
             eventStore = memoryEventStore;
         } else {
@@ -250,7 +250,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             mysqlEventParser.setSendBufferSize(parameters.getSendBufferSize());
             mysqlEventParser.setReceiveBufferSize(parameters.getReceiveBufferSize());
             // 心跳检查参数
-            mysqlEventParser.setDetectingEnable(parameters.getDetectingEnable());
+            mysqlEventParser.setDetectingEnable(parameters.isDetectingEnable());
             mysqlEventParser.setDetectingSQL(parameters.getDetectingSQL());
             mysqlEventParser.setDetectingIntervalInSeconds(parameters.getDetectingIntervalInSeconds());
             // 数据库信息参数
@@ -277,17 +277,13 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             }
             mysqlEventParser.setFallbackIntervalInSeconds(parameters.getFallbackIntervalInSeconds());
             mysqlEventParser.setProfilingEnabled(false);
-            mysqlEventParser.setFilterTableError(parameters.getFilterTableError());
-            mysqlEventParser.setParallel(parameters.getParallel());
-            mysqlEventParser.setGtIdMode(parameters.getGtIdEnable());
+            mysqlEventParser.setFilterTableError(parameters.isFilterTableError());
+            mysqlEventParser.setParallel(parameters.isParallel());
+            mysqlEventParser.setGtIdMode(parameters.isGtIdEnable());
             // TsBb
-            if (parameters.getTsDbSnapshotInterval() != null) {
-                mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsDbSnapshotInterval());
-            }
-            if (parameters.getTsDbSnapshotExpire() != null) {
-                mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsDbSnapshotExpire());
-            }
-            if (parameters.getTsDbEnable()) {
+            mysqlEventParser.setTsDbSnapshotInterval(parameters.getTsDbSnapshotInterval());
+            mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsDbSnapshotExpire());
+            if (parameters.isTsDbEnable()) {
                 TableMetaDataSourceConfig dataSourceConfig = new TableMetaDataSourceConfig();
                 dataSourceConfig.setDriverClassName(parameters.getTsDbDriverClassName());
                 dataSourceConfig.setUrl(parameters.getTsDbJdbcUrl());
@@ -305,10 +301,10 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             localBinlogEventParser.setConnectionCharset(Charset.forName(parameters.getConnectionCharset()));
             localBinlogEventParser.setDirectory(parameters.getLocalBinlogDirectory());
             localBinlogEventParser.setProfilingEnabled(false);
-            localBinlogEventParser.setDetectingEnable(parameters.getDetectingEnable());
+            localBinlogEventParser.setDetectingEnable(parameters.isDetectingEnable());
             localBinlogEventParser.setDetectingIntervalInSeconds(parameters.getDetectingIntervalInSeconds());
-            localBinlogEventParser.setFilterTableError(parameters.getFilterTableError());
-            localBinlogEventParser.setParallel(parameters.getParallel());
+            localBinlogEventParser.setFilterTableError(parameters.isFilterTableError());
+            localBinlogEventParser.setParallel(parameters.isParallel());
             // 数据库信息，反查表结构时需要
             if (!CollectionUtils.isEmpty(dbAddresses)) {
                 AuthenticationInfo authInfo = new AuthenticationInfo(dbAddresses.get(0), parameters.getDbUsername(), parameters.getDbPassword(), parameters.getDefaultDatabaseName());
@@ -355,7 +351,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         if (HAMode.HEARTBEAT.equals(haMode)) {
             haController = new HeartBeatHAController();
             haController.setDetectingRetryTimes(parameters.getDetectingRetryTimes());
-            haController.setSwitchEnable(parameters.getHeartbeatHaEnable());
+            haController.setSwitchEnable(parameters.isHeartbeatHaEnable());
         } else {
             throw new CanalException("unsupported HAMode for " + haMode);
         }

@@ -1,6 +1,7 @@
 package org.clever.canal.instance.manager.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
@@ -11,6 +12,7 @@ import java.util.Date;
 /**
  * 对应的canal模型对象
  */
+@NoArgsConstructor
 @Getter
 @Setter
 public class Canal implements Serializable {
@@ -21,11 +23,11 @@ public class Canal implements Serializable {
      */
     private Long id;
     /**
-     * 对应的名字
+     * 通道名称
      */
-    private String name;
+    private String destination;
     /**
-     * 描述
+     * 描述(不重要)
      */
     private String desc;
     /**
@@ -44,6 +46,17 @@ public class Canal implements Serializable {
      * 修改时间
      */
     private Date gmtModified = new Date();
+
+    /**
+     * @param id             canalId (唯一)
+     * @param destination    通道名称
+     * @param canalParameter 参数定义
+     */
+    public Canal(Long id, String destination, CanalParameter canalParameter) {
+        this.id = id;
+        this.destination = destination;
+        this.canalParameter = canalParameter;
+    }
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);

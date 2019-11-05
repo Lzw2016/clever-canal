@@ -917,8 +917,10 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
     }
 
     private boolean isText(String columnType) {
-        return "LONGTEXT".equalsIgnoreCase(columnType) || "MEDIUMTEXT".equalsIgnoreCase(columnType)
-                || "TEXT".equalsIgnoreCase(columnType) || "TINYTEXT".equalsIgnoreCase(columnType);
+        return "LONGTEXT".equalsIgnoreCase(columnType)
+                || "MEDIUMTEXT".equalsIgnoreCase(columnType)
+                || "TEXT".equalsIgnoreCase(columnType)
+                || "TINYTEXT".equalsIgnoreCase(columnType);
     }
 
     private boolean isAliSQLHeartBeat(String schema, String table) {
@@ -973,12 +975,12 @@ public class LogEventConvert extends AbstractCanalLifeCycle implements BinlogPar
 
     public void setNameFilter(AviaterRegexFilter nameFilter) {
         this.nameFilter = nameFilter;
-        logger.warn("--> init table filter : " + nameFilter.toString());
+        logger.info("--> init table filter : " + nameFilter.toString());
     }
 
     public void setNameBlackFilter(AviaterRegexFilter nameBlackFilter) {
         this.nameBlackFilter = nameBlackFilter;
-        logger.warn("--> init table black filter : " + nameBlackFilter.toString());
+        logger.info("--> init table black filter : " + nameBlackFilter.toString());
     }
 
     public void setFieldFilterMap(Map<String, List<String>> fieldFilterMap) {

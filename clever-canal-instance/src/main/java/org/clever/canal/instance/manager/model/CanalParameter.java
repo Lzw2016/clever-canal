@@ -36,12 +36,11 @@ public class CanalParameter implements Serializable {
     /**
      * MetaMode.LOCAL_FILE时，文件存储路径
      */
-
     private String metaDataDir = "./meta-manager";
     /**
      * MetaMode.LOCAL_FILE时，Meta刷新到文件系统的时间间隔(单位：ms)
      */
-    private Integer metaFileFlushPeriod = 1000;
+    private int metaFileFlushPeriod = 1000;
 
     // ============================================================================================================================== CanalEventStore
     /**
@@ -51,11 +50,11 @@ public class CanalParameter implements Serializable {
     /**
      * StorageMode.MEMORY时，内存存储的buffer大小
      */
-    private Integer memoryStorageBufferSize = 16 * 1024;
+    private int memoryStorageBufferSize = 16 * 1024;
     /**
      * StorageMode.MEMORY时，内存存储的buffer内存占用单位，默认为1kb
      */
-    private Integer memoryStorageBufferMemUnit = 1024;
+    private int memoryStorageBufferMemUnit = 1024;
     /**
      * StorageMode.MEMORY时，EventStore Batch模式
      */
@@ -65,7 +64,7 @@ public class CanalParameter implements Serializable {
      * 使用server/client模式时, 建议开启raw模式(raw = true)<br />
      * 使用Embedded模式时, 建议关闭raw模式(raw = false)<br />
      */
-    private Boolean memoryStorageRawEntry = Boolean.TRUE;
+    private boolean memoryStorageRawEntry = true;
     /**
      * 是否将ddl单条返回
      */
@@ -92,23 +91,23 @@ public class CanalParameter implements Serializable {
     /**
      * 数据库发生切换查找时回退的时间
      */
-    private Integer fallbackIntervalInSeconds = 60;
+    private int fallbackIntervalInSeconds = 60;
     /**
      * 是否忽略表解析异常
      */
-    private Boolean filterTableError = Boolean.FALSE;
+    private boolean filterTableError = false;
     /**
      * 是否开启并行解析模式
      */
-    private Boolean parallel = Boolean.FALSE;
+    private boolean parallel = false;
     /**
      * 是否开启GtId
      */
-    private Boolean gtIdEnable = Boolean.FALSE;
+    private boolean gtIdEnable = false;
     /**
      * 连接的编码信息
      */
-    private Byte connectionCharsetNumber = (byte) 33;
+    private byte connectionCharsetNumber = (byte) 33;
     /**
      * 连接的编码
      */
@@ -116,20 +115,20 @@ public class CanalParameter implements Serializable {
     /**
      * 发送缓冲区大小
      */
-    private Integer sendBufferSize = 64 * 1024;
+    private int sendBufferSize = 64 * 1024;
     /**
      * 接受缓冲区大小
      */
-    private Integer receiveBufferSize = 64 * 1024;
+    private int receiveBufferSize = 64 * 1024;
     // ============================================================ Server Binlog
     /**
      * 默认的连接超时时间(单位：秒)
      */
-    private Integer defaultConnectionTimeoutInSeconds = 30;
+    private int defaultConnectionTimeoutInSeconds = 30;
     /**
      * 链接到mysql的slaveId
      */
-    private Long slaveId;
+    private long slaveId;
     /**
      * 数据库链接信息，包含多组信息<br />
      * 每个集合中相同位置(index)的元素是一个 group
@@ -168,15 +167,15 @@ public class CanalParameter implements Serializable {
     /**
      * 是否开启 TableMetaTsDb
      */
-    private Boolean tsDbEnable = Boolean.FALSE;
+    private boolean tsDbEnable = false;
     /**
      * 生成快照的时间间隔(单位：小时)
      */
-    private Integer tsDbSnapshotInterval = 24;
+    private int tsDbSnapshotInterval = 24;
     /**
      * 快照过期时间(单位：小时)
      */
-    private Integer tsDbSnapshotExpire = 360;
+    private int tsDbSnapshotExpire = 360;
     /**
      * TsDb 数据源驱动 ClassName
      */
@@ -197,7 +196,7 @@ public class CanalParameter implements Serializable {
     /**
      * 是否开启心跳检查
      */
-    private Boolean detectingEnable = true;
+    private boolean detectingEnable = true;
     /**
      * 心跳sql
      */
@@ -205,12 +204,12 @@ public class CanalParameter implements Serializable {
     /**
      * 心跳检查检测频率(单位秒)
      */
-    private Integer detectingIntervalInSeconds = 3;
+    private int detectingIntervalInSeconds = 3;
     // ============================================================ AbstractEventParser
     /**
      * 支持处理的transaction事务大小
      */
-    private Integer transactionSize = 1024;
+    private int transactionSize = 1024;
     /**
      * 匹配黑名单,忽略解析
      */
@@ -224,11 +223,11 @@ public class CanalParameter implements Serializable {
     /**
      * 是否开启基于心跳检查的HA功能
      */
-    private Boolean heartbeatHaEnable = false;
+    private boolean heartbeatHaEnable = false;
     /**
      * 心跳检查重试次数
      */
-    private Integer detectingRetryTimes = 3;
+    private int detectingRetryTimes = 3;
 
     // ============================================================================================================================== CanalLogPositionManager
     /**
