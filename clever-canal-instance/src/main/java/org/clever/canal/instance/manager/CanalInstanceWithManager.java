@@ -406,6 +406,8 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         IndexMode indexMode = parameters.getIndexMode();
         CanalLogPositionManager logPositionManager = null;
         logPositionManager = new MetaLogPositionManager(metaManager);
+//        logPositionManager = new FileMixedLogPositionManager(new File("./parse-manager"), 1000, new MemoryLogPositionManager());
+
 //        TODO lzw
 //        if (indexMode.isMemory()) {
 //            logPositionManager = new MemoryLogPositionManager();

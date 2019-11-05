@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * 2. 数据采取overwrite模式(只保留最后一次)
  * </pre>
  */
-@SuppressWarnings({"DuplicatedCode", "unused"})
+@SuppressWarnings({"DuplicatedCode"})
 public class FileMixedLogPositionManager extends AbstractLogPositionManager {
     private final static Logger logger = LoggerFactory.getLogger(FileMixedLogPositionManager.class);
 
@@ -166,8 +166,7 @@ public class FileMixedLogPositionManager extends AbstractLogPositionManager {
                 throw new CanalMetaManagerException(e);
             }
         }
-        String dataFileName = "parse.dat";
-        return new File(destinationMetaDir, dataFileName);
+        return new File(destinationMetaDir, Default_File_Name);
     }
 
     private void flushDataToFile() {
