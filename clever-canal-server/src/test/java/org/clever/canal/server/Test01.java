@@ -18,6 +18,7 @@ import org.clever.canal.protocol.ClientIdentity;
 import org.clever.canal.protocol.Message;
 import org.clever.canal.protocol.position.EntryPosition;
 import org.clever.canal.server.embedded.CanalServerWithEmbedded;
+import org.clever.canal.store.model.BatchMode;
 import org.junit.Test;
 
 import java.io.File;
@@ -58,7 +59,6 @@ public class Test01 {
                 canal.setGmtModified(new Date());
                 CanalParameter canalParameter = new CanalParameter();
                 canal.setCanalParameter(canalParameter);
-                canalParameter.setCanalId(1L);
                 canalParameter.setDbAddresses(new ArrayList<InetSocketAddress>() {{
                     add(new InetSocketAddress("127.0.0.1", 3306));
                 }});
@@ -66,7 +66,7 @@ public class Test01 {
                 canalParameter.setDbPassword("canal");
                 canalParameter.setSlaveId(123L);
 //                canalParameter.setMetaMode(CanalParameter.MetaMode.MIXED);
-                canalParameter.setStorageBatchMode(CanalParameter.BatchMode.ITEM_SIZE);
+                canalParameter.setStorageBatchMode(BatchMode.ITEM_SIZE);
                 canalParameter.setMemoryStorageRawEntry(false);
 
                 canalParameter.setTsdbEnable(true);

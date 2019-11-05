@@ -1,6 +1,8 @@
 package org.clever.canal.instance.manager.model;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -181,80 +183,45 @@ public class CanalParameter implements Serializable {
 
     private Integer tsdbSnapshotInterval = 24;
     private Integer tsdbSnapshotExpire = 360;
-
-
-    // ==============================================================================================================================
-    // ==============================================================================================================================
-
-    private Boolean heartbeatHaEnable = false;                                      // 是否开启基于心跳检查的ha功能
-    private Integer detectingTimeoutThresholdInSeconds = 30;                        // 心跳超时时间
-    private Integer detectingRetryTimes = 3;                                        // 心跳检查重试次数
-
-    private Long canalId;
-
-    // 相关参数
-    private RunMode runMode = RunMode.EMBEDDED;                                     // 运行模式：嵌入式/服务式
-    private ClusterMode clusterMode = ClusterMode.STANDALONE;                       // 集群模式：单机/冷备/热备份
-
-    private Long zkClusterId;                                                       // zk集群id，为管理方便
-    private List<String> zkClusters;                                                // zk集群地址
-
-    private String dataDir = "../conf";                                             // 默认本地文件数据的目录默认是conf
-
-
-    // storage存储
-    private Integer transactionSize = 1024;                                         // 支持处理的transaction事务大小
-    private String fileStorageDirectory;                                            // 文件存储的目录位置
-    private Integer fileStorageStoreCount;                                          // 每个文件store存储的记录数
-    private Integer fileStorageRollverCount;                                        // store文件的个数
-    private Integer fileStoragePercentThresold;                                     // 整个store存储占disk硬盘的百分比，超过百分比及时条数还未满也不写入
-
-
-    // replication 相关参数
-
-    private String localBinlogDirectory;                                            // 本地localBinlog目录
-    private HAMode haMode = HAMode.HEARTBEAT;                                       // ha机制
-    // 网络链接参数
-    private Integer port = 11111;                                                   // 服务端口，独立运行时需要配置
-
-
-    // 数据库信息
-
-
-    // binlog链接信息
-    private IndexMode indexMode;
-
-
-    // 心跳检查信息
-
-
-    // tddl/diamond 配置信息
-    private String app;
-    private String group;
-    // media配置信息
-    private String mediaGroup;
-    // metaq 存储配置信息
-    private String metaqStoreUri;
-
-    // ddl同步支持，隔离dml/ddl
-
-
-    private String blackFilter = null;                                              // 匹配黑名单,忽略解析
-
-    private Boolean tsdbEnable = Boolean.FALSE;                                     // 是否开启tableMetaTSDB
+    /**
+     * 是否开启 TableMetaTsDb
+     */
+    private Boolean tsdbEnable = Boolean.FALSE;                                     //
+    @Setter
+    @Getter
+    private String tsDbDriverClassName = "com.mysql.cj.jdbc.Driver";
     private String tsdbJdbcUrl;
     private String tsdbJdbcUserName;
     private String tsdbJdbcPassword;
 
+    /**
+     * 本地localBinlog目录
+     */
+    private String localBinlogDirectory;
+    private Integer transactionSize = 1024;                                         // 支持处理的transaction事务大小
 
-    // ================================== 兼容字段处理
-    private InetSocketAddress masterAddress;                                        // 主库信息
-    private String masterUsername;                                                  // 帐号
-    private String masterPassword;                                                  // 密码
+    private String blackFilter = null;                                              // 匹配黑名单,忽略解析
 
-    private InetSocketAddress standbyAddress;                                       // 备库信息
-    private String standbyUsername;                                                 // 帐号
-    private String standbyPassword;
+
+    // ============================================================================================================================== CanalHAController
+    /**
+     * 是否开启基于心跳检查的HA功能
+     */
+    private Boolean heartbeatHaEnable = false;
+    /**
+     * HA机制
+     */
+    private HAMode haMode = HAMode.HEARTBEAT;
+    /**
+     * 心跳检查重试次数
+     */
+    private Integer detectingRetryTimes = 3;
+
+
+    // ============================================================================================================================== CanalLogPositionManager
+    private LogPositionMode logPositionMode = LogPositionMode.MEMORY;
+
+    // ==============================================================================================================================
 
 
     /**
@@ -349,53 +316,10 @@ public class CanalParameter implements Serializable {
         ORACLE,
     }
 
-
-    public enum RunMode {
-        /**
-         * 嵌入式
-         */
-        EMBEDDED,
-        /**
-         * 服务式
-         */
-        SERVICE;
-
-        public boolean isEmbedded() {
-            return this.equals(RunMode.EMBEDDED);
-        }
-
-        public boolean isService() {
-            return this.equals(RunMode.SERVICE);
-        }
-    }
-
-    public enum ClusterMode {
-        /**
-         * 嵌入式
-         */
-        STANDALONE,
-        /**
-         * 冷备
-         */
-        STANDBY,
-        /**
-         * 热备
-         */
-        ACTIVE;
-
-        public boolean isStandalone() {
-            return this.equals(ClusterMode.STANDALONE);
-        }
-
-        public boolean isStandby() {
-            return this.equals(ClusterMode.STANDBY);
-        }
-
-        public boolean isActive() {
-            return this.equals(ClusterMode.ACTIVE);
-        }
-    }
-
+    /**
+     * 高可用模式
+     */
+    @SuppressWarnings("unused")
     public enum HAMode {
         /**
          * 心跳检测
@@ -404,31 +328,17 @@ public class CanalParameter implements Serializable {
         /**
          * otter media
          */
-        MEDIA;
-
-        public boolean isHeartBeat() {
-            return this.equals(HAMode.HEARTBEAT);
-        }
-
-        public boolean isMedia() {
-            return this.equals(HAMode.MEDIA);
-        }
+        MEDIA,
     }
 
-
-    public enum IndexMode {
+    /**
+     * CanalLogPositionManager 的存储模式
+     */
+    public enum LogPositionMode {
         /**
          * 内存存储模式
          */
         MEMORY,
-        /**
-         * 文件存储模式 zookeeper
-         */
-        ZOOKEEPER,
-        /**
-         * 混合模式，内存+文件
-         */
-        MIXED,
         /**
          * 基于meta信息
          */
@@ -436,256 +346,127 @@ public class CanalParameter implements Serializable {
         /**
          * 基于内存+meta的failBack实现
          */
-        MEMORY_META_FAIL_BACK;
-
-        public boolean isMemory() {
-            return this.equals(IndexMode.MEMORY);
-        }
-
-        public boolean isZookeeper() {
-            return this.equals(IndexMode.ZOOKEEPER);
-        }
-
-        public boolean isMixed() {
-            return this.equals(IndexMode.MIXED);
-        }
-
-        public boolean isMeta() {
-            return this.equals(IndexMode.META);
-        }
-
-        public boolean isMemoryMetaFailback() {
-            return this.equals(IndexMode.MEMORY_META_FAIL_BACK);
-        }
+        MEMORY_META_FAIL_BACK,
+//        /**
+//         * 文件存储模式 zookeeper
+//         */
+//        ZOOKEEPER,
+//        /**
+//         * 混合模式，内存+文件
+//         */
+//        MIXED,
     }
 
+//    /**
+//     * 集群模式
+//     */
+//    public enum ClusterMode {
+//        /**
+//         * 嵌入式
+//         */
+//        STANDALONE,
+//        /**
+//         * 冷备
+//         */
+//        STANDBY,
+//        /**
+//         * 热备
+//         */
+//        ACTIVE,
+//    }
 
     /**
      * 数据来源描述
      */
-    @SuppressWarnings("WeakerAccess")
+    @NoArgsConstructor
+    @Data
     public static class DataSourcing implements Serializable {
         private static final long serialVersionUID = -1770648468678085234L;
+        /**
+         * 数据源类型
+         */
         private SourcingType type;
+        /**
+         * 数据源地址
+         */
         private InetSocketAddress dbAddress;
 
-        public DataSourcing() {
-        }
-
+        @SuppressWarnings("WeakerAccess")
         public DataSourcing(SourcingType type, InetSocketAddress dbAddress) {
             this.type = type;
             this.dbAddress = dbAddress;
         }
-
-        public SourcingType getType() {
-            return type;
-        }
-
-        public void setType(SourcingType type) {
-            this.type = type;
-        }
-
-        public InetSocketAddress getDbAddress() {
-            return dbAddress;
-        }
-
-        public void setDbAddress(InetSocketAddress dbAddress) {
-            this.dbAddress = dbAddress;
-        }
-
     }
 
-    public Long getCanalId() {
-        return canalId;
-    }
-
-    public void setCanalId(Long canalId) {
-        this.canalId = canalId;
-    }
-
-    public RunMode getRunMode() {
-        return runMode;
-    }
-
-    public void setRunMode(RunMode runMode) {
-        this.runMode = runMode;
-    }
-
-    public ClusterMode getClusterMode() {
-        return clusterMode;
-    }
-
-    public void setClusterMode(ClusterMode clusterMode) {
-        this.clusterMode = clusterMode;
-    }
-
-    public List<String> getZkClusters() {
-        return zkClusters;
-    }
-
-    public void setZkClusters(List<String> zkClusters) {
-        this.zkClusters = zkClusters;
-    }
 
     public MetaMode getMetaMode() {
         return metaMode;
     }
 
-    public void setMetaMode(MetaMode metaMode) {
-        this.metaMode = metaMode;
-    }
 
     public StorageMode getStorageMode() {
         return storageMode;
     }
 
-    public String getDataDir() {
-        return dataDir;
-    }
-
-    public void setDataDir(String dataDir) {
-        this.dataDir = dataDir;
-    }
 
     public Integer getMetaFileFlushPeriod() {
         return metaFileFlushPeriod;
     }
 
-    public void setMetaFileFlushPeriod(Integer metaFileFlushPeriod) {
-        this.metaFileFlushPeriod = metaFileFlushPeriod;
-    }
-
-    public void setStorageMode(StorageMode storageMode) {
-        this.storageMode = storageMode;
-    }
 
     public Integer getMemoryStorageBufferSize() {
         return memoryStorageBufferSize;
     }
 
-    public void setMemoryStorageBufferSize(Integer memoryStorageBufferSize) {
-        this.memoryStorageBufferSize = memoryStorageBufferSize;
-    }
-
-    public String getFileStorageDirectory() {
-        return fileStorageDirectory;
-    }
-
-    public void setFileStorageDirectory(String fileStorageDirectory) {
-        this.fileStorageDirectory = fileStorageDirectory;
-    }
-
-    public Integer getFileStorageStoreCount() {
-        return fileStorageStoreCount;
-    }
-
-    public void setFileStorageStoreCount(Integer fileStorageStoreCount) {
-        this.fileStorageStoreCount = fileStorageStoreCount;
-    }
-
-    public Integer getFileStorageRollverCount() {
-        return fileStorageRollverCount;
-    }
-
-    public void setFileStorageRollverCount(Integer fileStorageRollverCount) {
-        this.fileStorageRollverCount = fileStorageRollverCount;
-    }
-
-    public Integer getFileStoragePercentThresold() {
-        return fileStoragePercentThresold;
-    }
-
-    public void setFileStoragePercentThresold(Integer fileStoragePercentThresold) {
-        this.fileStoragePercentThresold = fileStoragePercentThresold;
-    }
 
     public SourcingType getSourcingType() {
         return sourcingType;
     }
 
-    public void setSourcingType(SourcingType sourcingType) {
-        this.sourcingType = sourcingType;
-    }
 
     public String getLocalBinlogDirectory() {
         return localBinlogDirectory;
     }
 
-    public void setLocalBinlogDirectory(String localBinlogDirectory) {
-        this.localBinlogDirectory = localBinlogDirectory;
-    }
 
     public HAMode getHaMode() {
         return haMode;
     }
 
-    public void setHaMode(HAMode haMode) {
-        this.haMode = haMode;
-    }
-
-    public Integer getPort() {
-        return port;
-    }
-
-    public void setPort(Integer port) {
-        this.port = port;
-    }
 
     public Integer getDefaultConnectionTimeoutInSeconds() {
         return defaultConnectionTimeoutInSeconds;
     }
 
-    public void setDefaultConnectionTimeoutInSeconds(Integer defaultConnectionTimeoutInSeconds) {
-        this.defaultConnectionTimeoutInSeconds = defaultConnectionTimeoutInSeconds;
-    }
 
     public Integer getReceiveBufferSize() {
         return receiveBufferSize;
     }
 
-    public void setReceiveBufferSize(Integer receiveBufferSize) {
-        this.receiveBufferSize = receiveBufferSize;
-    }
 
     public Integer getSendBufferSize() {
         return sendBufferSize;
     }
 
-    public void setSendBufferSize(Integer sendBufferSize) {
-        this.sendBufferSize = sendBufferSize;
-    }
 
     public Byte getConnectionCharsetNumber() {
         return connectionCharsetNumber;
     }
 
-    public void setConnectionCharsetNumber(Byte connectionCharsetNumber) {
-        this.connectionCharsetNumber = connectionCharsetNumber;
-    }
 
     public String getConnectionCharset() {
         return connectionCharset;
     }
 
-    public void setConnectionCharset(String connectionCharset) {
-        this.connectionCharset = connectionCharset;
+    public LogPositionMode getLogPositionMode() {
+        return logPositionMode;
     }
 
-    public IndexMode getIndexMode() {
-        return indexMode;
-    }
-
-    public void setIndexMode(IndexMode indexMode) {
-        this.indexMode = indexMode;
-    }
 
     public String getDefaultDatabaseName() {
         return defaultDatabaseName;
     }
 
-    public void setDefaultDatabaseName(String defaultDatabaseName) {
-        this.defaultDatabaseName = defaultDatabaseName;
-    }
 
     public Long getSlaveId() {
         return slaveId;
@@ -699,100 +480,37 @@ public class CanalParameter implements Serializable {
         return detectingEnable;
     }
 
-    public void setDetectingEnable(Boolean detectingEnable) {
-        this.detectingEnable = detectingEnable;
-    }
 
     public String getDetectingSQL() {
         return detectingSQL;
     }
 
-    public void setDetectingSQL(String detectingSQL) {
-        this.detectingSQL = detectingSQL;
-    }
 
     public Integer getDetectingIntervalInSeconds() {
         return detectingIntervalInSeconds;
     }
 
-    public void setDetectingIntervalInSeconds(Integer detectingIntervalInSeconds) {
-        this.detectingIntervalInSeconds = detectingIntervalInSeconds;
-    }
-
-    public Integer getDetectingTimeoutThresholdInSeconds() {
-        return detectingTimeoutThresholdInSeconds;
-    }
-
-    public void setDetectingTimeoutThresholdInSeconds(Integer detectingTimeoutThresholdInSeconds) {
-        this.detectingTimeoutThresholdInSeconds = detectingTimeoutThresholdInSeconds;
-    }
 
     public Integer getDetectingRetryTimes() {
         return detectingRetryTimes;
     }
 
-    public void setDetectingRetryTimes(Integer detectingRetryTimes) {
-        this.detectingRetryTimes = detectingRetryTimes;
-    }
 
     public StorageScavengeMode getStorageScavengeMode() {
         return storageScavengeMode;
-    }
-
-    public void setStorageScavengeMode(StorageScavengeMode storageScavengeMode) {
-        this.storageScavengeMode = storageScavengeMode;
     }
 
     public String getScavengeSchedule() {
         return scavengeSchedule;
     }
 
-    public void setScavengeSchedule(String scavengeSchedule) {
-        this.scavengeSchedule = scavengeSchedule;
-    }
-
-    public String getApp() {
-        return app;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public String getMetaqStoreUri() {
-        return metaqStoreUri;
-    }
-
-    public void setMetaqStoreUri(String metaqStoreUri) {
-        this.metaqStoreUri = metaqStoreUri;
-    }
 
     public Integer getTransactionSize() {
         return transactionSize != null ? transactionSize : 1024;
     }
 
-    public void setTransactionSize(Integer transactionSize) {
-        this.transactionSize = transactionSize;
-    }
 
     public List<InetSocketAddress> getDbAddresses() {
-        if (dbAddresses == null) {
-            dbAddresses = new ArrayList<>();
-            if (masterAddress != null) {
-                dbAddresses.add(masterAddress);
-            }
-            if (standbyAddress != null) {
-                dbAddresses.add(standbyAddress);
-            }
-        }
         return dbAddresses;
     }
 
@@ -805,34 +523,17 @@ public class CanalParameter implements Serializable {
                     groupAddresses.add(new DataSourcing(sourcingType, address));
                     groupDbAddresses.add(groupAddresses);
                 }
-            } else {
-                if (masterAddress != null) {
-                    List<DataSourcing> groupAddresses = new ArrayList<>();
-                    groupAddresses.add(new DataSourcing(sourcingType, masterAddress));
-                    groupDbAddresses.add(groupAddresses);
-                }
-                if (standbyAddress != null) {
-                    List<DataSourcing> groupAddresses = new ArrayList<>();
-                    groupAddresses.add(new DataSourcing(sourcingType, standbyAddress));
-                    groupDbAddresses.add(groupAddresses);
-                }
             }
         }
         return groupDbAddresses;
     }
 
-    public void setGroupDbAddresses(List<List<DataSourcing>> groupDbAddresses) {
-        this.groupDbAddresses = groupDbAddresses;
-    }
 
     public void setDbAddresses(List<InetSocketAddress> dbAddresses) {
         this.dbAddresses = dbAddresses;
     }
 
     public String getDbUsername() {
-        if (dbUsername == null) {
-            dbUsername = (masterUsername != null ? masterUsername : standbyUsername);
-        }
         return dbUsername;
     }
 
@@ -841,9 +542,6 @@ public class CanalParameter implements Serializable {
     }
 
     public String getDbPassword() {
-        if (dbPassword == null) {
-            dbPassword = (masterPassword != null ? masterPassword : standbyPassword);
-        }
         return dbPassword;
     }
 
@@ -866,9 +564,6 @@ public class CanalParameter implements Serializable {
         return positions;
     }
 
-    public void setPositions(List<String> positions) {
-        this.positions = positions;
-    }
 
     // ===========================兼容字段
 
@@ -900,69 +595,16 @@ public class CanalParameter implements Serializable {
         }
     }
 
-    public void setMasterUsername(String masterUsername) {
-        this.masterUsername = masterUsername;
-    }
-
-    public void setMasterPassword(String masterPassword) {
-        this.masterPassword = masterPassword;
-    }
-
-    public void setStandbyAddress(InetSocketAddress standbyAddress) {
-        this.standbyAddress = standbyAddress;
-    }
-
-    public void setStandbyUsername(String standbyUsername) {
-        this.standbyUsername = standbyUsername;
-    }
-
-    public void setStandbyPassword(String standbyPassword) {
-        this.standbyPassword = standbyPassword;
-    }
-
-    public void setMasterLogfileName(String masterLogfileName) {
-        this.masterLogfileName = masterLogfileName;
-    }
-
-    public void setMasterLogfileOffest(Long masterLogfileOffest) {
-        this.masterLogfileOffest = masterLogfileOffest;
-    }
-
-    public void setMasterTimestamp(Long masterTimestamp) {
-        this.masterTimestamp = masterTimestamp;
-    }
-
-    public void setStandbyLogfileName(String standbyLogfileName) {
-        this.standbyLogfileName = standbyLogfileName;
-    }
-
-    public void setStandbyLogfileOffest(Long standbyLogfileOffest) {
-        this.standbyLogfileOffest = standbyLogfileOffest;
-    }
-
-    public void setStandbyTimestamp(Long standbyTimestamp) {
-        this.standbyTimestamp = standbyTimestamp;
-    }
-
-    public void setMasterAddress(InetSocketAddress masterAddress) {
-        this.masterAddress = masterAddress;
-    }
 
     public Integer getFallbackIntervalInSeconds() {
         return fallbackIntervalInSeconds == null ? 60 : fallbackIntervalInSeconds;
     }
 
-    public void setFallbackIntervalInSeconds(Integer fallbackIntervalInSeconds) {
-        this.fallbackIntervalInSeconds = fallbackIntervalInSeconds;
-    }
 
     public Boolean getHeartbeatHaEnable() {
         return heartbeatHaEnable == null ? false : heartbeatHaEnable;
     }
 
-    public void setHeartbeatHaEnable(Boolean heartbeatHaEnable) {
-        this.heartbeatHaEnable = heartbeatHaEnable;
-    }
 
     public BatchMode getStorageBatchMode() {
         return storageBatchMode == null ? BatchMode.MEM_SIZE : storageBatchMode;
@@ -976,49 +618,21 @@ public class CanalParameter implements Serializable {
         return memoryStorageBufferMemUnit == null ? 1024 : memoryStorageBufferMemUnit;
     }
 
-    public void setMemoryStorageBufferMemUnit(Integer memoryStorageBufferMemUnit) {
-        this.memoryStorageBufferMemUnit = memoryStorageBufferMemUnit;
-    }
-
-    public String getMediaGroup() {
-        return mediaGroup;
-    }
-
-    public void setMediaGroup(String mediaGroup) {
-        this.mediaGroup = mediaGroup;
-    }
-
-    public Long getZkClusterId() {
-        return zkClusterId;
-    }
-
-    public void setZkClusterId(Long zkClusterId) {
-        this.zkClusterId = zkClusterId;
-    }
 
     public Boolean getDdlIsolation() {
         return ddlIsolation;
     }
 
-    public void setDdlIsolation(Boolean ddlIsolation) {
-        this.ddlIsolation = ddlIsolation;
-    }
 
     public Boolean getFilterTableError() {
         return filterTableError == null ? false : filterTableError;
     }
 
-    public void setFilterTableError(Boolean filterTableError) {
-        this.filterTableError = filterTableError;
-    }
 
     public String getBlackFilter() {
         return blackFilter;
     }
 
-    public void setBlackFilter(String blackFilter) {
-        this.blackFilter = blackFilter;
-    }
 
     public Boolean getTsdbEnable() {
         return tsdbEnable;
@@ -1056,33 +670,21 @@ public class CanalParameter implements Serializable {
         return rdsAccesskey;
     }
 
-    public void setRdsAccesskey(String rdsAccesskey) {
-        this.rdsAccesskey = rdsAccesskey;
-    }
 
     public String getRdsSecretKey() {
         return rdsSecretKey;
     }
 
-    public void setRdsSecretKey(String rdsSecretKey) {
-        this.rdsSecretKey = rdsSecretKey;
-    }
 
     public String getRdsInstanceId() {
         return rdsInstanceId;
     }
 
-    public void setRdsInstanceId(String rdsInstanceId) {
-        this.rdsInstanceId = rdsInstanceId;
-    }
 
     public Boolean getGtIdEnable() {
         return gtIdEnable;
     }
 
-    public void setGtIdEnable(Boolean gtIdEnable) {
-        this.gtIdEnable = gtIdEnable;
-    }
 
     public Boolean getMemoryStorageRawEntry() {
         return memoryStorageRawEntry;
@@ -1096,25 +698,16 @@ public class CanalParameter implements Serializable {
         return tsdbSnapshotInterval;
     }
 
-    public void setTsdbSnapshotInterval(Integer tsdbSnapshotInterval) {
-        this.tsdbSnapshotInterval = tsdbSnapshotInterval;
-    }
 
     public Integer getTsdbSnapshotExpire() {
         return tsdbSnapshotExpire;
     }
 
-    public void setTsdbSnapshotExpire(Integer tsdbSnapshotExpire) {
-        this.tsdbSnapshotExpire = tsdbSnapshotExpire;
-    }
 
     public Boolean getParallel() {
         return parallel;
     }
 
-    public void setParallel(Boolean parallel) {
-        this.parallel = parallel;
-    }
 
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);

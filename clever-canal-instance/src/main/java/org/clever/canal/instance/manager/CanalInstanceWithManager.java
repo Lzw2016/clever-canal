@@ -3,7 +3,6 @@ package org.clever.canal.instance.manager;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.common.CanalException;
-import org.clever.canal.common.alarm.CanalAlarmHandler;
 import org.clever.canal.common.alarm.LogAlarmHandler;
 import org.clever.canal.common.utils.CollectionUtils;
 import org.clever.canal.common.utils.JsonUtils;
@@ -24,6 +23,8 @@ import org.clever.canal.parse.inbound.mysql.MysqlEventParser;
 import org.clever.canal.parse.inbound.mysql.rds.RdsBinlogEventParserProxy;
 import org.clever.canal.parse.inbound.mysql.tsdb.TableMetaDataSourceConfig;
 import org.clever.canal.parse.index.CanalLogPositionManager;
+import org.clever.canal.parse.index.FailBackLogPositionManager;
+import org.clever.canal.parse.index.MemoryLogPositionManager;
 import org.clever.canal.parse.index.MetaLogPositionManager;
 import org.clever.canal.parse.support.AuthenticationInfo;
 import org.clever.canal.protocol.position.EntryPosition;
@@ -121,7 +122,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
         if (MetaMode.MEMORY.equals(mode)) {
             metaManager = new MemoryMetaManager();
         } else if (MetaMode.LOCAL_FILE.equals(mode)) {
-            metaManager = new FileMixedMetaManager(new File(parameters.getDataDir()), parameters.getMetaFileFlushPeriod());
+            metaManager = new FileMixedMetaManager(new File(parameters.getMetaDataDir()), parameters.getMetaFileFlushPeriod());
         } else {
             throw new CanalException("unsupported MetaMode for " + mode);
         }
@@ -177,7 +178,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             ((EntryEventSink) eventSink).setFilterTransactionEntry(false);
             ((EntryEventSink) eventSink).setEventStore(getEventStore());
         }
-        logger.info("[{}-{}] Init eventSink end! -> load CanalEventSink:{}", canalId, destination, eventSink.getClass().getName());
+        logger.info("[{}-{}] Init eventSink end! -> load CanalEventSink: {}", canalId, destination, eventSink.getClass().getName());
     }
 
     /**
@@ -219,7 +220,7 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             // 创建一个空数据库地址的parser，可能使用了tddl指定地址，启动的时候才会从tddl获取地址
             this.eventParser = doInitEventParser(type, new ArrayList<>());
         }
-        logger.info("[{}-{}] Init eventParser end! -> load CanalEventParser:{}", canalId, destination, eventParser.getClass().getName());
+        logger.info("[{}-{}] Init eventParser end! -> load CanalEventParser: {}", canalId, destination, eventParser.getClass().getName());
     }
 
     /**
@@ -294,24 +295,23 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             if (parameters.getTsdbSnapshotExpire() != null) {
                 mysqlEventParser.setTsDbSnapshotExpire(parameters.getTsdbSnapshotExpire());
             }
-//            TODO lzw
             boolean tsDbEnable = BooleanUtils.toBoolean(parameters.getTsdbEnable());
             if (tsDbEnable) {
                 TableMetaDataSourceConfig dataSourceConfig = new TableMetaDataSourceConfig();
-                dataSourceConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
+                dataSourceConfig.setDriverClassName(parameters.getTsDbDriverClassName());
                 dataSourceConfig.setUrl(parameters.getTsdbJdbcUrl());
                 dataSourceConfig.setUsername(parameters.getTsdbJdbcUserName());
                 dataSourceConfig.setPassword(parameters.getTsdbJdbcPassword());
                 mysqlEventParser.setDataSourceConfig(dataSourceConfig);
-                mysqlEventParser.setEnableTsDb(tsDbEnable);
+                mysqlEventParser.setEnableTsDb(true);
             }
             eventParser = mysqlEventParser;
         } else if (SourcingType.LOCAL_BINLOG.equals(type)) {
             LocalBinlogEventParser localBinlogEventParser = new LocalBinlogEventParser();
             localBinlogEventParser.setDestination(destination);
             localBinlogEventParser.setBufferSize(parameters.getReceiveBufferSize());
-            localBinlogEventParser.setConnectionCharset(Charset.forName(parameters.getConnectionCharset()));
             localBinlogEventParser.setConnectionCharsetNumber(parameters.getConnectionCharsetNumber());
+            localBinlogEventParser.setConnectionCharset(Charset.forName(parameters.getConnectionCharset()));
             localBinlogEventParser.setDirectory(parameters.getLocalBinlogDirectory());
             localBinlogEventParser.setProfilingEnabled(false);
             localBinlogEventParser.setDetectingEnable(parameters.getDetectingEnable());
@@ -362,51 +362,38 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
     }
 
     protected CanalHAController initHaController() {
-        logger.info("init haController begin...");
+        logger.info("[{}-{}] Init haController begin...", canalId, destination);
         HAMode haMode = parameters.getHaMode();
         HeartBeatHAController haController;
-        if (haMode.isHeartBeat()) {
+        if (HAMode.HEARTBEAT.equals(haMode)) {
             haController = new HeartBeatHAController();
             haController.setDetectingRetryTimes(parameters.getDetectingRetryTimes());
             haController.setSwitchEnable(parameters.getHeartbeatHaEnable());
         } else {
-            throw new CanalException("unsupport HAMode for " + haMode);
+            throw new CanalException("unsupported HAMode for " + haMode);
         }
-        logger.info("init haController end! \n\t load CanalHAController:{}", haController.getClass().getName());
-
+        logger.info("[{}-{}] Init haController end! -> load CanalHAController: {}", canalId, destination, haController.getClass().getName());
         return haController;
     }
 
-    @SuppressWarnings("UnnecessaryLocalVariable")
     protected CanalLogPositionManager initLogPositionManager() {
-        logger.info("init logPositionPersistManager begin...");
-        IndexMode indexMode = parameters.getIndexMode();
-        CanalLogPositionManager logPositionManager = null;
-        logPositionManager = new MetaLogPositionManager(metaManager);
-//        logPositionManager = new FileMixedLogPositionManager(new File("./parse-manager"), 1000, new MemoryLogPositionManager());
-
-//        TODO lzw
-//        if (indexMode.isMemory()) {
-//            logPositionManager = new MemoryLogPositionManager();
-//        } else if (indexMode.isZookeeper()) {
-//            logPositionManager = new ZooKeeperLogPositionManager(getZkclientx());
-//        } else if (indexMode.isMixed()) {
-//            MemoryLogPositionManager memoryLogPositionManager = new MemoryLogPositionManager();
-//            ZooKeeperLogPositionManager zooKeeperLogPositionManager = new ZooKeeperLogPositionManager(getZkclientx());
-//            logPositionManager = new PeriodMixedLogPositionManager(memoryLogPositionManager, zooKeeperLogPositionManager, 1000L);
-//        } else if (indexMode.isMeta()) {
-//            logPositionManager = new MetaLogPositionManager(metaManager);
-//        } else if (indexMode.isMemoryMetaFailback()) {
-//            MemoryLogPositionManager primary = new MemoryLogPositionManager();
-//            MetaLogPositionManager secondary = new MetaLogPositionManager(metaManager);
-//            logPositionManager = new FailbackLogPositionManager(primary, secondary);
-//        } else {
-//            throw new CanalException("unsupport indexMode for " + indexMode);
-//        }
-//        logger.info("init logPositionManager end! \n\t load CanalLogPositionManager:{}", logPositionManager.getClass().getName());
+        logger.info("[{}-{}] Init logPositionPersistManager begin...", canalId, destination);
+        LogPositionMode logPositionMode = parameters.getLogPositionMode();
+        CanalLogPositionManager logPositionManager;
+        if (LogPositionMode.MEMORY.equals(logPositionMode)) {
+            logPositionManager = new MemoryLogPositionManager();
+        } else if (LogPositionMode.META.equals(logPositionMode)) {
+            logPositionManager = new MetaLogPositionManager(metaManager);
+        } else if (LogPositionMode.MEMORY_META_FAIL_BACK.equals(logPositionMode)) {
+            MemoryLogPositionManager primary = new MemoryLogPositionManager();
+            MetaLogPositionManager secondary = new MetaLogPositionManager(metaManager);
+            logPositionManager = new FailBackLogPositionManager(primary, secondary);
+        } else {
+            throw new CanalException("unsupported LogPositionMode for " + logPositionMode);
+        }
+        logger.info("[{}-{}] Init logPositionManager end! -> load CanalLogPositionManager:{}", canalId, destination, logPositionManager.getClass().getName());
         return logPositionManager;
     }
-
 
     private int getGroupSize() {
         List<List<DataSourcing>> groupDbAddresses = parameters.getGroupDbAddresses();
@@ -416,16 +403,5 @@ public class CanalInstanceWithManager extends AbstractCanalInstance {
             // 可能是基于tddl的启动
             return 1;
         }
-    }
-
-//    private synchronized ZkClientx getZkclientx() {
-//        // 做一下排序，保证相同的机器只使用同一个链接
-//        List<String> zkClusters = new ArrayList<String>(parameters.getZkClusters());
-//        Collections.sort(zkClusters);
-//        return ZkClientx.getZkClient(StringUtils.join(zkClusters, ";"));
-//    }
-
-    public void setAlarmHandler(CanalAlarmHandler alarmHandler) {
-        this.alarmHandler = alarmHandler;
     }
 }
