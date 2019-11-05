@@ -77,6 +77,15 @@ public class CanalParameter implements Serializable {
     private String scavengeSchedule;
 
     // ============================================================================================================================== CanalEventParser
+    // ============================================================ AbstractEventParser
+    /**
+     * 支持处理的transaction事务大小
+     */
+    private int transactionSize = 1024;
+    /**
+     * 匹配黑名单,忽略解析
+     */
+    private String blackFilter = null;
     // ============================================================ 常规配置
     /**
      * 数据来源类型
@@ -198,21 +207,11 @@ public class CanalParameter implements Serializable {
     /**
      * 心跳sql
      */
-    private String detectingSQL;
+    private String detectingSQL = "SELECT 1";
     /**
      * 心跳检查检测频率(单位秒)
      */
     private int detectingIntervalInSeconds = 3;
-    // ============================================================ AbstractEventParser
-    /**
-     * 支持处理的transaction事务大小
-     */
-    private int transactionSize = 1024;
-    /**
-     * 匹配黑名单,忽略解析
-     */
-    private String blackFilter = null;
-
     // ============================================================================================================================== CanalHAController
     /**
      * HA机制
