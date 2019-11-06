@@ -2,6 +2,7 @@ package org.clever.canal.protocol;
 
 import com.google.protobuf.ByteString;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
 
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
+@Setter
 public class Message implements Serializable {
     private static final long serialVersionUID = 1234034768477580009L;
     /**
