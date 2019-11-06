@@ -71,7 +71,7 @@ public class Test01 {
         };
 
         ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator(canalConfigClient);
-        CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.instance();
+        CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.Instance;
         canalServerWithEmbedded.setCanalInstanceGenerator(managerCanalInstanceGenerator);
         canalServerWithEmbedded.start();
         canalServerWithEmbedded.start("test");

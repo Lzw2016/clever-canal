@@ -7,6 +7,7 @@ import org.clever.canal.parse.CanalEventParser;
 import org.clever.canal.protocol.ClientIdentity;
 import org.clever.canal.sink.CanalEventSink;
 import org.clever.canal.store.CanalEventStore;
+import org.clever.canal.store.model.Event;
 
 /**
  * 代表单个canal实例，比如一个destination会独立一个实例
@@ -23,7 +24,7 @@ public interface CanalInstance extends CanalLifeCycle {
 
     CanalEventSink getEventSink();
 
-    CanalEventStore getEventStore();
+    CanalEventStore<Event> getEventStore();
 
     CanalMetaManager getMetaManager();
 

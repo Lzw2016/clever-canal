@@ -4,6 +4,7 @@ import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.common.utils.MigrateMap;
 import org.clever.canal.meta.exception.CanalMetaManagerException;
 import org.clever.canal.protocol.ClientIdentity;
+import org.clever.canal.protocol.position.LogPosition;
 import org.clever.canal.protocol.position.Position;
 import org.clever.canal.protocol.position.PositionRange;
 
@@ -114,7 +115,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 为 client 产生一个唯一、递增的id
      */
     @Override
-    public Long addBatch(ClientIdentity clientIdentity, PositionRange positionRange) throws CanalMetaManagerException {
+    public Long addBatch(ClientIdentity clientIdentity, PositionRange<LogPosition> positionRange) throws CanalMetaManagerException {
         return batches.get(clientIdentity).addPositionRange(positionRange);
     }
 
@@ -122,7 +123,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 指定batchId，插入batch数据
      */
     @Override
-    public void addBatch(ClientIdentity clientIdentity, PositionRange positionRange, Long batchId) throws CanalMetaManagerException {
+    public void addBatch(ClientIdentity clientIdentity, PositionRange<LogPosition> positionRange, Long batchId) throws CanalMetaManagerException {
         // 添加记录到指定batchId
         batches.get(clientIdentity).addPositionRange(positionRange, batchId);
     }
@@ -131,7 +132,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 对一个batch的Ack(确认)
      */
     @Override
-    public PositionRange removeBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException {
+    public PositionRange<LogPosition> removeBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException {
         return batches.get(clientIdentity).removePositionRange(batchId);
     }
 
@@ -139,7 +140,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 根据唯一batchId，查找对应的 Position范围数据
      */
     @Override
-    public PositionRange getBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException {
+    public PositionRange<LogPosition> getBatch(ClientIdentity clientIdentity, Long batchId) throws CanalMetaManagerException {
         return batches.get(clientIdentity).getPositionRange(batchId);
     }
 
@@ -147,7 +148,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 获得该client的第一个位置的position范围数据
      */
     @Override
-    public PositionRange getFirstBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException {
+    public PositionRange<LogPosition> getFirstBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException {
         return batches.get(clientIdentity).getFirstPositionRange();
     }
 
@@ -155,7 +156,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
      * 获得该client最新的一个位置的position范围数据(最后一个位置)
      */
     @Override
-    public PositionRange getLatestBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException {
+    public PositionRange<LogPosition> getLatestBatch(ClientIdentity clientIdentity) throws CanalMetaManagerException {
         return batches.get(clientIdentity).getLatestPositionRange();
     }
 
@@ -189,7 +190,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
         /**
          * batchId --> position范围
          */
-        private Map<Long, PositionRange> batches = new ConcurrentHashMap<>();
+        private Map<Long, PositionRange<LogPosition>> batches = new ConcurrentHashMap<>();
         /**
          * 自动递增的BatchId
          */
@@ -212,7 +213,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
          * @param positionRange 插入batch数据
          * @param batchId       batchId
          */
-        public synchronized void addPositionRange(PositionRange positionRange, Long batchId) {
+        public synchronized void addPositionRange(PositionRange<LogPosition> positionRange, Long batchId) {
             updateMaxId(batchId);
             batches.put(batchId, positionRange);
         }
@@ -223,7 +224,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
          * @param positionRange 插入batch数据
          * @return 自动生成的唯一的batchId
          */
-        public synchronized Long addPositionRange(PositionRange positionRange) {
+        public synchronized Long addPositionRange(PositionRange<LogPosition> positionRange) {
             Long batchId = atomicMaxBatchId.getAndIncrement();
             batches.put(batchId, positionRange);
             return batchId;
@@ -232,7 +233,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
         /**
          * 对一个batch的Ack(确认) - 删除对于的范围数据
          */
-        public synchronized PositionRange removePositionRange(Long batchId) {
+        public synchronized PositionRange<LogPosition> removePositionRange(Long batchId) {
             if (batches.containsKey(batchId)) {
                 Long minBatchId = Collections.min(batches.keySet());
                 if (!minBatchId.equals(batchId)) {
@@ -248,14 +249,14 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
         /**
          * 根据唯一batchId，查找对应的 Position范围数据
          */
-        public synchronized PositionRange getPositionRange(Long batchId) {
+        public synchronized PositionRange<LogPosition> getPositionRange(Long batchId) {
             return batches.get(batchId);
         }
 
         /**
          * 获得该client最新的一个位置(最后一个位置)
          */
-        public synchronized PositionRange getLatestPositionRange() {
+        public synchronized PositionRange<LogPosition> getLatestPositionRange() {
             if (batches.size() == 0) {
                 return null;
             } else {
@@ -267,7 +268,7 @@ public class MemoryMetaManager extends AbstractCanalLifeCycle implements CanalMe
         /**
          * 获得该client的第一个位置的position范围数据
          */
-        public synchronized PositionRange getFirstPositionRange() {
+        public synchronized PositionRange<LogPosition> getFirstPositionRange() {
             if (batches.size() == 0) {
                 return null;
             } else {

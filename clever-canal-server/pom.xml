@@ -22,11 +22,14 @@
             <groupId>org.clever</groupId>
             <artifactId>clever-canal-instance</artifactId>
         </dependency>
-
-        <!--TODO 当前测试使用-->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

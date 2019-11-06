@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.clever.canal.common.utils.CanalToStringStyle;
+import org.clever.canal.protocol.position.LogPosition;
 import org.clever.canal.protocol.position.PositionRange;
 
 import java.io.Serializable;
@@ -18,7 +19,7 @@ import java.util.List;
 public class Events<EVENT> implements Serializable {
     private static final long serialVersionUID = -7337454954300706044L;
 
-    private PositionRange positionRange = new PositionRange();
+    private PositionRange<LogPosition> positionRange = new PositionRange<>();
     private List<EVENT> events = new ArrayList<>();
 
     public String toString() {

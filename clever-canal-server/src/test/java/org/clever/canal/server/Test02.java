@@ -66,7 +66,7 @@ public class Test02 {
 
         // 启动服务端
         ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator(canalConfigClient);
-        CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.instance();
+        CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.Instance;
         canalServerWithEmbedded.setCanalInstanceGenerator(managerCanalInstanceGenerator);
         canalServerWithEmbedded.start();
         canalServerWithEmbedded.start("test");
