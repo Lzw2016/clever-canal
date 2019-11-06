@@ -1,21 +1,21 @@
 clever-canal-protocol
-    源码分析 - 增加注释                     ### OK
+    源码分析 - 增加注释                    ### OK
 
 clever-canal-meta
-    源码分析 - 增加注释                     ### OK
+    源码分析 - 增加注释                    ### OK
     TODO
      OK 1.本地存储的meta.dat的数据没有生效
         2.需要支持 etcd
 
 clever-canal-filter
-    源码分析 - 增加注释                     ### OK
+    源码分析 - 增加注释                    ### OK
     支持更简单的过滤规则
 
 clever-canal-store
-    源码分析 - 增加注释                     ### OK
+    源码分析 - 增加注释                    ### OK
 
 clever-canal-sink
-    源码分析 - 增加注释                     ### OK
+    源码分析 - 增加注释                    ### OK
     TODO
         1.EntryEventSink#doFilter中filter从未初始化过
 
@@ -27,7 +27,7 @@ clever-canal-dbsync -------------------> 底层库
     源码分析 - 增加注释
 
 clever-canal-parse
-    源码分析 - 增加注释 减少依赖            ### OK
+    源码分析 - 增加注释                    ### OK
     TODO
         1.CanalLogPositionManager etcd 支持
      OK 2.TsDb支持
@@ -39,9 +39,10 @@ clever-canal-server
     源码分析 - 增加注释                    ### OK
 
 clever-canal-server-netty
+    源码分析 - 增加注释
 
 clever-canal-prometheus
-
+    源码分析 - 增加注释                    ### OK
 
 
 

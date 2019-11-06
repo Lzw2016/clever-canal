@@ -37,9 +37,8 @@ public class SinkCollector extends Collector implements InstanceRegistry {
 
     @Override
     public List<MetricFamilySamples> collect() {
-        List<MetricFamilySamples> mfs = new ArrayList<MetricFamilySamples>();
-        CounterMetricFamily blockingCounter = new CounterMetricFamily(SINK_BLOCKING_TIME,
-                SINK_BLOCK_TIME_HELP, DEST_LABELS_LIST);
+        List<MetricFamilySamples> mfs = new ArrayList<>();
+        CounterMetricFamily blockingCounter = new CounterMetricFamily(SINK_BLOCKING_TIME, SINK_BLOCK_TIME_HELP, DEST_LABELS_LIST);
         for (SinkMetricsHolder smh : instances.values()) {
             blockingCounter.addMetric(smh.destLabelValues, (smh.eventsSinkBlockingTime.doubleValue() / NANO_PER_MILLI));
         }
@@ -71,7 +70,7 @@ public class SinkCollector extends Collector implements InstanceRegistry {
         instances.remove(destination);
     }
 
-    private class SinkMetricsHolder {
+    private static class SinkMetricsHolder {
         private AtomicLong eventsSinkBlockingTime;
         private List<String> destLabelValues;
     }

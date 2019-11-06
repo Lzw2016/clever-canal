@@ -64,14 +64,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     /**
      * 代表当前put操作最后一次写操作发生的位置
      */
+    @Getter
     private AtomicLong putSequence = new AtomicLong(INIT_SEQUENCE);
     /**
      * 代表当前get操作读取的最后一条的位置
      */
+    @Getter
     private AtomicLong getSequence = new AtomicLong(INIT_SEQUENCE);
     /**
      * 代表当前ack操作的最后一条的位置
      */
+    @Getter
     private AtomicLong ackSequence = new AtomicLong(INIT_SEQUENCE);
 
     // ================================================================================================= 记录下put/get/ack操作的三个memSize大小
@@ -79,14 +82,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     /**
      * put操作的memSize大小
      */
+    @Getter
     private AtomicLong putMemSize = new AtomicLong(0);
     /**
      * get操作的memSize大小
      */
+    @Getter
     private AtomicLong getMemSize = new AtomicLong(0);
     /**
      * ack操作的memSize大小
      */
+    @Getter
     private AtomicLong ackMemSize = new AtomicLong(0);
 
     // ================================================================================================= 记录下put/get/ack操作的三个execTime
@@ -94,14 +100,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     /**
      * put操作的execTime
      */
+    @Getter
     private AtomicLong putExecTime = new AtomicLong(System.currentTimeMillis());
     /**
      * get操作的execTime
      */
+    @Getter
     private AtomicLong getExecTime = new AtomicLong(System.currentTimeMillis());
     /**
      * ack操作的execTime
      */
+    @Getter
     private AtomicLong ackExecTime = new AtomicLong(System.currentTimeMillis());
 
     // ================================================================================================= 记录下put/get/ack操作的三个table rows
@@ -109,14 +118,17 @@ public class MemoryEventStoreWithBuffer extends AbstractCanalStoreScavenge imple
     /**
      * put操作的table rows
      */
+    @Getter
     private AtomicLong putTableRows = new AtomicLong(0);
     /**
      * get操作的table rows
      */
+    @Getter
     private AtomicLong getTableRows = new AtomicLong(0);
     /**
      * ack操作的table rows
      */
+    @Getter
     private AtomicLong ackTableRows = new AtomicLong(0);
 
     // ================================================================================================= 阻塞put/get操作控制信号

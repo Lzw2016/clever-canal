@@ -48,17 +48,14 @@ public class ParserCollector extends Collector implements InstanceRegistry {
     @Override
     public List<MetricFamilySamples> collect() {
         List<MetricFamilySamples> mfs = new ArrayList<>();
-        CounterMetricFamily bytesCounter = new CounterMetricFamily(RECEIVED_BINLOG,
-                RECEIVED_BINLOG_HELP, parserLabels);
-        GaugeMetricFamily modeGauge = new GaugeMetricFamily(PARSER_MODE,
-                MODE_HELP, modeLabels);
-        CounterMetricFamily blockingCounter = new CounterMetricFamily(PUBLISH_BLOCKING,
-                PUBLISH_BLOCKING_HELP, parserLabels);
+        CounterMetricFamily bytesCounter = new CounterMetricFamily(RECEIVED_BINLOG, RECEIVED_BINLOG_HELP, parserLabels);
+        GaugeMetricFamily modeGauge = new GaugeMetricFamily(PARSER_MODE, MODE_HELP, modeLabels);
+        CounterMetricFamily blockingCounter = new CounterMetricFamily(PUBLISH_BLOCKING, PUBLISH_BLOCKING_HELP, parserLabels);
         for (ParserMetricsHolder emh : instances.values()) {
             if (emh instanceof GroupParserMetricsHolder) {
                 GroupParserMetricsHolder group = (GroupParserMetricsHolder) emh;
-                for (ParserMetricsHolder semh : group.holders) {
-                    singleCollect(bytesCounter, blockingCounter, modeGauge, semh);
+                for (ParserMetricsHolder holder : group.holders) {
+                    singleCollect(bytesCounter, blockingCounter, modeGauge, holder);
                 }
             } else {
                 singleCollect(bytesCounter, blockingCounter, modeGauge, emh);
@@ -72,7 +69,12 @@ public class ParserCollector extends Collector implements InstanceRegistry {
         return mfs;
     }
 
-    private void singleCollect(CounterMetricFamily bytesCounter, CounterMetricFamily blockingCounter, GaugeMetricFamily modeGauge, ParserMetricsHolder holder) {
+    private void singleCollect(
+            CounterMetricFamily bytesCounter,
+            CounterMetricFamily blockingCounter,
+            GaugeMetricFamily modeGauge,
+            ParserMetricsHolder holder
+    ) {
         if (holder.isParallel) {
             blockingCounter.addMetric(holder.parserLabelValues, (holder.eventsPublishBlockingTime.doubleValue() / NANO_PER_MILLI));
         }
@@ -133,7 +135,7 @@ public class ParserCollector extends Collector implements InstanceRegistry {
         instances.remove(destination);
     }
 
-    private class ParserMetricsHolder {
+    private static class ParserMetricsHolder {
         private List<String> parserLabelValues;
         private List<String> modeLabelValues;
         // metrics for single parser
@@ -143,8 +145,7 @@ public class ParserCollector extends Collector implements InstanceRegistry {
         private boolean isParallel;
     }
 
-    private class GroupParserMetricsHolder extends ParserMetricsHolder {
+    private static class GroupParserMetricsHolder extends ParserMetricsHolder {
         private final List<ParserMetricsHolder> holders = new ArrayList<>();
     }
-
 }

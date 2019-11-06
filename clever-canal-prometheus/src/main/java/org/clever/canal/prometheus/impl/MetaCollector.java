@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import io.prometheus.client.Collector;
 import io.prometheus.client.GaugeMetricFamily;
 import org.clever.canal.instance.core.CanalInstance;
-import org.clever.canal.instance.spring.CanalInstanceWithSpring;
 import org.clever.canal.meta.CanalMetaManager;
 import org.clever.canal.prometheus.InstanceRegistry;
 import org.clever.canal.protocol.ClientIdentity;
@@ -37,11 +36,9 @@ public class MetaCollector extends Collector implements InstanceRegistry {
 
     @Override
     public List<MetricFamilySamples> collect() {
-        List<MetricFamilySamples> mfs = new ArrayList<MetricFamilySamples>();
-        GaugeMetricFamily instanceInfo = new GaugeMetricFamily(INSTANCE,
-                INSTANCE_HELP, INFO_LABELS_LIST);
-        GaugeMetricFamily subsInfo = new GaugeMetricFamily(SUBSCRIPTION,
-                SUBSCRIPTION_HELP, DEST_LABELS_LIST);
+        List<MetricFamilySamples> mfs = new ArrayList<>();
+        GaugeMetricFamily instanceInfo = new GaugeMetricFamily(INSTANCE, INSTANCE_HELP, INFO_LABELS_LIST);
+        GaugeMetricFamily subsInfo = new GaugeMetricFamily(SUBSCRIPTION, SUBSCRIPTION_HELP, DEST_LABELS_LIST);
         for (Map.Entry<String, MetaMetricsHolder> nme : instances.entrySet()) {
             final String destination = nme.getKey();
             final MetaMetricsHolder nmh = nme.getValue();
@@ -59,7 +56,8 @@ public class MetaCollector extends Collector implements InstanceRegistry {
     public void register(CanalInstance instance) {
         final String destination = instance.getDestination();
         MetaMetricsHolder holder = new MetaMetricsHolder();
-        String mode = (instance instanceof CanalInstanceWithSpring) ? "spring" : "manager";
+        // String mode = (instance instanceof CanalInstanceWithSpring) ? "spring" : "manager";
+        String mode = "manager";
         holder.infoLabelValues = Arrays.asList(destination, mode);
         holder.destLabelValues = Collections.singletonList(destination);
         holder.metaManager = instance.getMetaManager();
@@ -76,11 +74,9 @@ public class MetaCollector extends Collector implements InstanceRegistry {
         instances.remove(destination);
     }
 
-    private class MetaMetricsHolder {
+    private static class MetaMetricsHolder {
         private List<String> infoLabelValues;
         private List<String> destLabelValues;
         private CanalMetaManager metaManager;
     }
-
-
 }

@@ -1,5 +1,6 @@
 package org.clever.canal.prometheus.impl;
 
+import lombok.Getter;
 import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.CanalEntry.EntryType;
 import org.clever.canal.sink.AbstractCanalEventDownStreamHandler;
@@ -13,7 +14,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class PrometheusCanalEventDownStreamHandler extends AbstractCanalEventDownStreamHandler<List<Event>> {
 
-    private final AtomicLong latestExecuteTime  = new AtomicLong(System.currentTimeMillis());
+    @Getter
+    private final AtomicLong latestExecuteTime = new AtomicLong(System.currentTimeMillis());
+    @Getter
     private final AtomicLong transactionCounter = new AtomicLong(0L);
 
     @Override
@@ -24,25 +27,21 @@ public class PrometheusCanalEventDownStreamHandler extends AbstractCanalEventDow
                 EntryType type = e.getEntryType();
                 if (type == null) continue;
                 switch (type) {
-                    case TRANSACTIONBEGIN: {
+                    case TRANSACTION_BEGIN:
+                    case ROW_DATA: {
                         long exec = e.getExecuteTime();
                         if (exec > 0) localExecTime = exec;
                         break;
                     }
-                    case ROWDATA: {
-                        long exec = e.getExecuteTime();
-                        if (exec > 0) localExecTime = exec;
-                        break;
-                    }
-                    case TRANSACTIONEND: {
+                    case TRANSACTION_END: {
                         long exec = e.getExecuteTime();
                         if (exec > 0) localExecTime = exec;
                         transactionCounter.incrementAndGet();
                         break;
                     }
-                    case HEARTBEAT:
+                    case ENTRY_HEARTBEAT:
                         CanalEntry.EventType eventType = e.getEventType();
-                        if (eventType == CanalEntry.EventType.MHEARTBEAT) {
+                        if (eventType == CanalEntry.EventType.M_HEARTBEAT) {
                             localExecTime = System.currentTimeMillis();
                         }
                         break;
@@ -67,13 +66,4 @@ public class PrometheusCanalEventDownStreamHandler extends AbstractCanalEventDow
     public void stop() {
         super.stop();
     }
-
-    public AtomicLong getLatestExecuteTime() {
-        return latestExecuteTime;
-    }
-
-    public AtomicLong getTransactionCounter() {
-        return transactionCounter;
-    }
-
 }

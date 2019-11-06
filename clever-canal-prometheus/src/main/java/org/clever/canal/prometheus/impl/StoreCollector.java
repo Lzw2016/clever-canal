@@ -59,9 +59,10 @@ public class StoreCollector extends Collector implements InstanceRegistry {
     private StoreCollector() {
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public List<MetricFamilySamples> collect() {
-        List<MetricFamilySamples> mfs = new ArrayList<MetricFamilySamples>();
+        List<MetricFamilySamples> mfs = new ArrayList<>();
         CounterMetricFamily put = new CounterMetricFamily(PRODUCE, PRODUCE_HELP, DEST_LABELS_LIST);
         CounterMetricFamily ack = new CounterMetricFamily(CONSUME, CONSUME_HELP, DEST_LABELS_LIST);
         GaugeMetricFamily store = new GaugeMetricFamily(STORE, STORE_HELP, storeLabelsList);
@@ -158,7 +159,7 @@ public class StoreCollector extends Collector implements InstanceRegistry {
         instances.remove(destination);
     }
 
-    private class StoreMetricsHolder {
+    private static class StoreMetricsHolder {
         private AtomicLong putSeq;
         private AtomicLong ackSeq;
         private BatchMode batchMode;

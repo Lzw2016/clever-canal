@@ -9,6 +9,7 @@ import org.clever.canal.prometheus.InstanceRegistry;
 import org.clever.canal.sink.CanalEventDownStreamHandler;
 import org.clever.canal.sink.CanalEventSink;
 import org.clever.canal.sink.entry.EntryEventSink;
+import org.clever.canal.store.model.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +41,9 @@ public class EntryCollector extends Collector implements InstanceRegistry {
 
     @Override
     public List<MetricFamilySamples> collect() {
-        List<MetricFamilySamples> mfs = new ArrayList<MetricFamilySamples>();
-        GaugeMetricFamily delay = new GaugeMetricFamily(DELAY,
-                DELAY_HELP, DEST_LABELS_LIST);
-        CounterMetricFamily transactions = new CounterMetricFamily(TRANSACTION,
-                TRANSACTION_HELP, DEST_LABELS_LIST);
+        List<MetricFamilySamples> mfs = new ArrayList<>();
+        GaugeMetricFamily delay = new GaugeMetricFamily(DELAY, DELAY_HELP, DEST_LABELS_LIST);
+        CounterMetricFamily transactions = new CounterMetricFamily(TRANSACTION, TRANSACTION_HELP, DEST_LABELS_LIST);
         for (EntryMetricsHolder emh : instances.values()) {
             long now = System.currentTimeMillis();
             long latest = emh.latestExecTime.get();
@@ -92,7 +91,7 @@ public class EntryCollector extends Collector implements InstanceRegistry {
 
     private PrometheusCanalEventDownStreamHandler assembleHandler(EntryEventSink entrySink) {
         PrometheusCanalEventDownStreamHandler ph = new PrometheusCanalEventDownStreamHandler();
-        List<CanalEventDownStreamHandler> handlers = entrySink.getHandlers();
+        List<CanalEventDownStreamHandler<List<Event>>> handlers = entrySink.getHandlers();
         for (CanalEventDownStreamHandler handler : handlers) {
             if (handler instanceof PrometheusCanalEventDownStreamHandler) {
                 throw new IllegalStateException("PrometheusCanalEventDownStreamHandler already exists in handlers.");
@@ -103,7 +102,7 @@ public class EntryCollector extends Collector implements InstanceRegistry {
     }
 
     private void unloadHandler(EntryEventSink entrySink) {
-        List<CanalEventDownStreamHandler> handlers = entrySink.getHandlers();
+        List<CanalEventDownStreamHandler<List<Event>>> handlers = entrySink.getHandlers();
         int i = 0;
         for (; i < handlers.size(); i++) {
             if (handlers.get(i) instanceof PrometheusCanalEventDownStreamHandler) {
@@ -120,10 +119,9 @@ public class EntryCollector extends Collector implements InstanceRegistry {
         }
     }
 
-    private class EntryMetricsHolder {
+    private static class EntryMetricsHolder {
         private AtomicLong latestExecTime;
         private AtomicLong transactionCounter;
         private List<String> destLabelValues;
     }
-
 }

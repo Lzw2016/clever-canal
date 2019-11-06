@@ -66,6 +66,7 @@ public class EntryEventSink extends AbstractCanalEventSink<List<CanalEntry.Entry
     protected AtomicLong lastTransactionCount = new AtomicLong(0L);
     protected volatile long lastEmptyTransactionTimestamp = 0L;
     protected AtomicLong lastEmptyTransactionCount = new AtomicLong(0L);
+    @Getter
     protected AtomicLong eventsSinkBlockingTime = new AtomicLong(0L);
     /**
      * 是否以原始数据的方式保存(保存原始数据为了方便网络传输)

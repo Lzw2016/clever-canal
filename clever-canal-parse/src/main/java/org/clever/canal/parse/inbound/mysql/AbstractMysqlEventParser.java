@@ -108,10 +108,12 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
     /**
      * 接收到的binlog数据字节数(单位: )
      */
+    @Getter
     protected final AtomicLong receivedBinlogBytes = new AtomicLong(0L);
     /**
      * binlog事情发布阻塞时间(单位: )
      */
+    @Getter
     private final AtomicLong eventsPublishBlockingTime = new AtomicLong(0L);
 
     @Override
@@ -244,15 +246,5 @@ public abstract class AbstractMysqlEventParser extends AbstractEventParser<LogEv
                 tableMetaTsDb = tableMetaTsDbFactory.build(destination, dataSourceConfig);
             }
         }
-    }
-
-    @SuppressWarnings("unused")
-    public Long getEventsPublishBlockingTime() {
-        return this.eventsPublishBlockingTime.get();
-    }
-
-    @SuppressWarnings("unused")
-    public Long getReceivedBinlogBytes() {
-        return this.receivedBinlogBytes.get();
     }
 }

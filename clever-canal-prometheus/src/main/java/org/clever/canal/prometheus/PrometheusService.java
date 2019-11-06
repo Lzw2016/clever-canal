@@ -41,7 +41,7 @@ public class PrometheusService implements CanalMetricsService {
     public void initialize() {
         try {
             logger.info("Start prometheus HTTPServer on port {}.", port);
-            //TODO 2.Https?
+            // TODO 2.Https? HTTPServer
             server = new HTTPServer(port);
         } catch (IOException e) {
             logger.warn("Unable to start prometheus HTTPServer.", e);
@@ -50,6 +50,7 @@ public class PrometheusService implements CanalMetricsService {
         try {
             // JVM exports
             DefaultExports.initialize();
+            // Canal exports
             instanceExports.initialize();
             if (!clientProfiler.isStart()) {
                 clientProfiler.start();
@@ -58,7 +59,6 @@ public class PrometheusService implements CanalMetricsService {
         } catch (Throwable t) {
             logger.warn("Unable to initialize server exports.", t);
         }
-
         running = true;
     }
 

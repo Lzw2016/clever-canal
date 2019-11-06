@@ -10,23 +10,21 @@ import org.clever.canal.server.netty.listener.ChannelFutureAggregator.ClientRequ
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST;
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST_LABELS;
 
-/**
- * @author Chuanyi Li
- */
 public class PrometheusClientInstanceProfiler implements ClientInstanceProfiler {
 
-    private static final long   NANO_PER_MILLI = 1000 * 1000L;
-    private static final String PACKET_TYPE    = "canal_instance_client_packets";
+    private static final long NANO_PER_MILLI = 1000 * 1000L;
+    private static final String PACKET_TYPE = "canal_instance_client_packets";
     private static final String OUTBOUND_BYTES = "canal_instance_client_bytes";
-    private static final String EMPTY_BATCHES  = "canal_instance_client_empty_batches";
-    private static final String ERRORS         = "canal_instance_client_request_error";
-    private static final String LATENCY        = "canal_instance_client_request_latency";
-    private final Counter       outboundCounter;
-    private final Counter       packetsCounter;
-    private final Counter       emptyBatchesCounter;
-    private final Counter       errorsCounter;
-    private final Histogram     responseLatency;
-    private volatile boolean    running        = false;
+    private static final String EMPTY_BATCHES = "canal_instance_client_empty_batches";
+    private static final String ERRORS = "canal_instance_client_request_error";
+    private static final String LATENCY = "canal_instance_client_request_latency";
+
+    private final Counter outboundCounter;
+    private final Counter packetsCounter;
+    private final Counter emptyBatchesCounter;
+    private final Counter errorsCounter;
+    private final Histogram responseLatency;
+    private volatile boolean running = false;
 
     private static class SingletonHolder {
         private static final PrometheusClientInstanceProfiler SINGLETON = new PrometheusClientInstanceProfiler();
@@ -77,20 +75,17 @@ public class PrometheusClientInstanceProfiler implements ClientInstanceProfiler 
         }
         long latency = result.getLatency();
         responseLatency.labels(destination).observe(((double) latency) / NANO_PER_MILLI);
-        switch (type) {
-            case GET:
-                boolean empty = result.getEmpty();
-                // 区分一下空包
-                if (empty) {
-                    emptyBatchesCounter.labels(destination).inc();
-                } else {
-                    packetsCounter.labels(destination, type.name()).inc();
-                }
-                break;
-            // reserve for others
-            default:
+        if (type == PacketType.GET) {
+            boolean empty = result.getEmpty();
+            // 区分一下空包
+            if (empty) {
+                emptyBatchesCounter.labels(destination).inc();
+            } else {
                 packetsCounter.labels(destination, type.name()).inc();
-                break;
+            }
+            // reserve for others
+        } else {
+            packetsCounter.labels(destination, type.name()).inc();
         }
     }
 
