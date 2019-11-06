@@ -33,7 +33,7 @@ public final class CanalEntry {
     ENTRY_TYPE_COMPATIBLE_PROTO2(0),
     /**
      * <pre>
-     * 事件开始
+     * 事务开始
      * </pre>
      *
      * <code>TRANSACTION_BEGIN = 1;</code>
@@ -49,7 +49,7 @@ public final class CanalEntry {
     ROW_DATA(2),
     /**
      * <pre>
-     * 事件结束
+     * 事务结束
      * </pre>
      *
      * <code>TRANSACTION_END = 3;</code>
@@ -84,7 +84,7 @@ public final class CanalEntry {
     public static final int ENTRY_TYPE_COMPATIBLE_PROTO2_VALUE = 0;
     /**
      * <pre>
-     * 事件开始
+     * 事务开始
      * </pre>
      *
      * <code>TRANSACTION_BEGIN = 1;</code>
@@ -100,7 +100,7 @@ public final class CanalEntry {
     public static final int ROW_DATA_VALUE = 2;
     /**
      * <pre>
-     * 事件结束
+     * 事务结束
      * </pre>
      *
      * <code>TRANSACTION_END = 3;</code>
@@ -4238,7 +4238,7 @@ public final class CanalEntry {
   }
   /**
    * <pre>
-   * 解析binlog数据对用的实体
+   * 解析binlog数据对应的实体
    * </pre>
    *
    * Protobuf type {@code org.clever.canal.protocol.Entry}
@@ -4652,7 +4652,7 @@ public final class CanalEntry {
     }
     /**
      * <pre>
-     * 解析binlog数据对用的实体
+     * 解析binlog数据对应的实体
      * </pre>
      *
      * Protobuf type {@code org.clever.canal.protocol.Entry}
