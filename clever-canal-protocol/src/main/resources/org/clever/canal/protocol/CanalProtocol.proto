@@ -114,7 +114,7 @@ message ClientAuth {
     int64 startTimestamp = 8;
 }
 
-// Ack数据
+// Ack数据(普通返回数据)
 message Ack {
     // 错误code [default = 0]
     oneof errorCode_present {

@@ -1,56 +1,37 @@
 package org.clever.canal.server.netty.handler;
 
 import com.google.protobuf.ByteString;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.clever.canal.protocol.CanalPacket;
-import org.clever.canal.protocol.CanalPacket.Handshake;
-import org.clever.canal.protocol.CanalPacket.Packet;
-import org.clever.canal.server.netty.NettyUtils;
-import org.jboss.netty.channel.*;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.clever.canal.server.netty.NettyServerConstant;
 
 /**
- * handshake交互
- *
- * @author jianghang 2012-10-24 上午11:39:54
- * @version 1.0.0
+ * 连接握手处理
+ * 作者：lizw <br/>
+ * 创建时间：2019/11/06 16:58 <br/>
  */
-public class HandshakeInitializationHandler extends SimpleChannelHandler {
-
-    // support to maintain socket channel.
-    private ChannelGroup childGroups;
-
-    public HandshakeInitializationHandler(ChannelGroup childGroups) {
-        this.childGroups = childGroups;
-    }
-
-    private static final Logger logger = LoggerFactory.getLogger(HandshakeInitializationHandler.class);
-
-    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        // add new socket channel in channel container, used to manage sockets.
-        if (childGroups != null) {
-            childGroups.add(ctx.getChannel());
-        }
-
-        final byte[] seed = org.apache.commons.lang3.RandomUtils.nextBytes(8);
-        byte[] body = Packet.newBuilder()
+@Slf4j
+public class HandshakeInitializationHandler extends SimpleChannelInboundHandler<CanalPacket.Packet> {
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, CanalPacket.Packet msg) throws Exception {
+        // 构造握手数据
+        final byte[] seed = RandomUtils.nextBytes(8);
+        CanalPacket.Handshake handshake = CanalPacket.Handshake.newBuilder()
+                .setSeeds(ByteString.copyFrom(seed))
+                .setSupportedCompressions(CanalPacket.Compression.NONE)
+                .build();
+        // 构造响应数据
+        byte[] resData = CanalPacket.Packet.newBuilder()
                 .setType(CanalPacket.PacketType.HANDSHAKE)
-                .setVersion(NettyUtils.VERSION)
-                .setBody(Handshake.newBuilder().setSeeds(ByteString.copyFrom(seed)).build().toByteString())
+                .setVersion(NettyServerConstant.VERSION)
+                .setBody(handshake.toByteString())
                 .build()
                 .toByteArray();
+        // 写入响应数据
 
-        NettyUtils.write(ctx.getChannel(), body, new ChannelFutureListener() {
-
-            public void operationComplete(ChannelFuture future) throws Exception {
-                ctx.getPipeline().get(HandshakeInitializationHandler.class.getName());
-                ClientAuthenticationHandler handler = (ClientAuthenticationHandler) ctx.getPipeline()
-                        .get(ClientAuthenticationHandler.class.getName());
-                handler.setSeed(seed);
-            }
-
-        });
-        logger.info("send handshake initialization packet to : {}", ctx.getChannel());
+        // NettyUtils.write(ctx.getChannel(), resData, ...);
     }
 }

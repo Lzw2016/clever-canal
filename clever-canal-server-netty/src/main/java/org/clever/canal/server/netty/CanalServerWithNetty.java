@@ -17,6 +17,9 @@ import org.clever.canal.common.AbstractCanalLifeCycle;
 import org.clever.canal.protocol.CanalPacket;
 import org.clever.canal.server.CanalServer;
 import org.clever.canal.server.embedded.CanalServerWithEmbedded;
+import org.clever.canal.server.netty.handler.ClientAuthenticationHandler;
+import org.clever.canal.server.netty.handler.HandshakeInitializationHandler;
+import org.clever.canal.server.netty.handler.SessionHandler;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +31,7 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
     /**
      * 单例
      */
+    @SuppressWarnings("WeakerAccess")
     public static final CanalServerWithNetty Instance = new CanalServerWithNetty();
     /**
      * 嵌入式server
@@ -90,7 +94,7 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
         // 设置处理逻辑Handler
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
-            protected void initChannel(SocketChannel ch) throws Exception {
+            protected void initChannel(SocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
                 // -------------------------- 解码和编码，应和客户端一致 (传输的协议 Protobuf) -------------------------- //
                 // 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）
@@ -103,11 +107,11 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
                 pipeline.addLast(new ProtobufEncoder());
                 // -------------------------- CanalServer业务逻辑 -------------------------- //
                 // 连接握手处理
-                // pipeline.addLast(new HandshakeInitializationHandler2());
+                pipeline.addLast(new HandshakeInitializationHandler());
                 // 客户端授权处理
-                // pipeline.addLast(new ClientAuthenticationHandler2());
+                pipeline.addLast(new ClientAuthenticationHandler(embeddedServer));
                 // Canal 数据同步功能处理
-                // pipeline.addLast(new SessionHandler2());
+                pipeline.addLast(new SessionHandler(embeddedServer));
             }
         });
         // 优化网络配置
@@ -119,7 +123,7 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
             log.info("CanalServerWithNetty start for {}:{}", bindIp, port);
         } else {
             bootstrap.bind(port);
-            log.info("CanalServerWithNetty start for {}", port);
+            log.info("CanalServerWithNetty start for port:{}", port);
         }
     }
 
