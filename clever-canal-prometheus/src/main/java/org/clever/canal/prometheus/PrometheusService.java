@@ -15,29 +15,27 @@ import static org.clever.canal.server.netty.CanalServerWithNettyProfiler.NOP;
 import static org.clever.canal.server.netty.CanalServerWithNettyProfiler.profiler;
 
 /**
- * @author Chuanyi Li
+ * CanalMetricsService 的 Prometheus 实现
  */
+@SuppressWarnings("WeakerAccess")
 public class PrometheusService implements CanalMetricsService {
+    private static final Logger logger = LoggerFactory.getLogger(PrometheusService.class);
+    /**
+     * 单例对象
+     */
+    public static final PrometheusService Instance = new PrometheusService();
 
-    private static final Logger logger          = LoggerFactory.getLogger(PrometheusService.class);
-    private final CanalInstanceExports   instanceExports;
-    private volatile boolean             running         = false;
-    private int                          port;
-    private HTTPServer                   server;
+    private final CanalInstanceExports instanceExports;
+    private volatile boolean running = false;
+    private int port;
+    private HTTPServer server;
     private final ClientInstanceProfiler clientProfiler;
 
     private PrometheusService() {
-        this.instanceExports = CanalInstanceExports.instance();
+        this.instanceExports = CanalInstanceExports.Instance;
         this.clientProfiler = PrometheusClientInstanceProfiler.instance();
     }
 
-    private static class SingletonHolder {
-        private static final PrometheusService SINGLETON = new PrometheusService();
-    }
-
-    public static PrometheusService getInstance() {
-        return SingletonHolder.SINGLETON;
-    }
 
     @Override
     public void initialize() {

@@ -83,6 +83,7 @@
         <common.version>1.0.2.RELEASES</common.version>
         <security.version>1.0.1.RELEASES</security.version>
         <protobuf.version>3.10.0</protobuf.version>
+        <prometheus.version>0.8.0</prometheus.version>
     </properties>
 
     <dependencyManagement>
@@ -268,9 +269,18 @@
             <dependency>
                 <groupId>io.prometheus</groupId>
                 <artifactId>simpleclient</artifactId>
-                <version>0.7.0</version>
+                <version>${prometheus.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_httpserver</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_hotspot</artifactId>
+                <version>${prometheus.version}</version>
+            </dependency>
             <!--clever-canal-admin依赖-->
             <!--jdbc-client-->
             <dependency>

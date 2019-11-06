@@ -21,26 +21,21 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST_LABELS_LIST;
 
-/**
- * @author Chuanyi Li
- */
 public class EntryCollector extends Collector implements InstanceRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(SinkCollector.class);
+    /**
+     * 单例对象
+     */
+    public static final EntryCollector Instance = new EntryCollector();
 
-    private static final Logger logger            = LoggerFactory.getLogger(SinkCollector.class);
-    private static final String                             DELAY             = "canal_instance_traffic_delay";
-    private static final String                             TRANSACTION       = "canal_instance_transactions";
-    private static final String                             DELAY_HELP        = "Traffic delay of canal instance in milliseconds";
-    private static final String                             TRANSACTION_HELP  = "Transactions counter of canal instance";
-    private final ConcurrentMap<String, EntryMetricsHolder> instances        = new ConcurrentHashMap<String, EntryMetricsHolder>();
+    private static final String DELAY = "canal_instance_traffic_delay";
+    private static final String TRANSACTION = "canal_instance_transactions";
+    private static final String DELAY_HELP = "Traffic delay of canal instance in milliseconds";
+    private static final String TRANSACTION_HELP = "Transactions counter of canal instance";
 
-    private EntryCollector() {}
+    private final ConcurrentMap<String, EntryMetricsHolder> instances = new ConcurrentHashMap<>();
 
-    private static class SingletonHolder {
-        private static final EntryCollector SINGLETON = new EntryCollector();
-    }
-
-    public static EntryCollector instance() {
-        return SingletonHolder.SINGLETON;
+    private EntryCollector() {
     }
 
     @Override
@@ -126,8 +121,8 @@ public class EntryCollector extends Collector implements InstanceRegistry {
     }
 
     private class EntryMetricsHolder {
-        private AtomicLong   latestExecTime;
-        private AtomicLong   transactionCounter;
+        private AtomicLong latestExecTime;
+        private AtomicLong transactionCounter;
         private List<String> destLabelValues;
     }
 

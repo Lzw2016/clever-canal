@@ -17,27 +17,22 @@ import java.util.concurrent.ConcurrentMap;
 
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST_LABELS_LIST;
 
-/**
- * @author Chuanyi Li
- */
 public class MetaCollector extends Collector implements InstanceRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(MetaCollector.class);
+    /**
+     * 单例对象
+     */
+    public static final MetaCollector Instance = new MetaCollector();
 
-    private static final List<String>                      INFO_LABELS_LIST  = Arrays.asList("destination", "mode");
-    private static final Logger logger            = LoggerFactory.getLogger(MetaCollector.class);
-    private static final String                            INSTANCE          = "canal_instance";
-    private static final String                            INSTANCE_HELP     = "Canal instance";
-    private static final String                            SUBSCRIPTION      = "canal_instance_subscriptions";
-    private static final String                            SUBSCRIPTION_HELP = "Canal instance subscriptions";
-    private final ConcurrentMap<String, MetaMetricsHolder> instances         = new ConcurrentHashMap<String, MetaMetricsHolder>();
+    private static final List<String> INFO_LABELS_LIST = Arrays.asList("destination", "mode");
+    private static final String INSTANCE = "canal_instance";
+    private static final String INSTANCE_HELP = "Canal instance";
+    private static final String SUBSCRIPTION = "canal_instance_subscriptions";
+    private static final String SUBSCRIPTION_HELP = "Canal instance subscriptions";
 
-    private MetaCollector() {}
+    private final ConcurrentMap<String, MetaMetricsHolder> instances = new ConcurrentHashMap<>();
 
-    private static class SingletonHolder {
-        private static final MetaCollector SINGLETON = new MetaCollector();
-    }
-
-    public static MetaCollector instance() {
-        return SingletonHolder.SINGLETON;
+    private MetaCollector() {
     }
 
     @Override
@@ -82,8 +77,8 @@ public class MetaCollector extends Collector implements InstanceRegistry {
     }
 
     private class MetaMetricsHolder {
-        private List<String>     infoLabelValues;
-        private List<String>     destLabelValues;
+        private List<String> infoLabelValues;
+        private List<String> destLabelValues;
         private CanalMetaManager metaManager;
     }
 

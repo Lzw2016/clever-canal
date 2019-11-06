@@ -10,37 +10,31 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Chuanyi Li
- */
+@SuppressWarnings("WeakerAccess")
 public class CanalInstanceExports {
-
-    private static final Logger logger           = LoggerFactory.getLogger(CanalInstanceExports.class);
-    public static final String       DEST             = "destination";
-    public static final String[]     DEST_LABELS      = {DEST};
+    private static final Logger logger = LoggerFactory.getLogger(CanalInstanceExports.class);
+    public static final CanalInstanceExports Instance = new CanalInstanceExports();
+    public static final String DEST = "destination";
+    public static final String[] DEST_LABELS = {DEST};
     public static final List<String> DEST_LABELS_LIST = Collections.singletonList(DEST);
-    private final Collector          storeCollector;
-    private final Collector          entryCollector;
-    private final Collector          metaCollector;
-    private final Collector          sinkCollector;
-    private final Collector          parserCollector;
+
+    private final Collector storeCollector;
+    private final Collector entryCollector;
+    private final Collector metaCollector;
+    private final Collector sinkCollector;
+    private final Collector parserCollector;
 
     private CanalInstanceExports() {
-        this.storeCollector = StoreCollector.instance();
-        this.entryCollector = EntryCollector.instance();
-        this.metaCollector = MetaCollector.instance();
-        this.sinkCollector = SinkCollector.instance();
-        this.parserCollector = ParserCollector.instance();
+        this.storeCollector = StoreCollector.Instance;
+        this.entryCollector = EntryCollector.Instance;
+        this.metaCollector = MetaCollector.Instance;
+        this.sinkCollector = SinkCollector.Instance;
+        this.parserCollector = ParserCollector.Instance;
     }
 
-    private static class SingletonHolder {
-        private static final CanalInstanceExports SINGLETON = new CanalInstanceExports();
-    }
-
-    public static CanalInstanceExports instance() {
-        return SingletonHolder.SINGLETON;
-    }
-
+    /**
+     * 初始化监控
+     */
     public void initialize() {
         storeCollector.register();
         entryCollector.register();
@@ -49,6 +43,9 @@ public class CanalInstanceExports {
         parserCollector.register();
     }
 
+    /**
+     * 停止监控
+     */
     public void terminate() {
         CollectorRegistry.defaultRegistry.unregister(storeCollector);
         CollectorRegistry.defaultRegistry.unregister(entryCollector);
@@ -57,6 +54,9 @@ public class CanalInstanceExports {
         CollectorRegistry.defaultRegistry.unregister(parserCollector);
     }
 
+    /**
+     * 注册监控数据收集器
+     */
     void register(CanalInstance instance) {
         requiredInstanceRegistry(storeCollector).register(instance);
         requiredInstanceRegistry(entryCollector).register(instance);
@@ -66,6 +66,9 @@ public class CanalInstanceExports {
         logger.info("Successfully register metrics for instance {}.", instance.getDestination());
     }
 
+    /**
+     * 取消注册监控数据收集器
+     */
     void unregister(CanalInstance instance) {
         requiredInstanceRegistry(storeCollector).unregister(instance);
         requiredInstanceRegistry(entryCollector).unregister(instance);
@@ -81,5 +84,4 @@ public class CanalInstanceExports {
         }
         return (InstanceRegistry) collector;
     }
-
 }

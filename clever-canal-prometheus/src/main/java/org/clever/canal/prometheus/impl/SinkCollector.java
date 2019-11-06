@@ -19,25 +19,20 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST_LABELS_LIST;
 
-/**
- * @author Chuanyi Li
- */
 public class SinkCollector extends Collector implements InstanceRegistry {
+    private static final Logger logger = LoggerFactory.getLogger(SinkCollector.class);
+    /**
+     * 单例对象
+     */
+    public static final SinkCollector Instance = new SinkCollector();
 
-    private static final Logger logger               = LoggerFactory.getLogger(SinkCollector.class);
-    private static final long                              NANO_PER_MILLI       = 1000 * 1000L;
-    private static final String                            SINK_BLOCKING_TIME   = "canal_instance_sink_blocking_time";
-    private static final String                            SINK_BLOCK_TIME_HELP = "Total sink blocking time in milliseconds";
-    private final ConcurrentMap<String, SinkMetricsHolder> instances            = new ConcurrentHashMap<String, SinkMetricsHolder>();
+    private static final long NANO_PER_MILLI = 1000 * 1000L;
+    private static final String SINK_BLOCKING_TIME = "canal_instance_sink_blocking_time";
+    private static final String SINK_BLOCK_TIME_HELP = "Total sink blocking time in milliseconds";
 
-    private SinkCollector() {}
+    private final ConcurrentMap<String, SinkMetricsHolder> instances = new ConcurrentHashMap<>();
 
-    private static class SingletonHolder {
-        private static final SinkCollector SINGLETON = new SinkCollector();
-    }
-
-    public static SinkCollector instance() {
-        return SingletonHolder.SINGLETON;
+    private SinkCollector() {
     }
 
     @Override
@@ -77,7 +72,7 @@ public class SinkCollector extends Collector implements InstanceRegistry {
     }
 
     private class SinkMetricsHolder {
-        private AtomicLong   eventsSinkBlockingTime;
+        private AtomicLong eventsSinkBlockingTime;
         private List<String> destLabelValues;
     }
 }
