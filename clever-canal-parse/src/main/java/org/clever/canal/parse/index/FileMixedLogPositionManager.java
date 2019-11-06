@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  * 2. 数据采取overwrite模式(只保留最后一次)
  * </pre>
  */
-@SuppressWarnings({"DuplicatedCode"})
+@SuppressWarnings({"DuplicatedCode", "unused"})
 public class FileMixedLogPositionManager extends AbstractLogPositionManager {
     private final static Logger logger = LoggerFactory.getLogger(FileMixedLogPositionManager.class);
 

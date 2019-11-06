@@ -333,9 +333,8 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
         checkStart(clientIdentity.getDestination());
         checkSubscribe(clientIdentity);
         CanalInstance canalInstance = canalInstances.get(clientIdentity.getDestination());
-        PositionRange<LogPosition> positionRanges;
         // 更新位置
-        positionRanges = canalInstance.getMetaManager().removeBatch(clientIdentity, batchId);
+        PositionRange<LogPosition> positionRanges = canalInstance.getMetaManager().removeBatch(clientIdentity, batchId);
         if (positionRanges == null) {
             // 说明是重复的ack/rollback
             throw new CanalServerException(String.format("ack error , clientId:%s batchId:%d is not exist , please check", clientIdentity.getClientId(), batchId));

@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * 2. 数据采取overwrite模式(只保留最后一次)，通过logger实施append模式(记录历史版本)
  * </pre>
  */
-@SuppressWarnings({"FieldCanBeLocal", "DuplicatedCode", "unused", "WeakerAccess"})
+@SuppressWarnings({"FieldCanBeLocal", "DuplicatedCode", "WeakerAccess"})
 public class FileMixedMetaManager extends MemoryMetaManager implements CanalMetaManager {
     private static final Logger logger = LoggerFactory.getLogger(FileMixedMetaManager.class);
 
@@ -125,7 +125,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
                 () -> {
                     List<ClientIdentity> tasks = new ArrayList<>(updateCursorTasks);
                     for (ClientIdentity clientIdentity : tasks) {
-                        MDC.put("destination", String.valueOf(clientIdentity.getDestination()));
+                        MDC.put("destination", clientIdentity.getDestination());
                         try {
                             // 定时将内存中的最新值刷到file中，多次变更只刷一次
                             if (logger.isInfoEnabled()) {
@@ -349,7 +349,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     /**
      * 描述一个clientIdentity对应的数据对象
      */
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static class FileMetaClientIdentityData implements Serializable {
         /**
          * 客户端标识
@@ -390,7 +390,7 @@ public class FileMixedMetaManager extends MemoryMetaManager implements CanalMeta
     /**
      * 描述整个canal instance对应数据对象
      */
-    @SuppressWarnings({"WeakerAccess"})
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public static class FileMetaInstanceData implements Serializable {
         /**
          * 通道名称(destination)
