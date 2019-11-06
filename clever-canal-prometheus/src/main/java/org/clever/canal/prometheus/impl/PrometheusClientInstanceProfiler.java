@@ -5,12 +5,16 @@ import io.prometheus.client.Counter;
 import io.prometheus.client.Histogram;
 import org.clever.canal.protocol.CanalPacket.PacketType;
 import org.clever.canal.server.netty.ClientInstanceProfiler;
-import org.clever.canal.server.netty.listener.ChannelFutureAggregator.ClientRequestResult;
+import org.clever.canal.server.netty.model.ClientRequestResult;
 
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST;
 import static org.clever.canal.prometheus.CanalInstanceExports.DEST_LABELS;
 
 public class PrometheusClientInstanceProfiler implements ClientInstanceProfiler {
+    /**
+     * 单例
+     */
+    public static final PrometheusClientInstanceProfiler Instance = new PrometheusClientInstanceProfiler();
 
     private static final long NANO_PER_MILLI = 1000 * 1000L;
     private static final String PACKET_TYPE = "canal_instance_client_packets";
@@ -25,14 +29,6 @@ public class PrometheusClientInstanceProfiler implements ClientInstanceProfiler 
     private final Counter errorsCounter;
     private final Histogram responseLatency;
     private volatile boolean running = false;
-
-    private static class SingletonHolder {
-        private static final PrometheusClientInstanceProfiler SINGLETON = new PrometheusClientInstanceProfiler();
-    }
-
-    public static PrometheusClientInstanceProfiler instance() {
-        return SingletonHolder.SINGLETON;
-    }
 
     private PrometheusClientInstanceProfiler() {
         this.outboundCounter = Counter.build()
@@ -76,7 +72,7 @@ public class PrometheusClientInstanceProfiler implements ClientInstanceProfiler 
         long latency = result.getLatency();
         responseLatency.labels(destination).observe(((double) latency) / NANO_PER_MILLI);
         if (type == PacketType.GET) {
-            boolean empty = result.getEmpty();
+            boolean empty = result.isEmpty();
             // 区分一下空包
             if (empty) {
                 emptyBatchesCounter.labels(destination).inc();

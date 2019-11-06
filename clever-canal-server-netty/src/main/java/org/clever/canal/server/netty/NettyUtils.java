@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NettyUtils {
-
     private static final Logger logger = LoggerFactory.getLogger(NettyUtils.class);
     public static int HEADER_LENGTH = 4;
     public static Timer hashedWheelTimer = new HashedWheelTimer();

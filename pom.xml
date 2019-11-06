@@ -67,6 +67,7 @@
         <module>clever-canal-prometheus</module>
         <module>clever-canal-admin</module>
         <module>clever-canal-server-netty</module>
+        <module>clever-canal-client</module>
     </modules>
 
     <properties>

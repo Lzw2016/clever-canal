@@ -1,4 +1,4 @@
-package org.clever.canal.server;
+package org.clever.canal.prometheus;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 作者：lizw <br/>
- * 创建时间：2019/11/05 18:26 <br/>
+ * 创建时间：2019/11/06 15:45 <br/>
  */
 @Slf4j
-public class Test02 {
+public class PrometheusTest {
 
     @Test
     public void t1() throws InterruptedException {
@@ -128,43 +128,3 @@ public class Test02 {
         }
     }
 }
-/*
-Entry
-    Header
-        logfileName [binlog文件名]
-        logfileOffset [binlog position]
-        executeTime [binlog里记录变更发生的时间戳,精确到秒]
-        schemaName
-        tableName
-        eventType [insert/update/delete类型]
-    entryType   [事务头BEGIN/事务尾END/数据ROWDATA]
-    storeValue  [byte数据,可展开，对应的类型为RowChange]
-
-RowChange
-
-isDdl       [是否是ddl变更操作，比如create table/drop table]
-
-sql         [具体的ddl sql]
-
-rowDatas    [具体insert/update/delete的变更数据，可为多条，1个binlog event事件可对应多条变更，比如批处理]
-
-beforeColumns [Column类型的数组，变更前的数据字段]
-
-afterColumns [Column类型的数组，变更后的数据字段]
-
-Column
-
-index
-
-sqlType     [jdbc type]
-
-name        [column name]
-
-isKey       [是否为主键]
-
-updated     [是否发生过变更]
-
-isNull      [值是否为null]
-
-value       [具体的内容，注意为string文本]
-*/

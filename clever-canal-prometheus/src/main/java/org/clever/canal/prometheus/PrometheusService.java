@@ -27,15 +27,14 @@ public class PrometheusService implements CanalMetricsService {
 
     private final CanalInstanceExports instanceExports;
     private volatile boolean running = false;
-    private int port;
+    private int port = 18000;
     private HTTPServer server;
     private final ClientInstanceProfiler clientProfiler;
 
     private PrometheusService() {
         this.instanceExports = CanalInstanceExports.Instance;
-        this.clientProfiler = PrometheusClientInstanceProfiler.instance();
+        this.clientProfiler = PrometheusClientInstanceProfiler.Instance;
     }
-
 
     @Override
     public void initialize() {
@@ -115,5 +114,4 @@ public class PrometheusService implements CanalMetricsService {
     public void setServerPort(int port) {
         this.port = port;
     }
-
 }

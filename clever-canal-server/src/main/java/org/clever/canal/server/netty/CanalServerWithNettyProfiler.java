@@ -1,11 +1,9 @@
 package org.clever.canal.server.netty;
 
 import org.clever.canal.common.AbstractCanalLifeCycle;
-import org.clever.canal.server.netty.listener.ChannelFutureAggregator.ClientRequestResult;
+import org.clever.canal.server.netty.model.ClientRequestResult;
 
-/**
- * @author Chuanyi Li
- */
+
 public class CanalServerWithNettyProfiler {
 
     public static final ClientInstanceProfiler NOP = new DefaultClientInstanceProfiler();
@@ -36,5 +34,4 @@ public class CanalServerWithNettyProfiler {
         public void profiling(ClientRequestResult result) {
         }
     }
-
 }
