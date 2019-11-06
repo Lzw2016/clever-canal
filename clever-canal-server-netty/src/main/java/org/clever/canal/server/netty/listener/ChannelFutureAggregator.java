@@ -9,9 +9,6 @@ import org.jboss.netty.channel.ChannelFutureListener;
 import static org.clever.canal.server.netty.CanalServerWithNettyProfiler.profiler;
 import static org.clever.canal.server.netty.NettyUtils.HEADER_LENGTH;
 
-/**
- * @author Chuanyi Li
- */
 public class ChannelFutureAggregator implements ChannelFutureListener {
 
     private ClientRequestResult result;

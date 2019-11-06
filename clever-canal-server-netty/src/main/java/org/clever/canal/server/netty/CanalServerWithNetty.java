@@ -108,19 +108,18 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
                 // pipeline.addLast(new ClientAuthenticationHandler2());
                 // Canal 数据同步功能处理
                 // pipeline.addLast(new SessionHandler2());
-
             }
         });
         // 优化网络配置
         bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
         bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
         // 启动服务
-        if (StringUtils.isNotEmpty(bindIp)) {
+        if (StringUtils.isNotBlank(bindIp)) {
             channelFuture = bootstrap.bind(bindIp, port);
             log.info("CanalServerWithNetty start for {}:{}", bindIp, port);
         } else {
             bootstrap.bind(port);
-            log.info("CanalServerWithNetty start for {}:{}", bindIp, port);
+            log.info("CanalServerWithNetty start for {}", port);
         }
     }
 
