@@ -42,7 +42,7 @@
 //                properties.putAll(canalConfig);
 //
 //                // 设置动态properties,替换掉本地properties
-//                com.alibaba.otter.canal.instance.spring.support.PropertyPlaceholderConfigurer.propertiesLocal.set(properties);
+//                org.clever.canal.instance.spring.support.PropertyPlaceholderConfigurer.propertiesLocal.set(properties);
 //                // 设置当前正在加载的通道，加载spring查找文件时会用到该变量
 //                System.setProperty("canal.instance.destination", destination);
 //                this.beanFactory = getBeanFactory(springXml);

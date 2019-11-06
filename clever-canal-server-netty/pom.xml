@@ -10,7 +10,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>clever-canal-server</artifactId>
+    <artifactId>clever-canal-server-netty</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -20,7 +20,16 @@
         </dependency>
         <dependency>
             <groupId>org.clever</groupId>
-            <artifactId>clever-canal-instance</artifactId>
+            <artifactId>clever-canal-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.netty</groupId>
+            <artifactId>netty</artifactId>
+            <version>3.2.10.Final</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

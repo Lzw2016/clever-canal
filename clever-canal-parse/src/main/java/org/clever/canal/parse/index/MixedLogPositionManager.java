@@ -1,8 +1,8 @@
 //package org.clever.canal.parse.index;
 //
-//import com.alibaba.otter.canal.common.zookeeper.ZkClientx;
-//import com.alibaba.otter.canal.parse.exception.CanalParseException;
-//import com.alibaba.otter.canal.protocol.position.LogPosition;
+//import org.clever.canal.common.zookeeper.ZkClientx;
+//import org.clever.canal.parse.exception.CanalParseException;
+//import org.clever.canal.protocol.position.LogPosition;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 //

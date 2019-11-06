@@ -66,6 +66,7 @@
         <module>clever-canal-server</module>
         <module>clever-canal-prometheus</module>
         <module>clever-canal-admin</module>
+        <module>clever-canal-server-netty</module>
     </modules>
 
     <properties>
@@ -140,6 +141,11 @@
             <dependency>
                 <groupId>org.clever</groupId>
                 <artifactId>clever-canal-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.clever</groupId>
+                <artifactId>clever-canal-server-netty</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
