@@ -15,7 +15,7 @@ import java.net.InetSocketAddress;
  * 创建时间：2019/11/06 11:42 <br/>
  */
 @Slf4j
-public class Test03 {
+public class ServerNetty {
     @Test
     public void t1() throws InterruptedException {
         CanalConfigClient canalConfigClient = new CanalConfigClient() {

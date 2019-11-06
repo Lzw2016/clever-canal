@@ -5,6 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.clever.canal.common.AbstractCanalLifeCycle;
+import org.clever.canal.protocol.CanalPacket;
 import org.clever.canal.server.CanalServer;
 import org.clever.canal.server.embedded.CanalServerWithEmbedded;
 
@@ -90,22 +92,23 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-
+                // -------------------------- 解码和编码，应和客户端一致 (传输的协议 Protobuf) -------------------------- //
                 // 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）
-                pipeline.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-                //配置 protobuf 解码处理器，消息接收到了就会自动解码，ProtobufDecoder是netty自带的，Message是自己定义的Protobuf类
-                // pipeline.addLast("protobufDecoder", new ProtobufDecoder(Message.getDefaultInstance()));
+                pipeline.addLast(new ProtobufVarint32FrameDecoder());
+                // 反序列化指定的 Protobuf 字节数组为 Protobuf 类型
+                pipeline.addLast(new ProtobufDecoder(CanalPacket.Packet.getDefaultInstance()));
                 // 用于在序列化的字节数组前加上一个简单的包头，只包含序列化的字节长度
-                pipeline.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
-                // 配置 protobuf 编码器，发送的消息会先经过编码
-                pipeline.addLast("ProtobufEncoder", new ProtobufEncoder());
-
-
-//                pipeline.addLast("FixedHeaderFrameDecoder", new FixedHeaderFrameDecoder());
-//                // 支持维护child socket通道
-//                pipeline.addLast("HandshakeInitializationHandler", new HandshakeInitializationHandler(childGroups));
+                pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+                // 用于对 Protobuf 类型序列化
+                pipeline.addLast(new ProtobufEncoder());
+                // -------------------------- CanalServer业务逻辑 -------------------------- //
+                // 连接握手处理
+                // pipeline.addLast(new HandshakeInitializationHandler2());
                 // 客户端授权处理
-//                pipeline.addLast("ClientAuthenticationHandler", new ClientAuthenticationHandler(embeddedServer));
+                // pipeline.addLast(new ClientAuthenticationHandler2());
+                // Canal 数据同步功能处理
+                // pipeline.addLast(new SessionHandler2());
+
             }
         });
         // 优化网络配置
@@ -119,30 +122,22 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
             bootstrap.bind(port);
             log.info("CanalServerWithNetty start for {}:{}", bindIp, port);
         }
-
-        // 构造对应的pipeline
-//        bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-//            public ChannelPipeline getPipeline() throws Exception {
-//                ChannelPipeline pipelines = Channels.pipeline();
-//
-//                SessionHandler sessionHandler = new SessionHandler(embeddedServer);
-//                pipelines.addLast(SessionHandler.class.getName(), sessionHandler);
-//                return pipelines;
-//            }
-//        });
     }
 
     @Override
     public void stop() {
         super.stop();
-        if (channelFuture != null) {
-            channelFuture.channel().close().awaitUninterruptibly(1000);
-        }
-        if (bossGroup != null) {
-            bossGroup.shutdownGracefully(1L, 1L, TimeUnit.SECONDS);
-        }
-        if (workerGroup != null) {
-            workerGroup.shutdownGracefully(1L, 1L, TimeUnit.SECONDS);
+        try {
+            if (channelFuture != null) {
+                channelFuture.channel().close().sync();
+            }
+        } catch (Throwable e) {
+            if (bossGroup != null) {
+                bossGroup.shutdownGracefully(1L, 3L, TimeUnit.SECONDS);
+            }
+            if (workerGroup != null) {
+                workerGroup.shutdownGracefully(1L, 3L, TimeUnit.SECONDS);
+            }
         }
         channelFuture = null;
         bossGroup = null;

@@ -38,14 +38,14 @@ clever-canal-instance
 clever-canal-server
     源码分析 - 增加注释                    ### OK
 
-clever-canal-server-netty
-    源码分析 - 增加注释
-
 clever-canal-prometheus
     源码分析 - 增加注释                    ### OK
 
+clever-canal-server-netty
+    源码分析 - 增加注释
 
-
+clever-canal-client
+    源码分析 - 增加注释
 -
 
 

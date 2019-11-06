@@ -15,15 +15,15 @@ import java.io.Serializable;
 @Getter
 public class ClientRequestResult implements Serializable {
     /**
-     *
+     * 通道名称
      */
     private String destination;
     /**
-     *
+     * 数据Packet类型
      */
     private CanalPacket.PacketType type;
     /**
-     *
+     * 请求对象
      */
     private GeneratedMessageV3 request;
     /**
@@ -35,15 +35,15 @@ public class ClientRequestResult implements Serializable {
      */
     private long latency;
     /**
-     *
+     * Error Code
      */
     private short errorCode;
     /**
-     *
+     * 是否是空的
      */
     private boolean empty;
     /**
-     *
+     * Channel Error 对象
      */
     @Setter
     private Throwable channelError;

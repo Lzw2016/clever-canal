@@ -48,9 +48,7 @@ public class SessionHandler extends SimpleChannelHandler {
                 case SUBSCRIPTION:
                     Sub sub = Sub.parseFrom(packet.getBody());
                     if (StringUtils.isNotEmpty(sub.getDestination()) && StringUtils.isNotEmpty(sub.getClientId())) {
-                        clientIdentity = new ClientIdentity(sub.getDestination(),
-                                Short.valueOf(sub.getClientId()),
-                                sub.getFilter());
+                        clientIdentity = new ClientIdentity(sub.getDestination(), Short.parseShort(sub.getClientId()), sub.getFilter());
                         MDC.put("destination", clientIdentity.getDestination());
 
 //                        // 尝试启动，如果已经启动，忽略 TODO lzw
