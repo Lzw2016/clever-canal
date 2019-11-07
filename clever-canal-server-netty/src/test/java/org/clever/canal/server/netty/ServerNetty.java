@@ -66,8 +66,9 @@ public class ServerNetty {
         CanalServerWithNetty.Instance.start();
         canalServerWithEmbedded.start("test");
         log.info("### started");
-        Thread.sleep(1000 * 1000);
+        Thread.sleep(1000 * 3);
         log.info("### end");
-        canalServerWithEmbedded.stop();
+        // canalServerWithEmbedded.stop();
+        CanalServerWithNetty.Instance.stop();
     }
 }

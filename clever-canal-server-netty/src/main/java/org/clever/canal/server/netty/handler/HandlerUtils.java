@@ -88,9 +88,4 @@ public class HandlerUtils {
     public static void writeError(Channel channel, String errorMessage) {
         writeError(channel, Error_Code_400, errorMessage);
     }
-
-    public static void writeError(Channel channel, int errorCode, String errorMessage, ChannelFutureListener channelFutureListener) {
-        CanalPacket.Packet packet = errorPacket(errorCode, errorMessage);
-        write(channel, packet, channelFutureListener);
-    }
 }

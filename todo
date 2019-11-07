@@ -42,7 +42,9 @@ clever-canal-prometheus
     源码分析 - 增加注释                    ### OK
 
 clever-canal-server-netty
-    源码分析 - 增加注释
+    源码分析 - 增加注释                    ### OK
+    TODO
+        1.待测试与 clever-canal-client 联调
 
 clever-canal-client
     源码分析 - 增加注释

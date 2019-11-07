@@ -8,6 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.clever.canal.common.utils.CollectionUtils;
 import org.clever.canal.protocol.CanalEntry;
 import org.clever.canal.protocol.CanalPacket;
@@ -37,7 +38,7 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, CanalPacket.Packet msg) throws Exception {
+    public void channelRead0(ChannelHandlerContext ctx, CanalPacket.Packet msg) {
         log.info("[CanalServerWithNetty] message receives in session handler...");
         final long start = System.nanoTime();
         try {
@@ -56,26 +57,30 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
                     break;
                 case CLIENT_ACK:
                     // client ack
-                    clientAck(ctx, msg);
+                    clientAck(ctx, msg, start);
                     break;
                 case CLIENT_ROLLBACK:
                     // client rollback
-                    clientRollback(ctx, msg);
+                    clientRollback(ctx, msg, start);
                     break;
                 default:
                     // 返回错误
                     HandlerUtils.writeError(ctx.channel(), String.format("packet type=%s is NOT supported!", msg.getType()));
             }
         } catch (Throwable exception) {
-            // something goes wrong with channel:{}, exception={}
-
-//            byte[] errorBytes = NettyUtils.errorPacket(400,
-//                    MessageFormatter.format("something goes wrong with channel:{}, exception={}",
-//                            ctx.getChannel(),
-//                            ExceptionUtils.getStackTrace(exception)).getMessage());
-//            NettyUtils.write(ctx.getChannel(), errorBytes, new ChannelFutureAggregator(ctx.getChannel()
-//                    .getRemoteAddress()
-//                    .toString(), null, packet.getType(), errorBytes.length, System.nanoTime() - start, (short) 400));
+            CanalPacket.Packet packet = HandlerUtils.errorPacket(
+                    HandlerUtils.Error_Code_400,
+                    String.format("something goes wrong with channel:%s, exception=%s", ctx.channel(), ExceptionUtils.getStackTrace(exception))
+            );
+            ChannelFutureAggregator channelFutureAggregator = new ChannelFutureAggregator(
+                    ctx.channel().remoteAddress().toString(),
+                    null,
+                    msg.getType(),
+                    packet.getSerializedSize(),
+                    System.nanoTime() - start,
+                    (short) HandlerUtils.Error_Code_400
+            );
+            HandlerUtils.write(ctx.channel(), packet, channelFutureAggregator);
         } finally {
             MDC.remove("destination");
         }
@@ -94,14 +99,15 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
      * 停止 CanalInstance
      */
     private void stopCanalInstanceIfNecessary(ClientIdentity clientIdentity) {
-//        TODO lzw
-//        List<ClientIdentity> clientIdentitys = embeddedServer.listAllSubscribe(clientIdentity.getDestination());
-//        if (clientIdentitys != null && clientIdentitys.size() == 1 && clientIdentitys.contains(clientIdentity)) {
+        List<ClientIdentity> clientIdentities = embeddedServer.listAllSubscribe(clientIdentity.getDestination());
+        // noinspection StatementWithEmptyBody
+        if (clientIdentities != null && clientIdentities.size() == 1 && clientIdentities.contains(clientIdentity)) {
+//            TODO lzw
 //            ServerRunningMonitor runningMonitor = ServerRunningMonitors.getRunningMonitor(clientIdentity.getDestination());
 //            if (runningMonitor.isStart()) {
 //                runningMonitor.release();
 //            }
-//        }
+        }
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -216,7 +222,7 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
         HandlerUtils.write(ctx.channel(), body, channelFutureAggregator);
     }
 
-    private void clientAck(ChannelHandlerContext ctx, CanalPacket.Packet msg) throws InvalidProtocolBufferException {
+    private void clientAck(ChannelHandlerContext ctx, CanalPacket.Packet msg, final long start) throws InvalidProtocolBufferException {
         CanalPacket.ClientAck ack = CanalPacket.ClientAck.parseFrom(msg.getBody());
         if (StringUtils.isBlank(ack.getDestination()) || StringUtils.isBlank(ack.getClientId())) {
             HandlerUtils.writeError(ctx.channel(), HandlerUtils.Error_Code_401, "destination or clientId is null");
@@ -224,40 +230,51 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
         }
         MDC.put("destination", ack.getDestination());
         if (ack.getBatchId() == 0L) {
-            new ChannelFutureAggregator(ack.getDestination(),
+            CanalPacket.Packet packet = HandlerUtils.errorPacket(HandlerUtils.Error_Code_402, "batchId should assign value");
+            ChannelFutureAggregator channelFutureAggregator = new ChannelFutureAggregator(
+                    ack.getDestination(),
                     ack,
-                    packet.getType(),
-                    errorBytes.length,
+                    msg.getType(),
+                    packet.getSerializedSize(),
                     System.nanoTime() - start,
-                    (short) 402);
-            HandlerUtils.writeError(ctx.channel(), HandlerUtils.Error_Code_402, "batchId should assign value");
-        } else if (ack.getBatchId() == -1L) {
-            // -1代表上一次get没有数据，直接忽略之
-        } else {
-            ClientIdentity clientIdentity = new ClientIdentity(ack.getDestination(), Short.parseShort(ack.getClientId()));
-            embeddedServer.ack(clientIdentity, ack.getBatchId());
-            // new ChannelFutureAggregator(ack.getDestination(), ack, packet.getType(), 0, System.nanoTime() - start).operationComplete(null);
-            // TODO ??
+                    (short) HandlerUtils.Error_Code_402
+            );
+            HandlerUtils.write(ctx.channel(), packet, channelFutureAggregator);
+            return;
         }
+        if (ack.getBatchId() == -1L) {
+            // -1代表上一次get没有数据，直接忽略之
+            return;
+        }
+        ClientIdentity clientIdentity = new ClientIdentity(ack.getDestination(), Short.parseShort(ack.getClientId()));
+        embeddedServer.ack(clientIdentity, ack.getBatchId());
+        ChannelFutureAggregator channelFutureAggregator = new ChannelFutureAggregator(
+                ack.getDestination(),
+                ack,
+                msg.getType(),
+                0,
+                System.nanoTime() - start
+        );
+        channelFutureAggregator.operationComplete(null);
     }
 
-    private void clientRollback(ChannelHandlerContext ctx, CanalPacket.Packet msg) {
+    private void clientRollback(ChannelHandlerContext ctx, CanalPacket.Packet msg, final long start) throws InvalidProtocolBufferException {
         CanalPacket.ClientRollback rollback = CanalPacket.ClientRollback.parseFrom(msg.getBody());
         MDC.put("destination", rollback.getDestination());
-        if (StringUtils.isNotEmpty(rollback.getDestination()) && StringUtils.isNotEmpty(rollback.getClientId())) {
-            clientIdentity = new ClientIdentity(rollback.getDestination(), Short.parseShort(rollback.getClientId()));
-            if (rollback.getBatchId() == 0L) {
-                // 回滚所有批次
-                embeddedServer.rollback(clientIdentity);
-            } else {
-                // 只回滚单个批次
-                embeddedServer.rollback(clientIdentity, rollback.getBatchId());
-            }
-            // new ChannelFutureAggregator(rollback.getDestination(), rollback, packet.getType(), 0, System.nanoTime() - start).operationComplete(null);
-        } else {
-            // 返回错误
-            // destination or clientId is null
+        if (StringUtils.isBlank(rollback.getDestination()) || StringUtils.isBlank(rollback.getClientId())) {
+            HandlerUtils.writeError(ctx.channel(), HandlerUtils.Error_Code_401, "destination or clientId is null");
+            return;
         }
+        ClientIdentity clientIdentity = new ClientIdentity(rollback.getDestination(), Short.parseShort(rollback.getClientId()));
+        if (rollback.getBatchId() == 0L) {
+            // 回滚所有批次
+            embeddedServer.rollback(clientIdentity);
+        } else {
+            // 只回滚单个批次
+            embeddedServer.rollback(clientIdentity, rollback.getBatchId());
+        }
+        ChannelFutureAggregator channelFutureAggregator = new ChannelFutureAggregator(rollback.getDestination(), rollback, msg.getType(), 0, System.nanoTime() - start);
+        channelFutureAggregator.operationComplete(null);
     }
 
     private TimeUnit convertTimeUnit(int unit) {

@@ -93,6 +93,7 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
         bootstrap.channel(NioServerSocketChannel.class);
         // 设置处理逻辑Handler
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
+            @SuppressWarnings("SpellCheckingInspection")
             @Override
             protected void initChannel(SocketChannel ch) {
                 ChannelPipeline pipeline = ch.pipeline();
@@ -120,15 +121,16 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
         // 启动服务
         if (StringUtils.isNotBlank(bindIp)) {
             channelFuture = bootstrap.bind(bindIp, port);
-            log.info("CanalServerWithNetty start for {}:{}", bindIp, port);
+            log.info("[CanalServerWithNetty] start for {}:{}", bindIp, port);
         } else {
             bootstrap.bind(port);
-            log.info("CanalServerWithNetty start for port:{}", port);
+            log.info("[CanalServerWithNetty] start for port:{}", port);
         }
     }
 
     @Override
     public void stop() {
+        log.info("[CanalServerWithNetty] stopping...");
         super.stop();
         try {
             if (channelFuture != null) {
@@ -149,5 +151,6 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
         if (embeddedServer.isStart()) {
             embeddedServer.stop();
         }
+        log.info("[CanalServerWithNetty] stopped!");
     }
 }
