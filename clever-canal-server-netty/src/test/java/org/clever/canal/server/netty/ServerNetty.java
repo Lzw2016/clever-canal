@@ -27,7 +27,7 @@ public class ServerNetty {
                 // 配置 CanalEventStore
                 canalParameter.setStorageMode(StorageMode.MEMORY);
                 canalParameter.setStorageBatchMode(BatchMode.ITEM_SIZE);
-                canalParameter.setMemoryStorageRawEntry(false);
+                canalParameter.setMemoryStorageRawEntry(true);
                 canalParameter.setDdlIsolation(true);
                 // 配置 CanalEventParser
                 canalParameter.setBlackFilter(null);

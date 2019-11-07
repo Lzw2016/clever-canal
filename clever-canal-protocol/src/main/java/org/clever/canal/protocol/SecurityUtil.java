@@ -26,6 +26,14 @@ public class SecurityUtil {
         return byte2HexStr(bt);
     }
 
+    public static String scrambleGenPass(byte[] pass) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] pass1 = md.digest(pass);
+        md.reset();
+        byte[] pass2 = md.digest(pass1);
+        return SecurityUtil.byte2HexStr(pass2);
+    }
+
     /**
      * server auth check
      */

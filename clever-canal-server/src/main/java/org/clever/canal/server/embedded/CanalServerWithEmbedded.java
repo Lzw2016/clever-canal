@@ -460,7 +460,7 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
             }
             try {
                 byte[] passForClient = SecurityUtil.hexStr2Bytes(password);
-                return SecurityUtil.scrambleServerAuth(passForClient, SecurityUtil.hexStr2Bytes(this.password), seed);
+                return SecurityUtil.scrambleServerAuth(passForClient, SecurityUtil.hexStr2Bytes(SecurityUtil.scrambleGenPass(this.password.getBytes())), seed);
             } catch (NoSuchAlgorithmException e) {
                 return false;
             }

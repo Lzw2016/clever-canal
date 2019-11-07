@@ -34,7 +34,7 @@ public class ClientDemo {
     private static final short clientId = 1001;
     private static final String filter = "";
 
-    private static AtomicLong readCount = new AtomicLong(-1);
+    private static AtomicLong readCount = new AtomicLong(0);
 
     @Test
     public void client() throws InterruptedException {
@@ -73,7 +73,7 @@ public class ClientDemo {
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, CanalPacket.Packet msg) throws Exception {
             readCount.incrementAndGet();
-            log.warn("读取数据次数{} | {}", readCount.get(), msg.getType());
+            log.info("读取数据次数{} | {}", readCount.get(), msg.getType());
             switch (msg.getType()) {
                 case HANDSHAKE:
                     if (readCount.get() != 1) {
@@ -104,7 +104,7 @@ public class ClientDemo {
                                 .build();
                         HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.SUBSCRIPTION, sub));
                     } else {
-                        log.info("[ACK] {}:{}", ack.getErrorCode(), ack.getErrorMessage());
+                        log.info("[ACK] 开始GET数据 {}:{}", ack.getErrorCode(), ack.getErrorMessage());
                         // 获取数据
                         CanalPacket.Get get = CanalPacket.Get.newBuilder()
                                 .setAutoAck(false)
@@ -116,6 +116,7 @@ public class ClientDemo {
                                 .build();
                         HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.GET, get));
                     }
+                    break;
                 case MESSAGES:
                     CanalPacket.Messages messages = CanalPacket.Messages.parseFrom(msg.getBody());
                     log.info("[Messages] BatchId = {}", messages.getBatchId());
@@ -127,6 +128,7 @@ public class ClientDemo {
                             .setBatchId(messages.getBatchId())
                             .build();
                     HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.ACK, clientAck));
+                    break;
                 default:
                     log.warn("[default] {}", msg.getType());
             }
