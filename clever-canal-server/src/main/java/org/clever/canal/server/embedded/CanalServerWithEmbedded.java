@@ -449,7 +449,6 @@ public class CanalServerWithEmbedded extends AbstractCanalLifeCycle implements C
      * @param password 密码
      * @param seed     认证数据签名(digest)
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean auth(String user, String password, byte[] seed) {
         // 如果user/password密码为空,则任何用户账户都能登录
         if ((StringUtils.isEmpty(this.user) || StringUtils.equals(this.user, user))) {

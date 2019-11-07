@@ -27,8 +27,8 @@ enum PacketTypeAdmin {
 // Packet数据
 message PacketAdmin {
     // [default = 17];
-    oneof magic_number_present {
-        int32 magic_number = 1;
+    oneof magicNumber_present {
+        int32 magicNumber = 1;
     }
     // Version [default = 1]
     oneof version_present {

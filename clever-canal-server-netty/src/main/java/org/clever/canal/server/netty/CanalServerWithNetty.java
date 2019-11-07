@@ -18,7 +18,7 @@ import org.clever.canal.protocol.CanalPacket;
 import org.clever.canal.server.CanalServer;
 import org.clever.canal.server.embedded.CanalServerWithEmbedded;
 import org.clever.canal.server.netty.handler.ClientAuthenticationHandler;
-import org.clever.canal.server.netty.handler.HandshakeInitializationHandler;
+import org.clever.canal.server.netty.handler.HandshakeHandler;
 import org.clever.canal.server.netty.handler.SessionHandler;
 
 import java.util.concurrent.TimeUnit;
@@ -98,20 +98,20 @@ public class CanalServerWithNetty extends AbstractCanalLifeCycle implements Cana
                 ChannelPipeline pipeline = ch.pipeline();
                 // -------------------------- 解码和编码，应和客户端一致 (传输的协议 Protobuf) -------------------------- //
                 // 用于decode前解决半包和粘包问题（利用包头中的包含数组长度来识别半包粘包）
-                pipeline.addLast(new ProtobufVarint32FrameDecoder());
+                pipeline.addLast("ProtobufVarint32FrameDecoder", new ProtobufVarint32FrameDecoder());
                 // 反序列化指定的 Protobuf 字节数组为 Protobuf 类型
-                pipeline.addLast(new ProtobufDecoder(CanalPacket.Packet.getDefaultInstance()));
+                pipeline.addLast("ProtobufDecoder", new ProtobufDecoder(CanalPacket.Packet.getDefaultInstance()));
                 // 用于在序列化的字节数组前加上一个简单的包头，只包含序列化的字节长度
-                pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
+                pipeline.addLast("ProtobufVarint32LengthFieldPrepender", new ProtobufVarint32LengthFieldPrepender());
                 // 用于对 Protobuf 类型序列化
-                pipeline.addLast(new ProtobufEncoder());
+                pipeline.addLast("ProtobufEncoder", new ProtobufEncoder());
                 // -------------------------- CanalServer业务逻辑 -------------------------- //
                 // 连接握手处理
-                pipeline.addLast(new HandshakeInitializationHandler());
+                pipeline.addLast("HandshakeHandler", new HandshakeHandler());
                 // 客户端授权处理
-                pipeline.addLast(new ClientAuthenticationHandler(embeddedServer));
+                pipeline.addLast("ClientAuthenticationHandler", new ClientAuthenticationHandler(embeddedServer));
                 // Canal 数据同步功能处理
-                pipeline.addLast(new SessionHandler(embeddedServer));
+                pipeline.addLast("SessionHandler", new SessionHandler(embeddedServer));
             }
         });
         // 优化网络配置

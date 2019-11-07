@@ -1,15 +1,14 @@
 package org.clever.canal.server.netty.listener;
 
 import com.google.protobuf.GeneratedMessageV3;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.clever.canal.protocol.CanalPacket;
 import org.clever.canal.server.netty.NettyServerConstant;
 import org.clever.canal.server.netty.model.ClientRequestResult;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
 
 import static org.clever.canal.server.netty.CanalServerWithNettyProfiler.profiler;
 
-@SuppressWarnings("unused")
 public class ChannelFutureAggregator implements ChannelFutureListener {
 
     private ClientRequestResult result;
@@ -41,8 +40,8 @@ public class ChannelFutureAggregator implements ChannelFutureListener {
     @Override
     public void operationComplete(ChannelFuture future) {
         // profiling after I/O operation
-        if (future != null && future.getCause() != null) {
-            result.setChannelError(future.getCause());
+        if (future != null && future.cause() != null) {
+            result.setChannelError(future.cause());
         }
         profiler().profiling(result);
     }

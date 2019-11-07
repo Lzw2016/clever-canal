@@ -53,8 +53,8 @@ enum PacketType {
 // Packet数据
 message Packet {
     //[default = 17];
-    oneof magic_number_present {
-        int32 magic_number = 1;
+    oneof magicNumber_present {
+        int32 magicNumber = 1;
     }
     // version [default = 1];
     oneof version_present {

@@ -52,6 +52,17 @@ public class ClientIdentity implements Serializable {
         this.filter = filter;
     }
 
+    /**
+     * @param destination 客户端需要订阅的通道名称
+     * @param clientId    客户端ID
+     * @param filter      客户端过滤配置
+     */
+    public ClientIdentity(String destination, String clientId, String filter) {
+        this.clientId = Short.parseShort(clientId);
+        this.destination = destination;
+        this.filter = filter;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, CanalToStringStyle.DEFAULT_STYLE);
