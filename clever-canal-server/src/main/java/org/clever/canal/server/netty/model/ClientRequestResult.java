@@ -27,11 +27,11 @@ public class ClientRequestResult implements Serializable {
      */
     private GeneratedMessageV3 request;
     /**
-     *
+     * 数据量大小(字节)
      */
     private int amount;
     /**
-     *
+     * 延迟
      */
     private long latency;
     /**
