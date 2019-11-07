@@ -15,7 +15,7 @@ import java.util.List;
 public class Message implements Serializable {
     private static final long serialVersionUID = 1234034768477580009L;
     /**
-     * 消息ID
+     * 消息ID(值为-1表示为空数据)
      */
     private final long id;
     /**

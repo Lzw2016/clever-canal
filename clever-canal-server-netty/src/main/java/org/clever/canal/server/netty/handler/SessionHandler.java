@@ -1,9 +1,6 @@
 package org.clever.canal.server.netty.handler;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.WireFormat;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -166,60 +163,32 @@ public class SessionHandler extends SimpleChannelInboundHandler<CanalPacket.Pack
             TimeUnit unit = convertTimeUnit(get.getUnit());
             message = embeddedServer.getWithoutAck(clientIdentity, get.getFetchSize(), get.getTimeout(), unit);
         }
-        byte[] body;
-        if (message.getId() != -1 && message.isRaw()) {
-            List<ByteString> rowEntries = message.getRawEntries();
-            // message size
-            int messageSize = 0;
-            messageSize += com.google.protobuf.CodedOutputStream.computeInt64Size(1, message.getId());
-            int dataSize = 0;
-            for (ByteString rowEntry : rowEntries) {
-                dataSize += CodedOutputStream.computeBytesSizeNoTag(rowEntry);
-            }
-            messageSize += dataSize;
-            // noinspection PointlessArithmeticExpression (压制警告)
-            messageSize += (1 * rowEntries.size());
-            // packet size
-            int size = 0;
-            size += CodedOutputStream.computeEnumSize(3, CanalPacket.PacketType.MESSAGES.getNumber());
-            size += CodedOutputStream.computeTagSize(5) + CodedOutputStream.computeUInt32SizeNoTag(messageSize) + messageSize;
-            body = new byte[size];
-            CodedOutputStream output = CodedOutputStream.newInstance(body);
-            output.writeEnum(3, CanalPacket.PacketType.MESSAGES.getNumber());
-            output.writeTag(5, WireFormat.WIRETYPE_LENGTH_DELIMITED);
-            output.writeUInt32NoTag(messageSize);
-            // message
-            output.writeInt64(1, message.getId());
-            for (ByteString rowEntry : rowEntries) {
-                output.writeBytes(2, rowEntry);
-            }
-            output.checkNoSpaceLeft();
-
-        } else {
-            CanalPacket.Packet.Builder packetBuilder = CanalPacket.Packet.newBuilder();
-            packetBuilder.setType(CanalPacket.PacketType.MESSAGES).setVersion(NettyServerConstant.VERSION);
-            CanalPacket.Messages.Builder messageBuilder = CanalPacket.Messages.newBuilder();
-            messageBuilder.setBatchId(message.getId());
-            if (message.getId() != -1) {
-                if (message.isRaw() && !CollectionUtils.isEmpty(message.getRawEntries())) {
-                    messageBuilder.addAllMessages(message.getRawEntries());
-                } else if (!CollectionUtils.isEmpty(message.getEntries())) {
-                    for (CanalEntry.Entry entry : message.getEntries()) {
-                        messageBuilder.addMessages(entry.toByteString());
-                    }
+        // 组装返回数据
+        CanalPacket.Messages.Builder messageBuilder = CanalPacket.Messages.newBuilder();
+        messageBuilder.setBatchId(message.getId());
+        if (message.getId() != -1) {
+            if (message.isRaw() && !CollectionUtils.isEmpty(message.getRawEntries())) {
+                messageBuilder.addAllMessages(message.getRawEntries());
+            } else if (!CollectionUtils.isEmpty(message.getEntries())) {
+                for (CanalEntry.Entry entry : message.getEntries()) {
+                    messageBuilder.addMessages(entry.toByteString());
                 }
             }
-            body = packetBuilder.setBody(messageBuilder.build().toByteString()).build().toByteArray();
         }
+        CanalPacket.Packet packet = CanalPacket.Packet.newBuilder()
+                .setType(CanalPacket.PacketType.MESSAGES)
+                .setVersion(NettyServerConstant.VERSION)
+                .setBody(messageBuilder.build().toByteString())
+                .build();
         ChannelFutureAggregator channelFutureAggregator = new ChannelFutureAggregator(
                 get.getDestination(),
                 get,
                 msg.getType(),
-                body.length,
+                packet.getSerializedSize(),
                 System.nanoTime() - start,
                 message.getId() == -1
         );
-        HandlerUtils.write(ctx.channel(), body, channelFutureAggregator);
+        HandlerUtils.write(ctx.channel(), packet, channelFutureAggregator);
     }
 
     private void clientAck(ChannelHandlerContext ctx, CanalPacket.Packet msg, final long start) throws InvalidProtocolBufferException {

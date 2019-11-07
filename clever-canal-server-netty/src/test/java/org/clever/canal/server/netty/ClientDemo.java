@@ -1,6 +1,7 @@
 package org.clever.canal.server.netty;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -62,7 +63,7 @@ public class ClientDemo {
                         }
                     });
             Channel channel = client.connect(host, port).sync().channel();
-            Thread.sleep(1000 * 100);
+            Thread.sleep(1000 * 3000);
             channel.close();
         } finally {
             group.shutdownGracefully();
@@ -85,8 +86,8 @@ public class ClientDemo {
                     CanalPacket.ClientAuth clientAuth = CanalPacket.ClientAuth.newBuilder()
                             .setUsername(username)
                             .setPassword(ByteString.copyFromUtf8(newPassword))
-                            .setNetReadTimeout(10)
-                            .setNetWriteTimeout(10)
+                            .setNetReadTimeout(600)
+                            .setNetWriteTimeout(600)
                             .build();
                     HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.CLIENT_AUTHENTICATION, clientAuth));
                     break;
@@ -119,18 +120,57 @@ public class ClientDemo {
                     break;
                 case MESSAGES:
                     CanalPacket.Messages messages = CanalPacket.Messages.parseFrom(msg.getBody());
-                    log.info("[Messages] BatchId = {}", messages.getBatchId());
-                    CanalEntry.Entry entry = CanalEntry.Entry.parseFrom(msg.getBody());
-                    // ACK
+                    log.info("[Messages] 读取到数据 BatchId = {}", messages.getBatchId());
+                    for (ByteString byteString : messages.getMessagesList()) {
+                        CanalEntry.Entry entry = CanalEntry.Entry.parseFrom(byteString);
+                        log.info("[Messages] 读取到数据 entry -> {}", entry.getEntryType());
+                        printf(entry);
+                    }
+                    // client ack
                     CanalPacket.ClientAck clientAck = CanalPacket.ClientAck.newBuilder()
                             .setDestination(destination)
                             .setClientId(String.valueOf(clientId))
                             .setBatchId(messages.getBatchId())
                             .build();
-                    HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.ACK, clientAck));
+                    HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.CLIENT_ACK, clientAck));
+                    log.info("[Messages] 开始GET数据...");
+                    // 获取数据
+                    CanalPacket.Get get = CanalPacket.Get.newBuilder()
+                            .setAutoAck(false)
+                            .setDestination(destination)
+                            .setClientId(String.valueOf(clientId))
+                            .setFetchSize(1)
+                            .setTimeout(10)
+                            .setUnit(5)
+                            .build();
+                    HandlerUtils.write(ctx.channel(), HandlerUtils.createPacket(CanalPacket.PacketType.GET, get));
                     break;
                 default:
                     log.warn("[default] {}", msg.getType());
+            }
+        }
+
+        private void printf(CanalEntry.Entry entry) {
+            if (entry == null) {
+                log.info("### entry = null");
+                return;
+            }
+            try {
+                CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
+                CanalEntry.EventType eventType = rowChange.getEventType();
+                log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
+                for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
+                    for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
+                        log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
+                    }
+                    log.info("### -----------------------------------------------------------------------------------------");
+                    for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
+                        log.info("### AfterColumn | {}={}", column.getName(), column.getValue());
+                    }
+                }
+                log.info("### =============================================================================================");
+            } catch (InvalidProtocolBufferException e) {
+                log.error("", e);
             }
         }
     }
