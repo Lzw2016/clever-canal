@@ -50,13 +50,13 @@ public class HandlerUtils {
         if (resMsg == null) {
             return;
         }
-        ChannelFuture channelFuture = channel.write(resMsg);
+        ChannelFuture channelFuture = channel.writeAndFlush(resMsg);
         if (channelFutureListener != null) {
             channelFuture.addListener(channelFutureListener);
         }
     }
 
-    public static void write(Channel channel, GeneratedMessageV3 resMsg) {
+    public static void write(Channel channel, CanalPacket.Packet resMsg) {
         write(channel, resMsg, null);
     }
 
@@ -64,7 +64,7 @@ public class HandlerUtils {
         if (body == null) {
             return;
         }
-        ChannelFuture channelFuture = channel.write(body);
+        ChannelFuture channelFuture = channel.writeAndFlush(body);
         if (channelFutureListener != null) {
             channelFuture.addListener(channelFutureListener);
         }

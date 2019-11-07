@@ -28,46 +28,108 @@
 // * 基于 CanalServerWithNetty 定义的网络协议接口，对于canal数据进行get/rollback/ack等操作
 // */
 //public class SimpleCanalConnector implements CanalConnector {
-//
 //    private static final Logger logger = LoggerFactory.getLogger(SimpleCanalConnector.class);
+//    /**
+//     * 服务端地址
+//     */
 //    private SocketAddress address;
+//    /**
+//     * 用户名
+//     */
 //    private String username;
+//    /**
+//     * 密码
+//     */
 //    private String password;
-//    private int soTimeout = 60000;                                              // milliseconds
-//    private int idleTimeout = 60 * 60 * 1000;                                     // client和server之间的空闲链接超时的时间,默认为1小时
-//    private String filter;                                                                     // 记录上一次的filter提交值,便于自动重试时提交
+//    /**
+//     * 网络超时时间(单位: 毫秒)
+//     */
+//    private int soTimeout = 60000;
+//    /**
+//     * client和server之间的空闲链接超时的时间,默认为1小时
+//     */
+//    private int idleTimeout = 60 * 60 * 1000;
+//    /**
+//     * 记录上一次的filter提交值,便于自动重试时提交
+//     */
+//    private String filter;
 //
+//    /**
+//     *
+//     */
 //    private final ByteBuffer readHeader = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+//    /**
+//     *
+//     */
 //    private final ByteBuffer writeHeader = ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN);
+//
+//    /**
+//     *
+//     */
 //    private SocketChannel channel;
+//    /**
+//     *
+//     */
 //    private ReadableByteChannel readableChannel;
+//    /**
+//     *
+//     */
 //    private WritableByteChannel writableChannel;
+//    /**
+//     *
+//     */
 //    private List<Compression> supportedCompressions = new ArrayList<Compression>();
+//    /**
+//     *
+//     */
 //    private ClientIdentity clientIdentity;
-//    private ClientRunningMonitor runningMonitor;                                                             // 运行控制
-//    private ZkClientx zkClientx;
-//    private BooleanMutex mutex = new BooleanMutex(false);
-//    private volatile boolean connected = false;                                              // 代表connected是否已正常执行，因为有HA，不代表在工作中
-//    private boolean rollbackOnConnect = true;                                               // 是否在connect链接成功后，自动执行rollback操作
-//    private boolean rollbackOnDisConnect = false;                                              // 是否在connect链接成功后，自动执行rollback操作
-//    private boolean lazyParseEntry = false;                                              // 是否自动化解析Entry对象,如果考虑最大化性能可以延后解析
+////    TODO lzw
+////    /**
+////     * 运行控制
+////     */
+////    private ClientRunningMonitor runningMonitor;
+////    private ZkClientx zkClientx;
+////    private BooleanMutex mutex = new BooleanMutex(false);
+//    /**
+//     * 代表connected是否已正常执行，因为有HA，不代表在工作中
+//     */
+//    private volatile boolean connected = false;
+//    /**
+//     * 是否在connect链接成功后，自动执行rollback操作
+//     */
+//    private boolean rollbackOnConnect = true;
+//    /**
+//     * 是否在connect链接成功后，自动执行rollback操作
+//     */
+//    private boolean rollbackOnDisConnect = false;
+//    /**
+//     * 是否自动化解析Entry对象,如果考虑最大化性能可以延后解析
+//     */
+//    private boolean lazyParseEntry = false;
 //    // 读写数据分别使用不同的锁进行控制，减小锁粒度,读也需要排他锁，并发度容易造成数据包混乱，反序列化失败
+//    /**
+//     *
+//     */
 //    private Object readDataLock = new Object();
+//    /**
+//     *
+//     */
 //    private Object writeDataLock = new Object();
 //
+//    /**
+//     * 是否正在运行
+//     */
 //    private volatile boolean running = false;
 //
 //    public SimpleCanalConnector(SocketAddress address, String username, String password, String destination) {
 //        this(address, username, password, destination, 60000, 60 * 60 * 1000);
 //    }
 //
-//    public SimpleCanalConnector(SocketAddress address, String username, String password, String destination,
-//                                int soTimeout) {
+//    public SimpleCanalConnector(SocketAddress address, String username, String password, String destination, int soTimeout) {
 //        this(address, username, password, destination, soTimeout, 60 * 60 * 1000);
 //    }
 //
-//    public SimpleCanalConnector(SocketAddress address, String username, String password, String destination,
-//                                int soTimeout, int idleTimeout) {
+//    public SimpleCanalConnector(SocketAddress address, String username, String password, String destination, int soTimeout, int idleTimeout) {
 //        this.address = address;
 //        this.username = username;
 //        this.password = password;
@@ -76,11 +138,11 @@
 //        this.clientIdentity = new ClientIdentity(destination, (short) 1001);
 //    }
 //
+//    @Override
 //    public void connect() throws CanalClientException {
 //        if (connected) {
 //            return;
 //        }
-//
 //        if (runningMonitor != null) {
 //            if (!runningMonitor.isStart()) {
 //                runningMonitor.start();
@@ -91,17 +153,18 @@
 //                return;
 //            }
 //            doConnect();
-//            if (filter != null) { // 如果存在条件，说明是自动切换，基于上一次的条件订阅一次
+//            // 如果存在条件，说明是自动切换，基于上一次的条件订阅一次
+//            if (filter != null) {
 //                subscribe(filter);
 //            }
 //            if (rollbackOnConnect) {
 //                rollback();
 //            }
 //        }
-//
 //        connected = true;
 //    }
 //
+//    @Override
 //    public void disconnect() throws CanalClientException {
 //        if (rollbackOnDisConnect && channel.isConnected()) {
 //            rollback();
@@ -200,10 +263,12 @@
 //        }
 //    }
 //
+//    @Override
 //    public void subscribe() throws CanalClientException {
 //        subscribe(""); // 传递空字符即可
 //    }
 //
+//    @Override
 //    public void subscribe(String filter) throws CanalClientException {
 //        waitClientRunning();
 //        if (!running) {
@@ -233,6 +298,7 @@
 //        }
 //    }
 //
+//    @Override
 //    public void unsubscribe() throws CanalClientException {
 //        waitClientRunning();
 //        if (!running) {
@@ -259,20 +325,24 @@
 //        }
 //    }
 //
+//    @Override
 //    public Message get(int batchSize) throws CanalClientException {
 //        return get(batchSize, null, null);
 //    }
 //
+//    @Override
 //    public Message get(int batchSize, Long timeout, TimeUnit unit) throws CanalClientException {
 //        Message message = getWithoutAck(batchSize, timeout, unit);
 //        ack(message.getId());
 //        return message;
 //    }
 //
+//    @Override
 //    public Message getWithoutAck(int batchSize) throws CanalClientException {
 //        return getWithoutAck(batchSize, null, null);
 //    }
 //
+//    @Override
 //    public Message getWithoutAck(int batchSize, Long timeout, TimeUnit unit) throws CanalClientException {
 //        waitClientRunning();
 //        if (!running) {
@@ -309,6 +379,7 @@
 //        return CanalMessageDeserializer.deserializer(data, lazyParseEntry);
 //    }
 //
+//    @Override
 //    public void ack(long batchId) throws CanalClientException {
 //        waitClientRunning();
 //        if (!running) {
@@ -330,6 +401,7 @@
 //        }
 //    }
 //
+//    @Override
 //    public void rollback(long batchId) throws CanalClientException {
 //        waitClientRunning();
 //        ClientRollback ca = ClientRollback.newBuilder()
@@ -348,6 +420,7 @@
 //        }
 //    }
 //
+//    @Override
 //    public void rollback() throws CanalClientException {
 //        waitClientRunning();
 //        rollback(0);// 0代笔未设置
@@ -431,12 +504,14 @@
 //    private void waitClientRunning() {
 //        try {
 //            if (zkClientx != null) {
-//                if (!connected) {// 未调用connect
+//                if (!connected) {
+//                    // 未调用connect
 //                    throw new CanalClientException("should connect first");
 //                }
 //
 //                running = true;
-//                mutex.get();// 阻塞等待
+//                // 阻塞等待
+//                mutex.get();
 //            } else {
 //                // 单机模式直接设置为running
 //                running = true;

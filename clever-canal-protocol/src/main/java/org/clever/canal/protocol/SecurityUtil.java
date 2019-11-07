@@ -14,9 +14,9 @@ import java.util.Arrays;
  * 3. checktoken vs password
  * </pre>
  */
-@SuppressWarnings({"WeakerAccess"})
 public class SecurityUtil {
 
+    @SuppressWarnings("unused")
     public static String md5String(String content) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("md5");
         byte[] bt = md.digest(content.getBytes());
@@ -200,5 +200,19 @@ public class SecurityUtil {
             bs[(i - offset) >> 1] = (byte) b;
         }
         return bs;
+    }
+
+    public static byte[] scramble411(byte[] pass, byte[] seed) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] pass1 = md.digest(pass);
+        md.reset();
+        byte[] pass2 = md.digest(pass1);
+        md.reset();
+        md.update(seed);
+        byte[] pass3 = md.digest(pass2);
+        for (int i = 0; i < pass3.length; i++) {
+            pass3[i] = (byte) (pass3[i] ^ pass1[i]);
+        }
+        return pass3;
     }
 }

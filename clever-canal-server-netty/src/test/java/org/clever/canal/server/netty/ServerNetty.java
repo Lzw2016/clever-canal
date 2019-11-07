@@ -62,11 +62,13 @@ public class ServerNetty {
         ManagerCanalInstanceGenerator managerCanalInstanceGenerator = new ManagerCanalInstanceGenerator(canalConfigClient);
         CanalServerWithEmbedded canalServerWithEmbedded = CanalServerWithEmbedded.Instance;
         canalServerWithEmbedded.setCanalInstanceGenerator(managerCanalInstanceGenerator);
+        canalServerWithEmbedded.setUser("lizw");
+        canalServerWithEmbedded.setPassword("123");
         // 启动 CanalServerWithNetty
         CanalServerWithNetty.Instance.start();
         canalServerWithEmbedded.start("test");
         log.info("### started");
-        Thread.sleep(1000 * 3);
+        Thread.sleep(1000 * 3000);
         log.info("### end");
         // canalServerWithEmbedded.stop();
         CanalServerWithNetty.Instance.stop();
