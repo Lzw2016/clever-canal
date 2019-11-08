@@ -1,1 +1,29 @@
-{"clientDataList":[{"clientIdentity":{"clientId":12,"destination":"test","filter":"test\\.demo_store"},"cursor":{"identity":{"slaveId":-1,"sourceAddress":{"address":"activate.navicat.com","port":3306}},"position":{"gtId":"","included":false,"journalName":"mysql-bin.000031","position":1072,"serverId":1,"timestamp":1573205033000}}}],"destination":"test"}
+{
+  "clientDataList": [
+    {
+      "clientIdentity": {
+        "clientId": 12,
+        "destination": "test",
+        "filter": "test\\.demo_store"
+      },
+      "cursor": {
+        "identity": {
+          "slaveId": -1,
+          "sourceAddress": {
+            "address": "activate.navicat.com",
+            "port": 3306
+          }
+        },
+        "position": {
+          "gtId": "",
+          "included": false,
+          "journalName": "mysql-bin.000031",
+          "position": 1072,
+          "serverId": 1,
+          "timestamp": 1573205033000
+        }
+      }
+    }
+  ],
+  "destination": "test"
+}
