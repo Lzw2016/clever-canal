@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 作者：lizw <br/>
@@ -21,6 +22,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class ServerTest {
+
+    private AtomicLong sum = new AtomicLong(0);
+    private long start;
 
     @Test
     public void t1() throws InterruptedException {
@@ -82,7 +86,8 @@ public class ServerTest {
 
         // 消费线程
         Thread thread = new Thread(() -> {
-            for (int i = 0; i < 1000; i++) {
+            start = System.currentTimeMillis();
+            for (int i = 0; i < 10000000; i++) {
                 Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
                 if (message.isRaw()) {
                     message.getRawEntries().forEach(rawEntry -> {
@@ -94,6 +99,9 @@ public class ServerTest {
                     });
                 } else {
                     message.getEntries().forEach(this::printf);
+                }
+                if (i % 1000 == 0) {
+                    log.info("### 处理速度： {}(个/s)", (sum.get() * 1.0) / (System.currentTimeMillis() - start));
                 }
             }
         });
@@ -109,62 +117,58 @@ public class ServerTest {
             log.info("### entry = null");
             return;
         }
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append(
+                String.format(
+                        "[Header]### entryType=[%s] logfileName=[%s] | logfileOffset=[%s] | executeTime=[%s] | schemaName=[%s] | tableName=[%s] | eventType=[%s]",
+                        entry.getEntryType(),
+                        entry.getHeader().getLogfileName(),
+                        entry.getHeader().getLogfileOffset(),
+                        entry.getHeader().getExecuteTime(),
+                        entry.getHeader().getSchemaName(),
+                        entry.getHeader().getTableName(),
+                        entry.getHeader().getEventType()
+                )
+        ).append("\n");
         try {
             CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
-            CanalEntry.EventType eventType = rowChange.getEventType();
-            log.info("### eventType={} | Sql={}", eventType, rowChange.getSql());
-            for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
-                for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
-                    log.info("### BeforeColumn | {}={}", column.getName(), column.getValue());
-                }
-                log.info("### -----------------------------------------------------------------------------------------");
-                for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
-                    log.info("### AfterColumn | {}={}", column.getName(), column.getValue());
+            sb.append("[RowChange]### ");
+            if (rowChange.getIsDdl()) {
+                sum.incrementAndGet();
+                sb.append("Sql=[").append(rowChange.getSql()).append("]");
+            } else {
+                sb.append("\n");
+                int count = 0;
+                for (CanalEntry.RowData rowData : rowChange.getRowDataList()) {
+                    count++;
+                    sum.incrementAndGet();
+                    sb.append("\t").append(count).append("[Before]# ");
+                    for (CanalEntry.Column column : rowData.getBeforeColumnsList()) {
+                        sb.append(column.getName()).append("=").append(column.getValue()).append(" | ");
+                    }
+                    sb.append("\n");
+                    sb.append("\t").append(count).append("[After ]# ");
+                    for (CanalEntry.Column column : rowData.getAfterColumnsList()) {
+                        sb.append(column.getName()).append("=").append(column.getValue()).append(" | ");
+                    }
                 }
             }
-            log.info("### =============================================================================================");
+            sb.append("\n");
+            sb.append("-------------------------\n");
         } catch (InvalidProtocolBufferException e) {
             log.error("", e);
         }
+        log.info(sb.toString());
     }
 }
 /*
-Entry
-    Header
-        logfileName [binlog文件名]
-        logfileOffset [binlog position]
-        executeTime [binlog里记录变更发生的时间戳,精确到秒]
-        schemaName
-        tableName
-        eventType [insert/update/delete类型]
-    entryType   [事务头BEGIN/事务尾END/数据ROWDATA]
-    storeValue  [byte数据,可展开，对应的类型为RowChange]
-
-RowChange
-
-isDdl       [是否是ddl变更操作，比如create table/drop table]
-
-sql         [具体的ddl sql]
-
-rowDatas    [具体insert/update/delete的变更数据，可为多条，1个binlog event事件可对应多条变更，比如批处理]
-
-beforeColumns [Column类型的数组，变更前的数据字段]
-
-afterColumns [Column类型的数组，变更后的数据字段]
-
 Column
-
 index
-
 sqlType     [jdbc type]
-
 name        [column name]
-
 isKey       [是否为主键]
-
 updated     [是否发生过变更]
-
 isNull      [值是否为null]
-
 value       [具体的内容，注意为string文本]
 */
