@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ServerTest {
 
     private AtomicLong sum = new AtomicLong(0);
-    private long start;
+    private long start = 0;
 
     @Test
     public void t1() throws InterruptedException {
@@ -44,7 +44,8 @@ public class ServerTest {
                 canalParameter.setSourcingType(SourcingType.MYSQL);
                 canalParameter.setGtIdEnable(true);
                 canalParameter.setSlaveId(123L);
-                canalParameter.addGroupDbAddresses(new DataSourcing(SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
+                canalParameter.addGroupDbAddresses(new DataSourcing(SourcingType.MYSQL, new InetSocketAddress("192.168.31.40", 3306)));
+                // canalParameter.addGroupDbAddresses(new DataSourcing(SourcingType.MYSQL, new InetSocketAddress("127.0.0.1", 3306)));
                 canalParameter.setDbUsername("canal");
                 canalParameter.setDbPassword("canal");
                 // TsDb
@@ -83,12 +84,17 @@ public class ServerTest {
 
         // 订阅
         canalServerWithEmbedded.subscribe(clientIdentity);
-
+        final int batchSize = 100;
         // 消费线程
         Thread thread = new Thread(() -> {
-            start = System.currentTimeMillis();
             for (int i = 0; i < 10000000; i++) {
-                Message message = canalServerWithEmbedded.get(clientIdentity, 1, 10L, TimeUnit.DAYS);
+                if (start <= 0) {
+                    log.warn("### 开始！");
+                }
+                Message message = canalServerWithEmbedded.get(clientIdentity, batchSize, 10L, TimeUnit.DAYS);
+                if (start <= 0) {
+                    start = System.currentTimeMillis();
+                }
                 if (message.isRaw()) {
                     message.getRawEntries().forEach(rawEntry -> {
                         try {
@@ -100,8 +106,8 @@ public class ServerTest {
                 } else {
                     message.getEntries().forEach(this::printf);
                 }
-                if (i % 1000 == 0) {
-                    log.info("### 处理速度： {}(个/s)", (sum.get() * 1.0) / (System.currentTimeMillis() - start));
+                if ((i * batchSize) % 1000 == 0) {
+                    log.warn("### 处理速度： {}(个/ms)", (sum.get() * 1.0) / (System.currentTimeMillis() - start));
                 }
             }
         });
@@ -159,7 +165,7 @@ public class ServerTest {
         } catch (InvalidProtocolBufferException e) {
             log.error("", e);
         }
-        log.info(sb.toString());
+//        log.info(sb.toString());
     }
 }
 /*

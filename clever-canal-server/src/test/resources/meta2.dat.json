@@ -1,0 +1,29 @@
+{
+  "clientDataList": [
+    {
+      "clientIdentity": {
+        "clientId": 12,
+        "destination": "test",
+        "filter": "test\\.demo_store"
+      },
+      "cursor": {
+        "identity": {
+          "slaveId": -1,
+          "sourceAddress": {
+            "address": "192.168.31.40",
+            "port": 3306
+          }
+        },
+        "position": {
+          "gtId": "",
+          "included": false,
+          "journalName": "mysql-bin.000001",
+          "position": 120499,
+          "serverId": 1,
+          "timestamp": 1573280316000
+        }
+      }
+    }
+  ],
+  "destination": "test"
+}

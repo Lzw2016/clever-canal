@@ -43,7 +43,7 @@
         </filter>
     </appender>
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
         <appender-ref ref="ERROR_FILE"/>
