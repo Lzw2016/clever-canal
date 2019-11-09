@@ -165,7 +165,7 @@ public class ServerTest {
         } catch (InvalidProtocolBufferException e) {
             log.error("", e);
         }
-//        log.info(sb.toString());
+        log.info(sb.toString());
     }
 }
 /*
