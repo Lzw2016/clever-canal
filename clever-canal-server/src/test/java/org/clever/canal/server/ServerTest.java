@@ -84,7 +84,7 @@ public class ServerTest {
 
         // 订阅
         canalServerWithEmbedded.subscribe(clientIdentity);
-        final int batchSize = 100;
+        final int batchSize = 1;
         // 消费线程
         Thread thread = new Thread(() -> {
             for (int i = 0; i < 10000000; i++) {
